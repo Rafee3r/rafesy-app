@@ -30,7 +30,7 @@
     .gear-btn:hover{border-color:var(--primary)}
     .gear-btn svg{width:22px;height:22px;stroke:var(--muted);stroke-width:1.6;fill:none}
 
-    .tabs{display:flex;gap:8px;justify-content:flex-start;align-items:center}
+    .tabs{display:flex;gap:8px;justify-content:flex-start;align-items:center;flex-wrap:wrap}
     body.phone .tabs:not(.tabs-mobile){display:none!important}
     body.phone #localTime{display:none!important}
     body.phone #gear{display:none!important}
@@ -48,6 +48,8 @@
     .layout{display:grid;grid-template-columns:300px 1fr;gap:18px}
     body.phone .layout{grid-template-columns:1fr}
     body.phone{padding-top:112px!important}
+    .panel-view{max-width:860px;margin:0 auto;padding-bottom:200px}
+    body.phone .panel-view{padding-bottom:160px}
 
     aside.left{position:sticky;top:80px;align-self:start;display:grid;gap:12px;max-height:calc(100vh - 90px);overflow-y:auto;overflow-x:visible;padding-right:8px;padding-bottom:200px;margin-left:-2px}
     body.phone aside.left{top:112px;max-height:calc(100vh - 122px)}
@@ -90,8 +92,13 @@
     .feed-head{display:flex;gap:8px;align-items:center;margin:10px auto 8px;max-width:760px}
     body.phone .feed-head{flex-direction:column;align-items:stretch;padding:0 4px}
     body.phone .feed-head .search{width:100%}
-    .feed-filters{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-    body.phone .feed-filters{width:100%;justify-content:flex-start}
+    .feed-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;width:100%}
+    .chip-list{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}
+    .chip-list-empty{font-size:13px;color:var(--muted)}
+    .filter-actions{display:flex;gap:6px;align-items:center}
+    body.phone .feed-filters{flex-direction:column;align-items:stretch}
+    body.phone .chip-list{width:100%}
+    body.phone .filter-actions{width:100%;justify-content:flex-end}
     .search{flex:1;border:1px solid var(--line);background:var(--bg-soft);border-radius:12px;padding:8px 10px;color:var(--text)}
     .feed{max-width:760px;margin:6px auto 200px;padding:12px 0 200px;position:relative}
     .feed::after{content:"";position:fixed;bottom:68px;left:0;right:0;height:56px;background:linear-gradient(180deg,transparent,rgba(11,15,20,.92));pointer-events:none}
@@ -133,6 +140,20 @@
     .popover{position:absolute;top:40px;right:10px;z-index:50;border:1px solid var(--line);background:var(--bg-soft);border-radius:12px;box-shadow:var(--shadow);padding:10px 12px;width:260px;display:none;font-size:13px}
     .popover.open{display:block}
 
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);z-index:120}
+    .modal.hidden{display:none!important}
+    .modal-card{background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(420px,90vw);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+    .modal-head h3{margin:0;font-size:18px}
+    .modal-actions{display:flex;align-items:center;gap:8px;margin-top:16px}
+    .modal-actions .spacer{flex:1}
+    .tag-edit-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+    .tag-edit-row{display:flex;align-items:center;gap:8px}
+    .tag-edit-row span{font-weight:600;color:var(--muted)}
+    .tag-edit-row input{flex:1}
+    .tag-edit-row button{height:32px;min-width:32px;padding:0;border-radius:10px}
+    body.modal-open{overflow:hidden}
+
     .composer{position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--bg-soft);border-top:1px solid var(--line);padding-top:12px}
     .composer .inner{max-width:1180px;margin:0 auto;padding:0 16px 16px}
     .box{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;border:1px solid var(--line);background:var(--bg);border-radius:24px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
@@ -142,6 +163,9 @@
     .btn.primary{background:var(--primary);border-color:var(--primary);color:#000}
     .btn.primary:hover{background:rgba(111,220,255,.9);border-color:var(--primary)}
     .btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+    .btn.small{height:32px;padding:0 12px;font-size:12px;min-width:32px}
+    .btn.ghost{background:transparent;color:var(--muted)}
+    .btn.ghost:hover{color:var(--text);border-color:var(--primary)}
     .btn.icon{width:38px;padding:0;display:grid;place-items:center;font-size:22px;color:var(--primary)}
     .attachs{display:flex;gap:6px;align-items:center;padding:6px}
     .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:6px 8px;border:1px dashed var(--line);border-radius:999px}
@@ -186,41 +210,41 @@
     <div class="wrap">
       <div class="bar">
         <div class="bar-main">
-          <button id="sidebarToggle" title="Abrir panel" aria-label="Abrir panel">&#9776;</button>
-          <div class="brand" aria-label="Rafesy branding" style="display:flex;align-items:center;gap:16px;flex-shrink:0">
-            <div style="display:inline-flex;align-items:center;gap:10px">
-              <span class="dot" aria-hidden="true"></span>
-              <span>Rafesy <em>Business</em></span>
+          <div class="bar-left">
+            <button id="sidebarToggle" title="Abrir panel" aria-label="Abrir panel">&#9776;</button>
+            <div class="brand" aria-label="Rafesy branding" style="display:flex;align-items:center;gap:16px;flex-shrink:0">
+              <div style="display:inline-flex;align-items:center;gap:10px">
+                <span class="dot" aria-hidden="true"></span>
+                <span>Rafesy <em>Business</em></span>
+              </div>
+            </div>
+            <div class="tabs">
+              <button class="tab" data-tab="dashboard">Dashboard</button>
+              <button class="tab active" data-tab="feed">Feed</button>
+              <button class="tab" data-tab="habits">Hǭbitos</button>
+              <button class="tab" data-tab="images">Imǭgenes</button>
+              <button class="tab" data-tab="rewards">Rewards</button>
             </div>
           </div>
-        </div>
-          <div class="tabs" style="flex:1;display:flex;gap:8px;justify-content:flex-start;margin:0;padding:0;margin-left:18px">
-            <button class="tab" data-tab="dashboard">Dashboard</button>
-            <button class="tab active" data-tab="feed">Feed</button>
-            <button class="tab" data-tab="habits">Hábitos</button>
-            <button class="tab" data-tab="images">Imágenes</button>
-            <button class="tab" data-tab="rewards">Rewards</button>
-      </div>
-          <div class="tabs tabs-mobile" style="display:none">
-            <button class="tab" data-tab="dashboard">Dashboard</button>
-        <button class="tab active" data-tab="feed">Feed</button>
-        <button class="tab" data-tab="habits">Hábitos</button>
-        <button class="tab" data-tab="images">Imágenes</button>
-            <button class="tab" data-tab="rewards">Rewards</button>
+          <div class="bar-right">
+            <div id="localTime" style="font-size:18px;font-weight:400;color:var(--text);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:4px;flex-shrink:0;margin-left:auto;margin-right:16px"></div>
+            <div id="localTimeMobile" class="mobile" style="font-size:18px;font-weight:400;color:var(--text);font-variant-numeric:tabular-nums;display:none;align-items:baseline;gap:4px;flex-shrink:0;margin-left:auto;margin-right:8px"></div>
+            <button id="gearMobile" class="gear-btn mobile" title="Configuración" aria-label="Abrir configuración" style="display:none;flex-shrink:0">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 12.9a7.5 7.5 0 0 0 0-1.8l1.7-1.2a.9.9 0 0 0 .3-1.2l-1.6-2.7a.9.9 0 0 0-1.1-.4l-1.9.8a7.3 7.3 0 0 0-1.5-.9l-.3-2a.9.9 0 0 0-.9-.8h-3.2a.9.9 0 0 0-.9.8l-.3 2a7.3 7.3 0 0 0-1.5.9l-1.9-.8a.9.9 0 0 0-1.1.4L2.6 8.7a.9.9 0 0 0 .3 1.2l1.7 1.2a7.5 7.5 0 0 0 0 1.8L2.9 14.3a.9.9 0 0 0-.3 1.2l1.6 2.7c.24.42.76.6 1.2.4l1.9-.8c.46.36.96.66 1.5.9l.3 2c.08.45.46.8.9.8h3.2c.44 0 .82-.35.9-.8l.3-2c.53-.23 1.03-.53 1.5-.9l1.9.8c.44.18.96 0 1.2-.4l1.6-2.7a.9.9 0 0 0-.3-1.2l-1.7-1.4Z"/></svg>
+            </button>
+            <button id="gear" class="gear-btn" title="Configuración" aria-label="Abrir configuración" style="flex-shrink:0">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 12.9a7.5 7.5 0 0 0 0-1.8l1.7-1.2a.9.9 0 0 0 .3-1.2l-1.6-2.7a.9.9 0 0 0-1.1-.4l-1.9.8a7.3 7.3 0 0 0-1.5-.9l-.3-2a.9.9 0 0 0-.9-.8h-3.2a.9.9 0 0 0-.9.8l-.3 2a7.3 7.3 0 0 0-1.5.9l-1.9-.8a.9.9 0 0 0-1.1.4L2.6 8.7a.9.9 0 0 0 .3 1.2l1.7 1.2a7.5 7.5 0 0 0 0 1.8L2.9 14.3a.9.9 0 0 0-.3 1.2l1.6 2.7c.24.42.76.6 1.2.4l1.9-.8c.46.36.96.66 1.5.9l.3 2c.08.45.46.8.9.8h3.2c.44 0 .82-.35.9-.8l.3-2c.53-.23 1.03-.53 1.5-.9l1.9.8c.44.18.96 0 1.2-.4l1.6-2.7a.9.9 0 0 0-.3-1.2l-1.7-1.4Z"/></svg>
+            </button>
           </div>
-          <div id="localTime" style="font-size:18px;font-weight:400;color:var(--text);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:4px;flex-shrink:0;margin-left:auto;margin-right:16px"></div>
-          <div id="localTimeMobile" class="mobile" style="font-size:18px;font-weight:400;color:var(--text);font-variant-numeric:tabular-nums;display:none;align-items:baseline;gap:4px;flex-shrink:0;margin-left:auto;margin-right:8px"></div>
-          <button id="gearMobile" class="gear-btn mobile" title="Configuración" aria-label="Abrir configuración" style="display:none;flex-shrink:0">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 12.9a7.5 7.5 0 0 0 0-1.8l1.7-1.2a.9.9 0 0 0 .3-1.2l-1.6-2.7a.9.9 0 0 0-1.1-.4l-1.9.8a7.3 7.3 0 0 0-1.5-.9l-.3-2a.9.9 0 0 0-.9-.8h-3.2a.9.9 0 0 0-.9.8l-.3 2a7.3 7.3 0 0 0-1.5.9l-1.9-.8a.9.9 0 0 0-1.1.4L2.6 8.7a.9.9 0 0 0 .3 1.2l1.7 1.2a7.5 7.5 0 0 0 0 1.8L2.9 14.3a.9.9 0 0 0-.3 1.2l1.6 2.7c.24.42.76.6 1.2.4l1.9-.8c.46.36.96.66 1.5.9l.3 2c.08.45.46.8.9.8h3.2c.44 0 .82-.35.9-.8l.3-2c.53-.23 1.03-.53 1.5-.9l1.9.8c.44.18.96 0 1.2-.4l1.6-2.7a.9.9 0 0 0-.3-1.2l-1.7-1.4Z"/></svg>
-          </button>
-          <button id="gear" class="gear-btn" title="Configuración" aria-label="Abrir configuración" style="flex-shrink:0">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 12.9a7.5 7.5 0 0 0 0-1.8l1.7-1.2a.9.9 0 0 0 .3-1.2l-1.6-2.7a.9.9 0 0 0-1.1-.4l-1.9.8a7.3 7.3 0 0 0-1.5-.9l-.3-2a.9.9 0 0 0-.9-.8h-3.2a.9.9 0 0 0-.9.8l-.3 2a7.3 7.3 0 0 0-1.5.9l-1.9-.8a.9.9 0 0 0-1.1.4L2.6 8.7a.9.9 0 0 0 .3 1.2l1.7 1.2a7.5 7.5 0 0 0 0 1.8L2.9 14.3a.9.9 0 0 0-.3 1.2l1.6 2.7c.24.42.76.6 1.2.4l1.9-.8c.46.36.96.66 1.5.9l.3 2c.08.45.46.8.9.8h3.2c.44 0 .82-.35.9-.8l.3-2c.53-.23 1.03-.53 1.5-.9l1.9.8c.44.18.96 0 1.2-.4l1.6-2.7a.9.9 0 0 0-.3-1.2l-1.7-1.4Z"/></svg>
-          </button>
+        </div>
+        <div class="tabs tabs-mobile">
+          <button class="tab" data-tab="dashboard">Dashboard</button>
+          <button class="tab" data-tab="feed">Feed</button>
+          <button class="tab" data-tab="habits">Hǭbitos</button>
+          <button class="tab" data-tab="images">Imǭgenes</button>
+          <button class="tab" data-tab="rewards">Rewards</button>
         </div>
       </div>
-    </div>
-  </header>
-
   <section id="panel" class="panel" aria-label="Panel de configuración">
     <h3>Configuración</h3>
     <details class="row"><summary>Tema y Visual</summary>
@@ -361,7 +385,7 @@
       </aside>
 
       <main>
-        <div id="main-dashboard" class="hidden">
+        <div id="main-dashboard" class="panel-view hidden">
           <div class="feed" style="max-width:760px">
             <h2>Dashboard Personal</h2>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
@@ -394,23 +418,22 @@
             </div>
           </div>
         </div>
-        <div id="main-feed">
+        <div id="main-feed" class="panel-view">
           <div class="feed-head">
             <input id="search" class="search" type="search" placeholder="Buscar texto o #etiquetas" />
             <div class="feed-filters">
-              <button class="tag filter-chip" data-filter="#meta">#meta</button>
-              <button class="tag filter-chip" data-filter="#progreso">#progreso</button>
-              <button class="tag filter-chip" data-filter="#reflexion">#reflexion</button>
-              <button class="tag filter-chip" data-filter="#imagen">#imagen</button>
-              <button class="tag filter-chip" data-filter="#pdf">#pdf</button>
-            <button id="clearSearch" class="btn hidden">Limpiar</button>
+              <div id="filterChips" class="chip-list"></div>
+              <div class="filter-actions">
+                <button id="editTagsBtn" class="btn ghost small" type="button">Editar hashtags</button>
+                <button id="clearSearch" class="btn small hidden" type="button">Limpiar</button>
+              </div>
             </div>
           </div>
           <div class="feed" id="feed" aria-live="polite"></div>
           <div id="endMsg" class="end-msg hidden" style="margin-top:-310px;margin-bottom:180px;padding:4px 0">Has llegado al inicio del Feed</div>
         </div>
 
-        <div id="main-habits" class="hidden">
+        <div id="main-habits" class="panel-view hidden">
           <div class="feed" style="max-width:760px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
               <h2 style="margin:0">Hábitos</h2>
@@ -479,7 +502,7 @@
           </div>
         </div>
 
-        <div id="main-images" class="hidden">
+        <div id="main-images" class="panel-view hidden">
           <div class="feed" style="max-width:760px">
             <h2>Imágenes</h2>
             <div id="gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
@@ -488,7 +511,7 @@
             </div>
           </div>
         </div>
-        <div id="main-rewards" class="hidden">
+        <div id="main-rewards" class="panel-view hidden">
           <div class="feed" style="max-width:760px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
               <h2 style="margin:0">Rewards</h2>
@@ -512,6 +535,23 @@
 
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true"><img alt="imagen"/></div>
 
+  <div id="tagEditor" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tagEditorTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="tagEditorTitle">Editar hashtags sugeridos</h3>
+        <button type="button" id="closeTagEditor" class="btn icon" aria-label="Cerrar editor">&times;</button>
+      </div>
+      <p class="hint" style="margin:0 0 12px">Puedes tener hasta 7 hashtags, máximo 10 letras cada uno.</p>
+      <div id="tagEditorList" class="tag-edit-list"></div>
+      <div class="modal-actions">
+        <button id="addTagField" class="btn ghost small" type="button">+ Añadir hashtag</button>
+        <div class="spacer"></div>
+        <button id="cancelTagEdit" class="btn small" type="button">Cancelar</button>
+        <button id="saveTagEdit" class="btn primary small" type="button">Guardar</button>
+      </div>
+    </div>
+  </div>
+
   <footer class="composer" aria-label="Caja de publicación">
     <div class="inner">
       <div class="box" style="display:grid;grid-template-rows:auto auto;gap:8px">
@@ -533,12 +573,96 @@
   <script>
   const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
   const STORE_POSTS='rafesy:posts:v7'; const STORE_PREFS='rafesy:prefs:v7'; const STORE_GOALS='rafesy:goals:v5'; const STORE_AVATAR='rafesy:avatar:v1'; const STORE_REMIND='rafesy:reminders:v2'; const STORE_HABITS='rafesy:habits:v2'; const STORE_HABITLIST='rafesy:habitlist:v1'; const STORE_REFLECTIONS='rafesy:reflections:v1'; const STORE_APP_START='rafesy:appStart:v1'; const STORE_XP='rafesy:xp:v1'; const STORE_AUTO_BACKUP='rafesy:autoBackup';
-  let posts=[]; let prefs={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true}; let goals={week:[],month:[]}; let reminders=[]; let habits={}; let habitList=[]; let reflections={}; let focusMode=false; let quickMode='note'; let xpDaily={date:'',xp:0,posts:false,reflections:false,habitsDone:[],goalsDone:[]}; let appStartTime=Number(localStorage.getItem(STORE_APP_START)||Date.now()); let activeTime=0; let autoSaveInterval=null;
+  const DEFAULT_TAGS=['meta','progreso','reflexion','imagen','pdf'];
+  const MAX_SUGGESTED_TAGS=7;
+  const MAX_TAG_LENGTH=10;
+  const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice()};
+  const XP_DAILY_DEFAULT={date:'',xp:0,posts:false,reflections:false,habitsDone:[],goalsDone:[]};
+  const DEFAULT_REWARDS=[{id:'r1',name:'Desbloquea Notas',req:50,type:'xp',description:''},{id:'r2',name:'Avatar Personalizado',req:100,type:'xp',description:''},{id:'r3',name:'Tema Especial',req:200,type:'xp',description:''},{id:'r4',name:'Nivel 5',req:5,type:'level',description:''},{id:'r5',name:'Nivel 10',req:10,type:'level',description:''},{id:'r6',name:'Badge Estrella',req:15,type:'level',description:''}];
+  let posts=[];
+  let prefs={...PREFS_DEFAULT};
+  let goals={week:[],month:[]};
+  let reminders=[];
+  let habits={};
+  let habitList=[];
+  let reflections={};
+  let focusMode=false;
+  let quickMode='note';
+  let xpDaily={...XP_DAILY_DEFAULT};
+  let appStartTime=Date.now();
+  let activeTime=0;
+  let autoSaveInterval=null;
+  let tagDrafts=[];
+  let rewards=JSON.parse(JSON.stringify(DEFAULT_REWARDS));
 
-  function save(){try{localStorage.setItem(STORE_POSTS,JSON.stringify(posts));localStorage.setItem(STORE_PREFS,JSON.stringify(prefs));localStorage.setItem(STORE_GOALS,JSON.stringify(goals));localStorage.setItem(STORE_REMIND,JSON.stringify(reminders));localStorage.setItem(STORE_HABITS,JSON.stringify(habits));localStorage.setItem(STORE_HABITLIST,JSON.stringify(habitList));localStorage.setItem(STORE_REFLECTIONS,JSON.stringify(reflections));localStorage.setItem('rafesy:xpDaily',JSON.stringify(xpDaily));localStorage.setItem('rafesy:rewards',JSON.stringify(rewards));autoBackup();}catch(e){alert('Almacenamiento lleno')}}
+  function createDefaultState(){
+    return {
+      posts:[],
+      prefs:{...PREFS_DEFAULT},
+      goals:{week:[],month:[]},
+      reminders:[],
+      habits:{},
+      habitList:[],
+      reflections:{},
+      xpDaily:{...XP_DAILY_DEFAULT},
+      appStartTime:Date.now(),
+      rewards:JSON.parse(JSON.stringify(DEFAULT_REWARDS))
+    };
+  }
+  function hydrateFromState(state){
+    const target=state&&typeof state==='object'?state:createDefaultState();
+    if(!Array.isArray(target.posts))target.posts=[];
+    posts=target.posts;
+    target.prefs={...PREFS_DEFAULT,...(target.prefs||{})};
+    prefs=target.prefs;
+    const incomingGoals=target.goals&&typeof target.goals==='object'?target.goals:{};
+    target.goals={week:Array.isArray(incomingGoals.week)?incomingGoals.week:[],month:Array.isArray(incomingGoals.month)?incomingGoals.month:[]};
+    goals=target.goals;
+    target.reminders=Array.isArray(target.reminders)?target.reminders:[];
+    reminders=target.reminders;
+    target.habits=incomingObject(target.habits);
+    habits=target.habits;
+    target.habitList=Array.isArray(target.habitList)?target.habitList:[];
+    habitList=target.habitList;
+    target.reflections=incomingObject(target.reflections);
+    reflections=target.reflections;
+    target.xpDaily={...XP_DAILY_DEFAULT,...(target.xpDaily||{})};
+    xpDaily=target.xpDaily;
+    target.appStartTime=target.appStartTime||Date.now();
+    appStartTime=target.appStartTime;
+    target.rewards=Array.isArray(target.rewards)?target.rewards:JSON.parse(JSON.stringify(DEFAULT_REWARDS));
+    rewards=target.rewards;
+    ensureSuggestedTags();
+    window.__APP_STATE__=target;
+    return window.__APP_STATE__;
+  }
+  function incomingObject(value){return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}
+  function syncAppState(){return hydrateFromState(window.__APP_STATE__||createDefaultState())}
+  window.createDefaultState=createDefaultState;
+  window.hydrateFromState=hydrateFromState;
+  window.syncAppState=syncAppState;
+  window.__APP_STATE__=window.__APP_STATE__||createDefaultState();
+  hydrateFromState(window.__APP_STATE__);
+
+  function saveLocal(state){const snapshot=state||syncAppState();try{localStorage.setItem(STORE_POSTS,JSON.stringify(snapshot.posts||[]));localStorage.setItem(STORE_PREFS,JSON.stringify(snapshot.prefs||{}));localStorage.setItem(STORE_GOALS,JSON.stringify(snapshot.goals||{week:[],month:[]}));localStorage.setItem(STORE_REMIND,JSON.stringify(snapshot.reminders||[]));localStorage.setItem(STORE_HABITS,JSON.stringify(snapshot.habits||{}));localStorage.setItem(STORE_HABITLIST,JSON.stringify(snapshot.habitList||[]));localStorage.setItem(STORE_REFLECTIONS,JSON.stringify(snapshot.reflections||{}));localStorage.setItem('rafesy:xpDaily',JSON.stringify(snapshot.xpDaily||XP_DAILY_DEFAULT));localStorage.setItem('rafesy:rewards',JSON.stringify(snapshot.rewards||[]));localStorage.setItem(STORE_APP_START,String(snapshot.appStartTime||Date.now()));autoBackup();}catch(e){console.warn('No se pudo guardar en localStorage',e)}return snapshot}
+  function save(){return saveLocal()}
+  window.saveLocal=saveLocal;
   function autoBackup(){const today=new Date().toISOString().slice(0,10);const lastBackup=localStorage.getItem('rafesy:lastBackupDate');if(lastBackup!==today){try{const avatar=localStorage.getItem(STORE_AVATAR);const backup={posts,prefs,goals,reminders,habits,habitList,reflections,rewards,xpDaily,appStartTime,avatar,date:today};localStorage.setItem(STORE_AUTO_BACKUP,JSON.stringify(backup));localStorage.setItem('rafesy:lastBackupDate',today);}catch(e){}}}
   function getAutoBackup(){try{const backup=localStorage.getItem(STORE_AUTO_BACKUP);return backup?JSON.parse(backup):null}catch(e){return null}}
-  function load(){try{posts=JSON.parse(localStorage.getItem(STORE_POSTS)||'[]');const p=JSON.parse(localStorage.getItem(STORE_PREFS)||'null');if(p)Object.assign(prefs,p);const g=JSON.parse(localStorage.getItem(STORE_GOALS)||'null');goals=g||{week:[],month:[]};reminders=JSON.parse(localStorage.getItem(STORE_REMIND)||'[]');habits=JSON.parse(localStorage.getItem(STORE_HABITS)||'{}');habitList=JSON.parse(localStorage.getItem(STORE_HABITLIST)||'[]');reflections=JSON.parse(localStorage.getItem(STORE_REFLECTIONS)||'{}');xpDaily=JSON.parse(localStorage.getItem('rafesy:xpDaily')||'{"date":"","xp":0,"posts":false,"reflections":false,"habitsDone":[],"goalsDone":[]}');const savedRewards=JSON.parse(localStorage.getItem('rafesy:rewards'));if(savedRewards&&Array.isArray(savedRewards)){rewards=savedRewards;rewards.forEach(r=>{if(!r.description)r.description='';if(!r.name)r.name='Sin título'})}prefs.xp=0;prefs.level=1;prefs.rewardsClaimed=[];save();const av=localStorage.getItem(STORE_AVATAR);if(av)$('#avatar').src=av;const autoBackup=getAutoBackup();if(autoBackup&&autoBackup.date){const restore=$('#autoBackupRestore');const date=$('#autoBackupDate');if(restore)restore.style.display='block';if(date)date.textContent=new Date(autoBackup.date).toLocaleDateString('es-CL')}}catch(e){}}
+  function load(){try{const localState=createDefaultState();localState.posts=JSON.parse(localStorage.getItem(STORE_POSTS)||'[]');const storedPrefs=JSON.parse(localStorage.getItem(STORE_PREFS)||'null');if(storedPrefs)localState.prefs={...localState.prefs,...storedPrefs};const storedGoals=JSON.parse(localStorage.getItem(STORE_GOALS)||'null');if(storedGoals)localState.goals=storedGoals;localState.reminders=JSON.parse(localStorage.getItem(STORE_REMIND)||'[]');localState.habits=JSON.parse(localStorage.getItem(STORE_HABITS)||'{}');localState.habitList=JSON.parse(localStorage.getItem(STORE_HABITLIST)||'[]');localState.reflections=JSON.parse(localStorage.getItem(STORE_REFLECTIONS)||'{}');localState.xpDaily=JSON.parse(localStorage.getItem('rafesy:xpDaily')||JSON.stringify(XP_DAILY_DEFAULT));const savedRewards=JSON.parse(localStorage.getItem('rafesy:rewards')||'null');if(Array.isArray(savedRewards))localState.rewards=savedRewards;const storedStart=localStorage.getItem(STORE_APP_START);if(storedStart)localState.appStartTime=Number(storedStart);hydrateFromState(localState);const av=localStorage.getItem(STORE_AVATAR);if(av)$('#avatar').src=av;const autoBackup=getAutoBackup();if(autoBackup&&autoBackup.date){const restore=$('#autoBackupRestore');const date=$('#autoBackupDate');if(restore)restore.style.display='block';if(date)date.textContent=new Date(autoBackup.date).toLocaleDateString('es-CL')}}catch(e){console.warn('Error loading local cache',e)}}
+  function formatTagValue(value){return String(value||'').toLowerCase().replace(/[^a-z0-9áéíóúñ]/gi,'').slice(0,MAX_TAG_LENGTH)}
+  function sanitizeTags(list){const clean=[];const seen=new Set();(Array.isArray(list)?list:[]).forEach(tag=>{const formatted=formatTagValue(tag);if(formatted&&!seen.has(formatted)&&clean.length<MAX_SUGGESTED_TAGS){clean.push(formatted);seen.add(formatted)}});return clean.length?clean:DEFAULT_TAGS.slice()}
+  function ensureSuggestedTags(){prefs.suggestedTags=sanitizeTags(prefs.suggestedTags&&prefs.suggestedTags.length?prefs.suggestedTags:DEFAULT_TAGS)}
+  function renderFilterChips(){const wrap=$('#filterChips');if(!wrap)return;ensureSuggestedTags();if(!prefs.suggestedTags.length){wrap.innerHTML='<span class="chip-list-empty">Sin hashtags sugeridos</span>'}else{wrap.innerHTML=prefs.suggestedTags.map(tag=>`<button class="tag filter-chip${activeFilter===tag?' active':''}" data-tag="${tag}">#${tag}</button>`).join('')}bindFilterChips();updateClearButton()}
+  function bindFilterChips(){$$('#filterChips .filter-chip').forEach(chip=>{chip.onclick=()=>{const selected=chip.dataset.tag;activeFilter=activeFilter===selected?'':selected;$$('#filterChips .filter-chip').forEach(btn=>btn.classList.toggle('active',btn.dataset.tag===activeFilter));updateClearButton();renderInit()}})}
+  function updateClearButton(){const clearBtn=$('#clearSearch');if(!clearBtn)return;if(activeFilter||query.trim()){clearBtn.classList.remove('hidden')}else{clearBtn.classList.add('hidden')}}
+  function openTagEditor(){ensureSuggestedTags();tagDrafts=prefs.suggestedTags.slice();renderTagEditorList();document.body.classList.add('modal-open');$('#tagEditor')?.classList.remove('hidden')}
+  function closeTagEditor(){$('#tagEditor')?.classList.add('hidden');document.body.classList.remove('modal-open')}
+  function renderTagEditorList(){const list=$('#tagEditorList');if(!list)return;if(!tagDrafts.length){list.innerHTML='<div class="chip-list-empty">Agrega un hashtag para comenzar.</div>'}else{list.innerHTML=tagDrafts.map((tag,index)=>`<div class="tag-edit-row" data-index="${index}"><span>#</span><input class="search" type="text" value="${tag}" maxlength="${MAX_TAG_LENGTH}" data-index="${index}"/><button class="btn small remove-tag" type="button" data-index="${index}">Eliminar</button></div>`).join('')}list.querySelectorAll('input').forEach(input=>{input.addEventListener('input',e=>{const idx=Number(e.target.dataset.index);const formatted=formatTagValue(e.target.value);e.target.value=formatted;tagDrafts[idx]=formatted})});list.querySelectorAll('.remove-tag').forEach(btn=>btn.addEventListener('click',()=>{removeTagDraft(Number(btn.dataset.index))}));updateTagEditorControls()}
+  function updateTagEditorControls(){const addBtn=$('#addTagField');if(addBtn)addBtn.disabled=tagDrafts.length>=MAX_SUGGESTED_TAGS}
+  function addTagDraft(){if(tagDrafts.length>=MAX_SUGGESTED_TAGS)return;tagDrafts.push('');renderTagEditorList()}
+  function removeTagDraft(index){tagDrafts.splice(index,1);renderTagEditorList()}
+  function saveTagDrafts(){prefs.suggestedTags=sanitizeTags(tagDrafts);save();renderFilterChips();closeTagEditor();activeFilter='';updateClearButton();renderInit()}
   function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
   function esc(s=''){return s.replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[x]))}
   function updateLocalTime(){const now=new Date();const opts={hour:'2-digit',minute:'2-digit',hour12:false,timeZone:prefs.tz||undefined};const timeStr=now.toLocaleTimeString('es-CL',opts);const timeHtml=`<span style="font-size:18px;font-weight:400;color:var(--text)">${timeStr}</span>`;if($('#localTime'))$('#localTime').innerHTML=timeHtml;if($('#localTimeMobile'))$('#localTimeMobile').innerHTML=timeHtml}
@@ -547,13 +671,27 @@
   function rel(ts){const s=Math.floor((Date.now()-ts)/1000),m=Math.floor(s/60),h=Math.floor(m/60),d=Math.floor(h/24);if(d>0)return `hace ${d}d ${h%24}h`;if(h>0)return `hace ${h}h ${m%60}m`;if(m>0)return `hace ${m}m`;return 'ahora'}
   function parseTags(text){return Array.from(new Set((text.match(/(^|\s)#([\p{L}\p{N}_]{2,30})/gu)||[]).map(t=>t.trim().replace(/^#/,'').toLowerCase())))}
 
-  function applyPrefs(){document.documentElement.style.setProperty('--primary',prefs.primary);document.documentElement.style.setProperty('--density',String(prefs.density||1));document.body.classList.toggle('theme-light',prefs.theme==='light');document.body.classList.toggle('phone',prefs.phoneMode||window.innerWidth<=768);if(prefs.theme==='dark'){if(prefs.pureBlack){document.documentElement.style.setProperty('--bg','#000');document.documentElement.style.setProperty('--bg-soft','#0a0a0a');document.documentElement.style.setProperty('--line','#1b1b1b');}else{document.documentElement.style.setProperty('--bg','#0b0f14');document.documentElement.style.setProperty('--bg-soft','#11161c');document.documentElement.style.setProperty('--line','#1a2230');}}$('#accent').value=prefs.primary;$('#themeLight').checked=prefs.theme==='light';$('#pureBlack').checked=!!prefs.pureBlack;$('#minimal').checked=!!prefs.minimal;$('#showTime').checked=!!prefs.showTime;$('#phoneMode').checked=!!prefs.phoneMode;$('#soundsEnabled').checked=prefs.soundsEnabled!==false;$('#animationsEnabled').checked=prefs.animationsEnabled!==false;$('#autoWeeklySummary').checked=prefs.autoWeeklySummary!==false;$('#smartSuggestions').checked=prefs.smartSuggestions!==false;$('#notificationsEnabled').checked=prefs.notificationsEnabled!==false;$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;$('#fontSize').value=String(prefs.fontSize||1.1);$('#density').value=String(prefs.density||1);$('#tzSelect').value=prefs.tz||'';initAutoSave()}
+  function applyPrefs(){document.documentElement.style.setProperty('--primary',prefs.primary);document.documentElement.style.setProperty('--density',String(prefs.density||1));document.body.classList.toggle('theme-light',prefs.theme==='light');document.body.classList.toggle('phone',prefs.phoneMode||window.innerWidth<=768);if(prefs.theme==='dark'){if(prefs.pureBlack){document.documentElement.style.setProperty('--bg','#000');document.documentElement.style.setProperty('--bg-soft','#0a0a0a');document.documentElement.style.setProperty('--line','#1b1b1b');}else{document.documentElement.style.setProperty('--bg','#0b0f14');document.documentElement.style.setProperty('--bg-soft','#11161c');document.documentElement.style.setProperty('--line','#1a2230');}}$('#accent').value=prefs.primary;$('#themeLight').checked=prefs.theme==='light';$('#pureBlack').checked=!!prefs.pureBlack;$('#minimal').checked=!!prefs.minimal;$('#showTime').checked=!!prefs.showTime;$('#phoneMode').checked=!!prefs.phoneMode;$('#soundsEnabled').checked=prefs.soundsEnabled!==false;$('#animationsEnabled').checked=prefs.animationsEnabled!==false;$('#autoWeeklySummary').checked=prefs.autoWeeklySummary!==false;$('#smartSuggestions').checked=prefs.smartSuggestions!==false;$('#notificationsEnabled').checked=prefs.notificationsEnabled!==false;$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;$('#fontSize').value=String(prefs.fontSize||1.1);$('#density').value=String(prefs.density||1);$('#tzSelect').value=prefs.tz||'';ensureSuggestedTags();renderFilterChips();initAutoSave()}
 
   const PAGE=8;let idx=0;let query='';
   function postInfo(p){const tz=prefs.tz||Intl.DateTimeFormat().resolvedOptions().timeZone;const words=(p.text||'').trim().split(/\s+/).filter(Boolean).length;const chars=(p.text||'').length;const imgs=p.media?.length||0;const idShort=p.id.slice(-6);return `<div class="popover"><div><strong>Fecha exacta:</strong> ${new Date(p.created).toLocaleString('es-CL',{timeZone:prefs.tz||undefined})} (${tz})</div><div><strong>Autor:</strong> Rafael Sotomayor</div><div><strong>ID:</strong> …${idShort}</div><div><strong>Día:</strong> ${weekday(p.created)}</div><div><strong>Hace:</strong> ${rel(p.created)}</div><div><strong>Texto:</strong> ${words} palabras, ${chars} caracteres</div><div><strong>Imágenes:</strong> ${imgs}</div></div>`}
   function iconInfo(){return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 11h2v5h-2"></path></svg>'}
   function highlightTags(text){return esc(text).replace(/(^|\s)#([\p{L}\p{N}_]{2,30})/gu,(m,sp,tag)=>`${sp}<span class="tag" data-tag="${tag.toLowerCase()}">#${tag}</span>`)}
-  let activeFilter='';function matchQuery(p){if(activeFilter){if(activeFilter==='#meta')return p.text?.toLowerCase().includes('meta')||p.tags?.some(t=>t.toLowerCase().includes('meta'));if(activeFilter==='#progreso')return p.text?.toLowerCase().includes('progreso')||p.tags?.some(t=>t.toLowerCase().includes('progreso'));if(activeFilter==='#reflexion')return p.text?.toLowerCase().includes('reflexion')||p.tags?.some(t=>t.toLowerCase().includes('reflexion'))||p.author==='Mamá Bot';if(activeFilter==='#imagen')return p.media?.length>0;if(activeFilter==='#pdf')return p.doc?.type==='pdf';return false}if(!query)return true;const q=query.trim().toLowerCase();if(q.startsWith('#'))return p.tags?.includes(q.slice(1));return (p.text||'').toLowerCase().includes(q)}
+  let activeFilter='';
+  function matchQuery(p){
+    if(activeFilter){
+      const filter=activeFilter.toLowerCase();
+      if(filter==='imagen')return Array.isArray(p.media)&&p.media.length>0;
+      if(filter==='pdf')return p.doc?.type==='pdf';
+      const text=(p.text||'').toLowerCase();
+      const tagMatch=p.tags?.some(t=>t.toLowerCase().includes(filter));
+      return text.includes(filter)||tagMatch;
+    }
+    if(!query)return true;
+    const q=query.trim().toLowerCase();
+    if(q.startsWith('#'))return p.tags?.includes(q.slice(1));
+    return (p.text||'').toLowerCase().includes(q);
+  }
   function postHtml(p){const images=p.media||[];const grid=images.length===1?'one':images.length===2?'two':images.length===3?'three':images.length>=4?'four':'';const imgs=images.slice(0,4).map((m,i)=>`<img class=\"thumb\" data-idx=\"${i}\" data-full=\"${m.full||m}\" src=\"${m.thumb||m}\" alt=\"imagen\" loading=\"lazy\" decoding=\"async\"/>`).join('');let doc='';if(p.doc){if(p.doc.type==='text'){doc=`<details class=\"doc-preview\"><summary>Archivo: ${esc(p.doc.name)}</summary><pre>${esc(p.doc.text.slice(0,8000))}</pre></details>`}else if(p.doc.type==='pdf'){doc=`<details class=\"doc-preview\"><summary>PDF: ${esc(p.doc.name)}</summary><embed src=\"${p.doc.url}\" type=\"application/pdf\" style=\"width:100%;height:260px;border:0;border-radius:10px\"/></details>`}else{doc=`<div class=\"doc-preview\">Archivo: ${esc(p.doc.name)} — <a download=\"${esc(p.doc.name)}\" href=\"${p.doc.url}\">descargar</a></div>`}}
   const needsMore=(p.text||'').length>320;const txt=p.text?`<div class=\"content${needsMore?'':' expanded'}\">${highlightTags(p.text)}</div>${needsMore?'<div class=\"show-more\">Mostrar más</div>':''}`:'';const tags=p.tags?.length?`<div class=\"tags\">${p.tags.map(t=>`<span class=\"tag\" data-tag=\"${t}\">#${t}</span>`).join('')}</div>`:'';const reply=p.replyTo?`<div class=\"p-sub\">Respuesta a <a href=\"#\" class=\"go-reply\" data-ref=\"${p.replyTo}\">mensaje</a>: ${esc((posts.find(x=>x.id===p.replyTo)?.text||'').slice(0,80))}${(posts.find(x=>x.id===p.replyTo)?.text||'').length>80?'…':''}</div>`:'';const author=p.author||'Rafesy';return `<article class=\"post${prefs.minimal?' min':''}\" data-id=\"${p.id}\"><div class=\"meta\"><span class=\"who\">${author}</span><div class=\"right\"><button class=\"btn btn-reply\" data-reply=\"${p.id}\" style=\"height:28px;padding:0 10px\">Reply</button><time datetime=\"${new Date(p.created).toISOString()}\">${fmt(p.created,prefs.showTime)}</time><button class=\"info-btn\" title=\"Info\">${iconInfo()}</button></div></div>${reply}${doc}${txt}${images.length?`<div class=\"imgs ${grid}\">${imgs}</div>`:''}${tags}${postInfo(p)}</article>`}
   function attachPostEvents(root){root.querySelectorAll('.post').forEach(card=>{const btn=card.querySelector('.info-btn');const pop=card.querySelector('.popover');if(btn&&pop){btn.onclick=e=>{e.stopPropagation();$$('.popover').forEach(x=>x.classList.remove('open'));pop.classList.toggle('open')}}const rb=card.querySelector('[data-reply]');if(rb){rb.onclick=()=>{pending.replyTo=rb.getAttribute('data-reply');renderAttachs();const el=document.querySelector(`.post[data-id='${pending.replyTo}']`);el?.scrollIntoView({behavior:'smooth',block:'center'})}}card.querySelectorAll('.go-reply').forEach(a=>a.onclick=(e)=>{e.preventDefault();const ref=a.getAttribute('data-ref');document.querySelector(`.post[data-id='${ref}']`)?.scrollIntoView({behavior:'smooth',block:'center'})});const content=card.querySelector('.content');const more=card.querySelector('.show-more');if(more){more.onclick=()=>{if(content)content.classList.add('expanded');more.remove()}}});root.querySelectorAll('.thumb').forEach(img=>{img.addEventListener('click',e=>{e.preventDefault();const lb=$('#lightbox');if(lb){const lbImg=lb.querySelector('img');if(lbImg)lbImg.src=img.getAttribute('data-full')||img.src;lb.classList.add('open')}})});root.querySelectorAll('.tag').forEach(t=>{t.onclick=()=>{query='#'+t.dataset.tag;const search=$('#search');if(search)search.value=query;renderInit()}})}
@@ -606,8 +744,14 @@
   $('#text').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();postNow()}})
   $('#text').addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,200)+'px'})
 
-  $('#search').addEventListener('input',e=>{query=e.target.value;const clearBtn=$('#clearSearch');if(clearBtn){if(query.trim()||activeFilter){clearBtn.classList.remove('hidden')}else{clearBtn.classList.add('hidden')}}renderInit()})
-  $('#clearSearch').addEventListener('click',()=>{query='';activeFilter='';$$('.filter-chip').forEach(c=>c.classList.remove('active'));$('#search').value='';const clearBtn=$('#clearSearch');if(clearBtn)clearBtn.classList.add('hidden');renderInit()})
+  $('#search').addEventListener('input',e=>{query=e.target.value;updateClearButton();renderInit()})
+  $('#clearSearch').addEventListener('click',()=>{query='';activeFilter='';$('#search').value='';renderFilterChips();updateClearButton();renderInit()})
+  $('#editTagsBtn')?.addEventListener('click',openTagEditor)
+  $('#addTagField')?.addEventListener('click',addTagDraft)
+  $('#cancelTagEdit')?.addEventListener('click',closeTagEditor)
+  $('#saveTagEdit')?.addEventListener('click',saveTagDrafts)
+  $('#closeTagEditor')?.addEventListener('click',closeTagEditor)
+  $('#tagEditor')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeTagEditor()})
 
   function updateAge(){const now=new Date(),dob=new Date(2007,11,29,10,0,0);let y=now.getFullYear()-dob.getFullYear(),m=now.getMonth()-dob.getMonth(),d=now.getDate()-dob.getDate();if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate()}if(m<0){y--;m+=12}$('#age').textContent=`${y} años, ${m} meses, ${d} días`;const next=new Date(now.getFullYear(),11,29);if(next<now)next.setFullYear(now.getFullYear()+1);const diff=Math.ceil((next-now)/86400000);$('#nextBirthday').textContent=`Próximo cumpleaños en: ${diff} días`}
 
@@ -666,7 +810,6 @@
   function updateDashboard(){const weekly=calculateWeeklyStats();$('#dashDiscipline').textContent=weekly.percent+'%';const activeHours=Math.round((Date.now()-appStartTime)/(1000*60*60)*10)/10;$('#dashActive').textContent=activeHours+'h';updateStreak();const lastPost=posts[0];if(lastPost){$('#dashLastPost').textContent=(lastPost.text||'').slice(0,100)+(lastPost.text?.length>100?'…':'')}else{$('#dashLastPost').textContent='No hay posts aún'}const lastImg=posts.find(p=>p.media?.length);if(lastImg&&lastImg.media[0]){$('#dashLastImage').innerHTML=`<img src="${lastImg.media[0].thumb||lastImg.media[0]}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px"/>`}else{$('#dashLastImage').textContent='No hay imágenes aún'}const imgs=[];posts.forEach(p=>p.media?.forEach(m=>imgs.push(m)));const last3=imgs.slice(0,3);$('#dashGallery').innerHTML=last3.map(m=>`<img src="${m.thumb||m}" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in" onclick="document.querySelector('#lightbox img').src='${m.full||m}';document.querySelector('#lightbox').classList.add('open')"/>`).join('')+(last3.length===0?'<div style="text-align:center;color:var(--muted);padding:20px">No hay imágenes</div>':'')}
   function calculateYearlyStats(){const now=new Date();const y=now.getFullYear();let completed=0,total=0;for(let m=0;m<12;m++){const days=new Date(y,m+1,0).getDate();for(let d=1;d<=days;d++){const key=new Date(y,m,d).toISOString().slice(0,10);const dayData=habits[key]||{};habitList.forEach(h=>{total++;if(dayData[h.id])completed++})}}return{completed,total,percent:total?Math.round((completed/total)*100):0}}
   function updateProgressBars(){const now=new Date();const yearStart=new Date(now.getFullYear(),0,1);const yearEnd=new Date(now.getFullYear()+1,0,1);const yearProgress=((now-yearStart)/(yearEnd-yearStart)*100);const dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());const dayEnd=new Date(dayStart.getTime()+86400000);const dayProgress=((now-dayStart)/(dayEnd-dayStart)*100);const weekStart=new Date(now);weekStart.setDate(now.getDate()-((now.getDay()+6)%7));weekStart.setHours(0,0,0,0);const weekEnd=new Date(weekStart.getTime()+7*86400000);const weekProgress=((now-weekStart)/(weekEnd-weekStart)*100);const monthStart=new Date(now.getFullYear(),now.getMonth(),1);const monthEnd=new Date(now.getFullYear(),now.getMonth()+1,1);const monthProgress=((now-monthStart)/(monthEnd-monthStart)*100);const daysLeft=Math.ceil((yearEnd-now)/86400000);$('#yearProgressTitle').textContent=`${now.getFullYear()} se acaba en ${daysLeft} días`;$('#progressDay').textContent=Math.round(dayProgress)+'%';$('#progressWeek').textContent=Math.round(weekProgress)+'%';$('#progressMonth').textContent=Math.round(monthProgress)+'%';$('#progressYear').textContent=Math.round(yearProgress)+'%';$('#progressBarDay').style.width=dayProgress+'%';$('#progressBarWeek').style.width=weekProgress+'%';$('#progressBarMonth').style.width=monthProgress+'%';$('#progressBarYear').style.width=yearProgress+'%'}
-  let rewards=[{id:'r1',name:'Desbloquea Notas',req:50,type:'xp',description:''},{id:'r2',name:'Avatar Personalizado',req:100,type:'xp',description:''},{id:'r3',name:'Tema Especial',req:200,type:'xp',description:''},{id:'r4',name:'Nivel 5',req:5,type:'level',description:''},{id:'r5',name:'Nivel 10',req:10,type:'level',description:''},{id:'r6',name:'Badge Estrella',req:15,type:'level',description:''}]
   function checkDailyXP(){const today=getTodayKey();if(xpDaily.date!==today){xpDaily={date:today,xp:0,posts:false,reflections:false,habitsDone:[],goalsDone:[]};save()}}
   function addXP(amount,reason,id){checkDailyXP();if(xpDaily.xp>=100)return false;const canAdd=Math.min(amount,100-xpDaily.xp);if(canAdd<=0)return false;prefs.xp=Math.max(0,(prefs.xp||0)+canAdd);xpDaily.xp+=canAdd;const oldLevel=prefs.level||1;prefs.level=Math.floor(prefs.xp/100)+1;if(prefs.level>oldLevel){showLevelUp(prefs.level)}save();updateXPDisplay();renderRewards();return true}
   function updateXPDisplay(){const xp=prefs.xp||0;const level=prefs.level||1;const nextLevelXP=(level)*100;const currentLevelXP=(level-1)*100;const progress=((xp-currentLevelXP)/(nextLevelXP-currentLevelXP)*100);$('#xpLevel').textContent=`Nivel ${level} · ${xp} XP`;$('#rewardLevel').textContent=level;$('#rewardXP').textContent=xp;$('#rewardNextLevel').textContent=nextLevelXP;$('#rewardProgressBar').style.width=progress+'%';const headerChip=$('#headerXP');if(headerChip)headerChip.textContent=`Nivel ${level} · ${xp} XP`}
@@ -687,7 +830,6 @@
   $('#viewReflectionHistory')?.addEventListener('click',()=>{$('#reflectionHistory').classList.toggle('hidden');renderReflectionHistory()})
   $('#quickModeReflection')?.addEventListener('click',()=>{quickMode='reflection';$('#text').placeholder='Escribe tu reflexión…';$('#quickModeReflection').style.background='rgba(255,255,255,.15)';$('#quickModeReflection').style.borderColor='rgba(255,255,255,.3)';$('#quickModeNote').style.background='';$('#quickModeNote').style.borderColor=''})
   $('#quickModeNote')?.addEventListener('click',()=>{quickMode='note';$('#text').placeholder='Escribe algo para el feed…';$('#quickModeNote').style.background='rgba(255,255,255,.15)';$('#quickModeNote').style.borderColor='rgba(255,255,255,.3)';$('#quickModeReflection').style.background='';$('#quickModeReflection').style.borderColor=''})
-  $$('.filter-chip').forEach(chip=>chip.onclick=()=>{if(activeFilter===chip.dataset.filter){activeFilter='';chip.classList.remove('active')}else{activeFilter=chip.dataset.filter;$$('.filter-chip').forEach(c=>c.classList.toggle('active',c===chip))}const clearBtn=$('#clearSearch');if(clearBtn){if(activeFilter||query.trim()){clearBtn.classList.remove('hidden')}else{clearBtn.classList.add('hidden')}}renderInit()})
   $('#sidebarToggle')?.addEventListener('click',()=>{$('#left').classList.toggle('open')})
   $('#addReward')?.addEventListener('click',addNewReward)
   function initPhoneMode(){if(window.innerWidth<=768){document.body.classList.add('phone');prefs.phoneMode=true;$('#left').classList.remove('open');save();return true}return false}
@@ -711,6 +853,86 @@
   $('#reset').addEventListener('click',()=>{if(confirm('¿Estás seguro de que quieres restablecer todo? Esta acción eliminará todos tus datos permanentemente.')){if(confirm('ADVERTENCIA: Esta acción no se puede deshacer. ¿Realmente quieres continuar?')){localStorage.clear();location.reload()}}})
 
   ;(function runTests(){try{const KEY='__rafesy_test__';const sample={a:1,b:'x'};localStorage.setItem(KEY,JSON.stringify(sample));const back=JSON.parse(localStorage.getItem(KEY));console.assert(back && back.a===1 && back.b==='x','localStorage roundtrip');localStorage.removeItem(KEY);console.info('Self-tests OK');}catch(e){console.warn('Self-tests failed',e)}})();
+  </script>
+  <script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const SUPABASE_URL = "https://oiewxmssdztfwfwfuvah.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pZXd4bXNzZHp0Zndmd2Z1dmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MjM0MzMsImV4cCI6MjA3ODE5OTQzM30.QB0Tu4sANQgdCcfg420nkfLbvxRm0OOh7B1m9-9aFyg";
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, detectSessionInUrl: false } });
+
+  async function ensureUser() {
+    const { data } = await supabase.auth.getUser();
+    if (data?.user) return data.user;
+    const { data: anonData, error } = await supabase.auth.signInAnonymously();
+    if (error) throw error;
+    return anonData.user;
+  }
+
+  let user;
+  try {
+    user = await ensureUser();
+  } catch (err) {
+    console.error('Supabase auth error', err);
+  }
+
+  if (!user) {
+    throw new Error('No se pudo obtener un usuario anónimo de Supabase');
+  }
+
+  window.supabase = supabase;
+  window.supabaseUser = user;
+
+  async function loadCloud() {
+    const { data, error } = await supabase.from("users_data").select("data").eq("id", user.id).single();
+    if (error && error.code !== 'PGRST116') {
+      console.error('Supabase load error', error);
+    }
+    const cloud = data?.data || {
+      posts: [], prefs: {}, goals: { week: [], month: [] }, reminders: [],
+      habits: {}, habitList: [], reflections: {}, xpDaily: {}, appStartTime: Date.now(), rewards: []
+    };
+    window.__APP_STATE__ = cloud;
+    window.hydrateFromState?.(window.__APP_STATE__);
+    window.saveLocal?.(window.__APP_STATE__);
+    window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+  }
+
+  async function saveAll(nextState) {
+    const currentState = nextState || window.__APP_STATE__ || window.syncAppState?.();
+    if (!currentState) return;
+    window.saveLocal?.(currentState);
+    const { error } = await supabase.from("users_data").upsert({ id: user.id, data: currentState, updated_at: new Date().toISOString() });
+    if (error) {
+      console.error('Supabase save error', error);
+    }
+  }
+
+  window.loadCloud = loadCloud;
+  window.saveAll = saveAll;
+  window.save = () => saveAll(window.__APP_STATE__);
+
+  try {
+    await loadCloud();
+  } catch (err) {
+    console.error('No se pudo cargar el estado desde Supabase', err);
+  }
+
+  try {
+    supabase.channel('users_data_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'users_data', filter: `id=eq.${user.id}` }, payload => {
+        const incoming = payload.new?.data;
+        if (!incoming) return;
+        window.__APP_STATE__ = incoming;
+        window.hydrateFromState?.(window.__APP_STATE__);
+        window.saveLocal?.(window.__APP_STATE__);
+        window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+      })
+      .subscribe();
+  } catch (err) {
+    console.warn('Supabase realtime subscription error', err);
+  }
   </script>
 </body>
 </html>
