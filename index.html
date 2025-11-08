@@ -594,6 +594,18 @@
   let autoSaveInterval=null;
   let tagDrafts=[];
   let rewards=JSON.parse(JSON.stringify(DEFAULT_REWARDS));
+  let avatarData=localStorage.getItem(STORE_AVATAR)||null;
+
+  function applyAvatar(){
+    const img=$('#avatar');
+    if(avatarData){
+      localStorage.setItem(STORE_AVATAR,avatarData);
+      if(img)img.src=avatarData;
+    }else{
+      localStorage.removeItem(STORE_AVATAR);
+      if(img)img.removeAttribute('src');
+    }
+  }
 
   function createDefaultState(){
     return {
@@ -606,7 +618,8 @@
       reflections:{},
       xpDaily:{...XP_DAILY_DEFAULT},
       appStartTime:Date.now(),
-      rewards:JSON.parse(JSON.stringify(DEFAULT_REWARDS))
+      rewards:JSON.parse(JSON.stringify(DEFAULT_REWARDS)),
+      avatar:avatarData||null
     };
   }
   function hydrateFromState(state){
@@ -632,24 +645,44 @@
     appStartTime=target.appStartTime;
     target.rewards=Array.isArray(target.rewards)?target.rewards:JSON.parse(JSON.stringify(DEFAULT_REWARDS));
     rewards=target.rewards;
+    target.avatar=typeof target.avatar==='string'?target.avatar:null;
+    avatarData=target.avatar||avatarData||null;
+    target.avatar=avatarData;
+    applyAvatar();
     ensureSuggestedTags();
     window.__APP_STATE__=target;
     return window.__APP_STATE__;
   }
   function incomingObject(value){return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}
   function syncAppState(){return hydrateFromState(window.__APP_STATE__||createDefaultState())}
+  function snapshotState(){
+    const state=window.__APP_STATE__||createDefaultState();
+    state.posts=posts;
+    state.prefs=prefs;
+    state.goals=goals;
+    state.reminders=reminders;
+    state.habits=habits;
+    state.habitList=habitList;
+    state.reflections=reflections;
+    state.xpDaily=xpDaily;
+    state.appStartTime=appStartTime;
+    state.rewards=rewards;
+    state.avatar=avatarData||null;
+    return window.__APP_STATE__=state;
+  }
   window.createDefaultState=createDefaultState;
   window.hydrateFromState=hydrateFromState;
   window.syncAppState=syncAppState;
   window.__APP_STATE__=window.__APP_STATE__||createDefaultState();
   hydrateFromState(window.__APP_STATE__);
+  snapshotState();
 
-  function saveLocal(state){const snapshot=state||syncAppState();try{localStorage.setItem(STORE_POSTS,JSON.stringify(snapshot.posts||[]));localStorage.setItem(STORE_PREFS,JSON.stringify(snapshot.prefs||{}));localStorage.setItem(STORE_GOALS,JSON.stringify(snapshot.goals||{week:[],month:[]}));localStorage.setItem(STORE_REMIND,JSON.stringify(snapshot.reminders||[]));localStorage.setItem(STORE_HABITS,JSON.stringify(snapshot.habits||{}));localStorage.setItem(STORE_HABITLIST,JSON.stringify(snapshot.habitList||[]));localStorage.setItem(STORE_REFLECTIONS,JSON.stringify(snapshot.reflections||{}));localStorage.setItem('rafesy:xpDaily',JSON.stringify(snapshot.xpDaily||XP_DAILY_DEFAULT));localStorage.setItem('rafesy:rewards',JSON.stringify(snapshot.rewards||[]));localStorage.setItem(STORE_APP_START,String(snapshot.appStartTime||Date.now()));autoBackup();}catch(e){console.warn('No se pudo guardar en localStorage',e)}return snapshot}
+  function saveLocal(state){const snapshot=state||snapshotState();try{localStorage.setItem(STORE_POSTS,JSON.stringify(snapshot.posts||[]));localStorage.setItem(STORE_PREFS,JSON.stringify(snapshot.prefs||{}));localStorage.setItem(STORE_GOALS,JSON.stringify(snapshot.goals||{week:[],month:[]}));localStorage.setItem(STORE_REMIND,JSON.stringify(snapshot.reminders||[]));localStorage.setItem(STORE_HABITS,JSON.stringify(snapshot.habits||{}));localStorage.setItem(STORE_HABITLIST,JSON.stringify(snapshot.habitList||[]));localStorage.setItem(STORE_REFLECTIONS,JSON.stringify(snapshot.reflections||{}));localStorage.setItem('rafesy:xpDaily',JSON.stringify(snapshot.xpDaily||XP_DAILY_DEFAULT));localStorage.setItem('rafesy:rewards',JSON.stringify(snapshot.rewards||[]));localStorage.setItem(STORE_APP_START,String(snapshot.appStartTime||Date.now()));if(snapshot.avatar){localStorage.setItem(STORE_AVATAR,snapshot.avatar);}else{localStorage.removeItem(STORE_AVATAR);}autoBackup();}catch(e){console.warn('No se pudo guardar en localStorage',e)}return snapshot}
   function save(){return saveLocal()}
   window.saveLocal=saveLocal;
-  function autoBackup(){const today=new Date().toISOString().slice(0,10);const lastBackup=localStorage.getItem('rafesy:lastBackupDate');if(lastBackup!==today){try{const avatar=localStorage.getItem(STORE_AVATAR);const backup={posts,prefs,goals,reminders,habits,habitList,reflections,rewards,xpDaily,appStartTime,avatar,date:today};localStorage.setItem(STORE_AUTO_BACKUP,JSON.stringify(backup));localStorage.setItem('rafesy:lastBackupDate',today);}catch(e){}}}
+  function autoBackup(){const today=new Date().toISOString().slice(0,10);const lastBackup=localStorage.getItem('rafesy:lastBackupDate');if(lastBackup!==today){try{const backup={posts,prefs,goals,reminders,habits,habitList,reflections,rewards,xpDaily,appStartTime,avatar:avatarData,date:today};localStorage.setItem(STORE_AUTO_BACKUP,JSON.stringify(backup));localStorage.setItem('rafesy:lastBackupDate',today);}catch(e){}}}
   function getAutoBackup(){try{const backup=localStorage.getItem(STORE_AUTO_BACKUP);return backup?JSON.parse(backup):null}catch(e){return null}}
-  function load(){try{const localState=createDefaultState();localState.posts=JSON.parse(localStorage.getItem(STORE_POSTS)||'[]');const storedPrefs=JSON.parse(localStorage.getItem(STORE_PREFS)||'null');if(storedPrefs)localState.prefs={...localState.prefs,...storedPrefs};const storedGoals=JSON.parse(localStorage.getItem(STORE_GOALS)||'null');if(storedGoals)localState.goals=storedGoals;localState.reminders=JSON.parse(localStorage.getItem(STORE_REMIND)||'[]');localState.habits=JSON.parse(localStorage.getItem(STORE_HABITS)||'{}');localState.habitList=JSON.parse(localStorage.getItem(STORE_HABITLIST)||'[]');localState.reflections=JSON.parse(localStorage.getItem(STORE_REFLECTIONS)||'{}');localState.xpDaily=JSON.parse(localStorage.getItem('rafesy:xpDaily')||JSON.stringify(XP_DAILY_DEFAULT));const savedRewards=JSON.parse(localStorage.getItem('rafesy:rewards')||'null');if(Array.isArray(savedRewards))localState.rewards=savedRewards;const storedStart=localStorage.getItem(STORE_APP_START);if(storedStart)localState.appStartTime=Number(storedStart);hydrateFromState(localState);const av=localStorage.getItem(STORE_AVATAR);if(av)$('#avatar').src=av;const autoBackup=getAutoBackup();if(autoBackup&&autoBackup.date){const restore=$('#autoBackupRestore');const date=$('#autoBackupDate');if(restore)restore.style.display='block';if(date)date.textContent=new Date(autoBackup.date).toLocaleDateString('es-CL')}}catch(e){console.warn('Error loading local cache',e)}}
+  function load(){try{const localState=createDefaultState();localState.posts=JSON.parse(localStorage.getItem(STORE_POSTS)||'[]');const storedPrefs=JSON.parse(localStorage.getItem(STORE_PREFS)||'null');if(storedPrefs)localState.prefs={...localState.prefs,...storedPrefs};const storedGoals=JSON.parse(localStorage.getItem(STORE_GOALS)||'null');if(storedGoals)localState.goals=storedGoals;localState.reminders=JSON.parse(localStorage.getItem(STORE_REMIND)||'[]');localState.habits=JSON.parse(localStorage.getItem(STORE_HABITS)||'{}');localState.habitList=JSON.parse(localStorage.getItem(STORE_HABITLIST)||'[]');localState.reflections=JSON.parse(localStorage.getItem(STORE_REFLECTIONS)||'{}');localState.xpDaily=JSON.parse(localStorage.getItem('rafesy:xpDaily')||JSON.stringify(XP_DAILY_DEFAULT));const savedRewards=JSON.parse(localStorage.getItem('rafesy:rewards')||'null');if(Array.isArray(savedRewards))localState.rewards=savedRewards;const storedStart=localStorage.getItem(STORE_APP_START);if(storedStart)localState.appStartTime=Number(storedStart);localState.avatar=localStorage.getItem(STORE_AVATAR)||localState.avatar;hydrateFromState(localState);snapshotState();const autoBackup=getAutoBackup();if(autoBackup&&autoBackup.date){const restore=$('#autoBackupRestore');const date=$('#autoBackupDate');if(restore)restore.style.display='block';if(date)date.textContent=new Date(autoBackup.date).toLocaleDateString('es-CL')}}catch(e){console.warn('Error loading local cache',e)}}
   function formatTagValue(value){return String(value||'').toLowerCase().replace(/[^a-z0-9áéíóúñ]/gi,'').slice(0,MAX_TAG_LENGTH)}
   function sanitizeTags(list){const clean=[];const seen=new Set();(Array.isArray(list)?list:[]).forEach(tag=>{const formatted=formatTagValue(tag);if(formatted&&!seen.has(formatted)&&clean.length<MAX_SUGGESTED_TAGS){clean.push(formatted);seen.add(formatted)}});return clean.length?clean:DEFAULT_TAGS.slice()}
   function ensureSuggestedTags(){prefs.suggestedTags=sanitizeTags(prefs.suggestedTags&&prefs.suggestedTags.length?prefs.suggestedTags:DEFAULT_TAGS)}
@@ -730,11 +763,11 @@
   $('#showTime').addEventListener('change',e=>{prefs.showTime=e.target.checked;renderInit();save()})
   $('#tzSelect').addEventListener('change',e=>{try{prefs.tz=e.target.value.trim()||'';new Intl.DateTimeFormat('es-CL',{timeZone:prefs.tz||undefined});save();renderInit()}catch{alert('Zona horaria inválida')}})
 
-  $('#export').addEventListener('click',()=>{const avatar=localStorage.getItem(STORE_AVATAR);const blob=new Blob([JSON.stringify({posts,prefs,goals,reminders,habits,habitList,reflections,rewards,xpDaily,appStartTime,avatar},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`rafesy-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(url)})
+  $('#export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({posts,prefs,goals,reminders,habits,habitList,reflections,rewards,xpDaily,appStartTime,avatar:avatarData},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`rafesy-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(url)})
   $('#import').addEventListener('click',()=>$('#importFile').click())
-  $('#importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;const txt=await f.text();try{const d=JSON.parse(txt);if(Array.isArray(d.posts))posts=d.posts;if(d.prefs)Object.assign(prefs,d.prefs);if(d.goals)goals=d.goals;habits=d.habits||{};habitList=d.habitList||[];reflections=d.reflections||{};reminders=d.reminders||[];if(d.rewards&&Array.isArray(d.rewards)){rewards=d.rewards;rewards.forEach(r=>{if(!r.description)r.description='';if(!r.name)r.name='Sin título'})}if(d.xpDaily)xpDaily=d.xpDaily;if(d.appStartTime)appStartTime=d.appStartTime;if(d.avatar){localStorage.setItem(STORE_AVATAR,d.avatar);$('#avatar').src=d.avatar}applyPrefs();save();renderInit();renderGoals();renderGallery();renderHabitsPanel();renderRewards()}catch{alert('Archivo inválido')};const autoBackup=getAutoBackup();if(autoBackup&&autoBackup.date){const restore=$('#autoBackupRestore');const date=$('#autoBackupDate');if(restore)restore.style.display='block';if(date)date.textContent=new Date(autoBackup.date).toLocaleDateString('es-CL')}})
-  $('#restoreAutoBackup')?.addEventListener('click',()=>{const backup=getAutoBackup();if(!backup){alert('No hay respaldo automático disponible');return}if(!confirm(`¿Restaurar respaldo automático del ${new Date(backup.date).toLocaleDateString('es-CL')}?`))return;if(Array.isArray(backup.posts))posts=backup.posts;if(backup.prefs)Object.assign(prefs,backup.prefs);if(backup.goals)goals=backup.goals;habits=backup.habits||{};habitList=backup.habitList||[];reflections=backup.reflections||{};reminders=backup.reminders||[];if(backup.rewards&&Array.isArray(backup.rewards)){rewards=backup.rewards;rewards.forEach(r=>{if(!r.description)r.description='';if(!r.name)r.name='Sin título'})}if(backup.xpDaily)xpDaily=backup.xpDaily;if(backup.appStartTime)appStartTime=backup.appStartTime;if(backup.avatar){localStorage.setItem(STORE_AVATAR,backup.avatar);$('#avatar').src=backup.avatar}applyPrefs();save();renderInit();renderGoals();renderGallery();renderHabitsPanel();renderRewards();alert('Respaldo restaurado')})
-  $('#avatarFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;const url=await fileToDataURL(f);localStorage.setItem(STORE_AVATAR,url);$('#avatar').src=url})
+  $('#importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;const txt=await f.text();try{const d=JSON.parse(txt);hydrateFromState(d);snapshotState();applyPrefs();save();renderInit();renderGoals();renderGallery();renderHabitsPanel();renderRewards()}catch{alert('Archivo inválido')};const autoBackup=getAutoBackup();if(autoBackup&&autoBackup.date){const restore=$('#autoBackupRestore');const date=$('#autoBackupDate');if(restore)restore.style.display='block';if(date)date.textContent=new Date(autoBackup.date).toLocaleDateString('es-CL')}})
+  $('#restoreAutoBackup')?.addEventListener('click',()=>{const backup=getAutoBackup();if(!backup){alert('No hay respaldo automático disponible');return}if(!confirm(`¿Restaurar respaldo automático del ${new Date(backup.date).toLocaleDateString('es-CL')}?`))return;hydrateFromState(backup);snapshotState();applyPrefs();save();renderInit();renderGoals();renderGallery();renderHabitsPanel();renderRewards();alert('Respaldo restaurado')})
+  $('#avatarFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;const url=await fileToDataURL(f);avatarData=url;applyAvatar();save()})
 
   $('#addFileBtn').addEventListener('click',()=>$('#file').click())
   $('#file').addEventListener('change',e=>readFiles(e.target.files))
@@ -850,7 +883,7 @@
   load();applyPrefs();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);if($('#quickModeNote')){$('#quickModeNote').style.background='rgba(255,255,255,.15)';$('#quickModeNote').style.borderColor='rgba(255,255,255,.3)'}
   let ticking=false;window.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onScroll()})})
   document.addEventListener('click',()=>$$('.popover').forEach(p=>p.classList.remove('open')))
-  $('#reset').addEventListener('click',()=>{if(confirm('¿Estás seguro de que quieres restablecer todo? Esta acción eliminará todos tus datos permanentemente.')){if(confirm('ADVERTENCIA: Esta acción no se puede deshacer. ¿Realmente quieres continuar?')){localStorage.clear();location.reload()}}})
+  $('#reset').addEventListener('click',async ()=>{if(!confirm('¿Estás seguro de que quieres restablecer todo? Esta acción eliminará todos tus datos permanentemente.'))return;if(!confirm('ADVERTENCIA: Esta acción no se puede deshacer. ¿Realmente quieres continuar?'))return;try{if(window.supabase && window.supabaseUser){await window.supabase.from('users_data').delete().eq('id',window.supabaseUser.id);}}catch(err){console.warn('No se pudo limpiar Supabase',err)}localStorage.clear();window.__APP_STATE__=window.createDefaultState?.();hydrateFromState(window.__APP_STATE__);snapshotState();saveLocal(window.__APP_STATE__);location.reload()})
 
   ;(function runTests(){try{const KEY='__rafesy_test__';const sample={a:1,b:'x'};localStorage.setItem(KEY,JSON.stringify(sample));const back=JSON.parse(localStorage.getItem(KEY));console.assert(back && back.a===1 && back.b==='x','localStorage roundtrip');localStorage.removeItem(KEY);console.info('Self-tests OK');}catch(e){console.warn('Self-tests failed',e)}})();
   </script>
@@ -875,32 +908,51 @@
     user = await ensureUser();
   } catch (err) {
     console.error('Supabase auth error', err);
+    if(String(err?.message||'').toLowerCase().includes('anonymous sign-ins are disabled')){
+      alert('Debes habilitar las sesiones anónimas en tu proyecto de Supabase (Auth → Providers → Anonymous) para sincronizar los datos en la nube.');
+    }
   }
 
   if (!user) {
-    throw new Error('No se pudo obtener un usuario anónimo de Supabase');
+    console.warn('Supabase no disponible; se usará solo el almacenamiento local.');
+    window.loadCloud = async ()=>{};
+    window.saveAll = async ()=>window.saveLocal?.();
+    window.save = () => window.saveLocal?.();
+    return;
   }
 
   window.supabase = supabase;
   window.supabaseUser = user;
 
   async function loadCloud() {
+    if (!user) return;
     const { data, error } = await supabase.from("users_data").select("data").eq("id", user.id).single();
     if (error && error.code !== 'PGRST116') {
       console.error('Supabase load error', error);
     }
-    const cloud = data?.data || {
-      posts: [], prefs: {}, goals: { week: [], month: [] }, reminders: [],
-      habits: {}, habitList: [], reflections: {}, xpDaily: {}, appStartTime: Date.now(), rewards: []
-    };
+    if (!data?.data){
+      const localSnapshot = window.snapshotState?.() || window.__APP_STATE__ || window.createDefaultState?.();
+      if(localSnapshot){
+        window.__APP_STATE__=localSnapshot;
+        window.hydrateFromState?.(window.__APP_STATE__);
+        window.saveLocal?.(window.__APP_STATE__);
+        await saveAll(window.__APP_STATE__);
+        window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+      }
+      return;
+    }
+    const cloud = data.data && typeof data.data==='object' ? data.data : window.createDefaultState?.();
+    if (!cloud) return;
     window.__APP_STATE__ = cloud;
     window.hydrateFromState?.(window.__APP_STATE__);
+    window.snapshotState?.();
     window.saveLocal?.(window.__APP_STATE__);
     window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
   }
 
   async function saveAll(nextState) {
-    const currentState = nextState || window.__APP_STATE__ || window.syncAppState?.();
+    if (!user) return window.saveLocal?.();
+    const currentState = nextState || window.snapshotState?.() || window.__APP_STATE__;
     if (!currentState) return;
     window.saveLocal?.(currentState);
     const { error } = await supabase.from("users_data").upsert({ id: user.id, data: currentState, updated_at: new Date().toISOString() });
@@ -911,7 +963,7 @@
 
   window.loadCloud = loadCloud;
   window.saveAll = saveAll;
-  window.save = () => saveAll(window.__APP_STATE__);
+  window.save = () => saveAll();
 
   try {
     await loadCloud();
@@ -926,6 +978,7 @@
         if (!incoming) return;
         window.__APP_STATE__ = incoming;
         window.hydrateFromState?.(window.__APP_STATE__);
+        window.snapshotState?.();
         window.saveLocal?.(window.__APP_STATE__);
         window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
       })
