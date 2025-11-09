@@ -5,29 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rafesy — Business</title>
   <style>
-    :root{--bg:#0b0f14;--bg-soft:#11161c;--line:#1a2230;--text:#e8f1ff;--muted:#90a0b5;--primary:#6fdcff;--shadow:0 8px 24px rgba(0,0,0,.35);--radius:16px;--density:1;--danger:#ff4a4a;--success:#28d17c}
-    body.theme-light{--bg:#f3f6fb;--bg-soft:#ffffff;--line:#d8e1ee;--text:#0b1220;--muted:#5b6b80}
+    :root{--bg:#0b0f14;--bg-soft:#11161c;--line:#1a2230;--text:#e8f1ff;--muted:#90a0b5;--primary:#6fdcff;--shadow:0 8px 24px rgba(0,0,0,.35);--radius:16px;--density:1;--danger:#ff4a4a;--success:#28d17c;--panel:linear-gradient(160deg,rgba(16,22,33,.92),rgba(8,12,20,.88));--panel-light:linear-gradient(160deg,rgba(247,249,255,.96),rgba(233,239,252,.92));--surface:#0f151f}
+    body.theme-light{--bg:#f3f6fb;--bg-soft:#ffffff;--line:#d8e1ee;--text:#0b1220;--muted:#5b6b80;--surface:#f0f4fb}
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:calc(15px*var(--density))/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text);font:calc(15px*var(--density))/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;overflow-x:hidden;min-height:100dvh;display:flex;flex-direction:column}
     a{color:var(--primary);text-decoration:none}
-    .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+    .wrap{max-width:1180px;margin:0 auto;padding:0 16px;flex:1 1 auto;width:100%}
 
-    header{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:saturate(140%) blur(10px);background:rgba(11,15,20,.86);border-bottom:1px solid var(--line)}
-    body.theme-light header{background:rgba(243,246,251,.86)}
-    .bar{display:flex;align-items:center;height:64px}
-    .bar-main{display:flex;align-items:center;width:100%;gap:20px}
-    .bar-left{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
+    body.settings-open{overflow:hidden}
+
+    header{position:fixed;top:0;left:0;right:0;z-index:60;backdrop-filter:saturate(140%) blur(12px);background:rgba(11,15,20,.88);border-bottom:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+    body.theme-light header{background:rgba(243,246,251,.9);box-shadow:0 6px 18px rgba(16,28,46,.14)}
+    .bar{display:flex;align-items:center;height:64px;gap:12px}
+    .bar-main{display:flex;align-items:center;width:100%;gap:18px}
+    .bar-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
     .bar-left .tabs{flex:1}
     .bar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
     body.phone .bar-main{gap:12px}
     body.phone .bar-left{gap:12px}
-    .brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.3px}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.3px;white-space:nowrap}
     .brand .dot{width:10px;height:10px;border-radius:999px;background:var(--primary);box-shadow:0 0 24px var(--primary);opacity:.15;animation:blink 2s infinite}
     @keyframes blink{0%{opacity:.15}45%{opacity:1}55%{opacity:1}100%{opacity:.15}}
     .brand em{font-style:normal;color:var(--primary)}
-    .gear-btn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg-soft);cursor:pointer}
-    .gear-btn:hover{border-color:var(--primary)}
+    .gear-btn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg-soft);cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.28)}
+    .gear-btn:hover{border-color:var(--primary);box-shadow:0 10px 22px rgba(111,220,255,.22)}
     .gear-btn svg{width:22px;height:22px;stroke:var(--muted);stroke-width:1.6;fill:none}
 
     .tabs{display:flex;gap:8px;justify-content:flex-start;align-items:center;flex-wrap:wrap}
@@ -36,31 +38,47 @@
     body.phone #gear{display:none!important}
     #localTimeMobile{display:none}
     #gearMobile{display:none}
-    body.phone #localTimeMobile{display:flex!important;margin-left:auto;margin-right:8px}
-    body.phone #gearMobile{display:grid!important;flex-shrink:0}
-    .tabs-mobile{display:none!important;position:fixed;top:64px;left:0;right:0;z-index:49;background:var(--bg-soft);border-bottom:1px solid var(--line);padding:8px 16px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-ms-overflow-style:none}
+    body.phone #localTimeMobile{display:none!important}
+    body.phone #gearMobile{display:grid!important;flex-shrink:0;margin-left:0}
+    body.phone header .wrap{position:relative}
+    body.phone .bar{height:58px;padding:0 8px;position:relative}
+    body.phone .bar-main{gap:10px}
+    body.phone .bar-left{gap:10px;padding-right:60px}
+    body.phone .bar-right{margin-left:0;position:absolute;top:9px;right:8px}
+    body.phone .brand span:last-child{display:none}
+    body.phone .brand .dot{margin-right:0}
+    body.phone .gear-btn{width:36px;height:36px;border-radius:10px}
+    body.phone #sidebarToggle{border-radius:10px;width:36px;height:36px}
+    .tabs-mobile{display:none!important;position:sticky;top:64px;left:0;right:0;z-index:59;background:rgba(17,23,32,.94);border-bottom:1px solid var(--line);padding:10px 14px;overflow-x:auto;gap:12px;scrollbar-width:none;-ms-overflow-style:none;backdrop-filter:blur(16px)}
+    body.theme-light .tabs-mobile{background:rgba(245,247,252,.94)}
     .tabs-mobile::-webkit-scrollbar{display:none}
-    body.phone .tabs-mobile{display:flex!important}
-    .tab{border:1px solid var(--line);background:var(--bg-soft);padding:8px 16px;border-radius:999px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .2s ease;font-weight:500}
+    body.phone .tabs-mobile{display:flex!important;justify-content:flex-start;align-items:center;gap:10px;top:58px;padding:8px 12px}
+    .tab{border:1px solid var(--line);background:var(--bg-soft);padding:8px 16px;border-radius:999px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .2s ease;font-weight:500;display:inline-flex;align-items:center;gap:8px}
     .tab:hover{background:rgba(111,220,255,.1);border-color:rgba(111,220,255,.4);color:var(--text)}
     .tab.active{background:rgba(111,220,255,.2);border-color:var(--primary);color:var(--primary);font-weight:600}
+    .tab .tab-icon{display:none}
+    body.phone .tabs-mobile .tab{flex:0 0 auto;min-width:auto;display:inline-flex;flex-direction:row;align-items:center;justify-content:center;border-radius:16px;padding:8px 12px;font-size:12px;background:transparent;border:1px solid transparent;color:var(--muted);gap:8px;transition:transform .2s,background .2s,border .2s,color .2s}
+    body.phone .tabs-mobile .tab .tab-icon{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:12px;background:rgba(111,220,255,.12);color:var(--primary);transition:background .2s,color .2s,transform .2s;box-shadow:0 6px 14px rgba(0,0,0,.18)}
+    body.phone .tabs-mobile .tab .tab-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+    body.phone .tabs-mobile .tab.active{color:var(--primary);background:rgba(111,220,255,.12);border-color:rgba(111,220,255,.24);transform:translateY(-1px)}
+    body.phone .tabs-mobile .tab.active .tab-icon{background:var(--primary);color:#000;transform:scale(1.05)}
 
-    .layout{display:grid;grid-template-columns:300px 1fr;gap:18px}
-    body.phone .layout{grid-template-columns:1fr}
-    body.phone{padding-top:112px!important}
-    .panel-view{max-width:860px;margin:0 auto;padding-bottom:200px}
-    body.phone .panel-view{padding-bottom:160px}
+    .layout{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start;min-height:calc(100dvh - 64px);height:calc(100dvh - 64px);padding-top:20px}
+    body.phone .layout{grid-template-columns:1fr;padding-top:12px;min-height:calc(100dvh - 120px);height:calc(100dvh - 120px)}
+    body.phone{padding-top:120px!important}
+    .panel-view{max-width:860px;margin:0 auto;padding:0 4px 220px;min-height:0;overflow-y:auto;scrollbar-gutter:stable;flex:1 1 auto;display:flex;flex-direction:column;width:100%}
+    body.phone .panel-view{padding:0 0 160px}
 
-    aside.left{position:sticky;top:80px;align-self:start;display:grid;gap:12px;max-height:calc(100vh - 90px);overflow-y:auto;overflow-x:visible;padding-right:8px;padding-bottom:200px;margin-left:-2px}
-    body.phone aside.left{top:112px;max-height:calc(100vh - 122px)}
-    aside.left::-webkit-scrollbar{width:0px;display:none}
-    aside.left::-webkit-scrollbar-track{background:transparent}
-    aside.left::-webkit-scrollbar-thumb{background:transparent}
-    aside.left::-webkit-scrollbar-thumb:hover{background:transparent}
-    body.phone aside.left{position:fixed;left:-320px;top:112px;width:300px;height:calc(100vh - 112px);background:var(--bg-soft);z-index:80;transition:left .3s ease;border-right:1px solid var(--line);box-shadow:var(--shadow)}
+    aside.left{position:sticky;top:84px;align-self:start;display:grid;gap:18px;max-height:calc(100vh - 96px);overflow-y:auto;overflow-x:visible;padding:24px 22px 240px;margin-left:-2px;background:var(--panel);border:1px solid rgba(111,220,255,.18);border-radius:26px;box-shadow:0 24px 68px rgba(0,0,0,.32);backdrop-filter:blur(12px);scrollbar-width:none}
+    body.theme-light aside.left{background:var(--panel-light);border-color:rgba(111,220,255,.24);box-shadow:0 24px 60px rgba(16,28,46,.16)}
+    aside.left::-webkit-scrollbar{width:0;height:0}
+    aside.left .card{background:rgba(8,13,20,.78);border:1px solid rgba(111,220,255,.12)}
+    body.theme-light aside.left .card{background:rgba(255,255,255,.92);border-color:rgba(111,220,255,.18)}
+    body.phone aside.left{position:fixed;left:-320px;top:120px;width:300px;height:calc(100vh - 120px);background:var(--panel);z-index:90;transition:left .3s ease;border-right:1px solid rgba(111,220,255,.22);box-shadow:0 24px 64px rgba(0,0,0,.38);padding:22px 20px 180px;gap:18px;border-radius:0 22px 22px 0}
+    body.theme-light.phone aside.left{background:var(--panel-light)}
     body.phone aside.left.open{left:0}
-    #sidebarToggle{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--primary);color:#000;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;font-size:20px}
-    body.phone #sidebarToggle{display:inline-flex;position:static;margin-right:12px;flex-shrink:0}
+    #sidebarToggle{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--primary);color:#000;box-shadow:0 10px 22px rgba(111,220,255,.35);cursor:pointer;font-size:20px}
+    body.phone #sidebarToggle{display:inline-flex;position:static;margin-right:8px;flex-shrink:0}
     .card{border:1px solid var(--line);background:var(--bg-soft);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;position:relative;margin-right:8px;margin-left:0}
     .profile{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center}
     .avatar{width:64px;height:64px;border-radius:50%;border:2px solid var(--line);object-fit:cover}
@@ -87,23 +105,36 @@
     .goals-goal-inputs.hidden{max-height:0;opacity:0;margin:0;padding:0}
     .goals-goal-inputs.hidden input,.goals-goal-inputs.hidden button{display:none}
 
-    main{min-height:calc(100dvh - 64px - 86px);border-left:1px solid var(--line);padding-left:18px}
-    body.phone main{min-height:calc(100dvh - 112px - 86px);border-left:0;padding-left:0}
-    .feed-head{display:flex;gap:8px;align-items:center;margin:10px auto 8px;max-width:760px}
-    body.phone .feed-head{flex-direction:column;align-items:stretch;padding:0 4px}
+    main{min-height:0;height:100%;border-left:1px solid var(--line);padding:16px 18px 240px;overflow:hidden;background:linear-gradient(180deg,rgba(15,21,31,.8),rgba(11,16,24,.92));border-radius:26px;display:flex;flex-direction:column}
+    main::-webkit-scrollbar{width:10px}
+    main::-webkit-scrollbar-thumb{background:rgba(111,220,255,.25);border-radius:8px}
+    main::-webkit-scrollbar-track{background:transparent}
+    body.theme-light main{background:linear-gradient(180deg,rgba(248,250,255,.92),rgba(236,241,252,.92))}
+    body.phone main{min-height:0;height:100%;border-left:0;padding:12px 0 180px;background:transparent;overflow:hidden;border-radius:0}
+    .feed-head{display:flex;gap:8px;align-items:center;margin:10px auto 8px;max-width:760px;position:sticky;top:calc(64px + 12px);z-index:10;background:rgba(11,16,24,.85);padding:14px 16px;border-radius:22px;backdrop-filter:blur(12px);border:1px solid rgba(111,220,255,.12);box-shadow:0 14px 34px rgba(0,0,0,.32)}
+    body.theme-light .feed-head{background:rgba(249,252,255,.9);border-color:rgba(111,220,255,.2);box-shadow:0 12px 32px rgba(16,28,46,.12)}
+    body.phone .feed-head{background:transparent;border:0;box-shadow:none;padding:0}
+    body.phone .feed-head{flex-direction:column;align-items:stretch;margin:4px 12px 0;gap:14px;top:calc(58px + 56px);padding:0 0 16px}
     body.phone .feed-head .search{width:100%}
     .feed-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;width:100%}
     .chip-list{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}
+    body.phone #filterChips{justify-content:center}
     .chip-list-empty{font-size:13px;color:var(--muted)}
     .filter-actions{display:flex;gap:6px;align-items:center}
-    body.phone .feed-filters{flex-direction:column;align-items:stretch}
-    body.phone .chip-list{width:100%}
-    body.phone .filter-actions{width:100%;justify-content:flex-end}
-    .search{flex:1;border:1px solid var(--line);background:var(--bg-soft);border-radius:12px;padding:8px 10px;color:var(--text)}
-    .feed{max-width:760px;margin:6px auto 200px;padding:12px 0 200px;position:relative}
-    .feed::after{content:"";position:fixed;bottom:68px;left:0;right:0;height:56px;background:linear-gradient(180deg,transparent,rgba(11,15,20,.92));pointer-events:none}
-    body.theme-light .feed::after{background:linear-gradient(180deg,transparent,rgba(243,246,251,.92))}
-    .end-msg{text-align:center;color:var(--muted);font-size:12px;padding:8px 0}
+    body.phone .feed-filters{flex-direction:column;align-items:stretch;gap:14px;background:rgba(15,22,32,.82);border:1px solid rgba(111,220,255,.15);border-radius:18px;padding:14px 16px;box-shadow:0 12px 34px rgba(0,0,0,.32)}
+    body.theme-light.phone .feed-filters{background:rgba(255,255,255,.9);border-color:rgba(111,220,255,.18)}
+    body.phone .chip-list{width:100%;justify-content:center;overflow-x:auto;padding-bottom:4px}
+    body.phone .chip-list::-webkit-scrollbar{height:6px}
+    body.phone .chip-list::-webkit-scrollbar-thumb{background:rgba(111,220,255,.25);border-radius:999px}
+    body.phone .chip-list::-webkit-scrollbar-track{background:transparent}
+    body.phone .filter-actions{width:100%;justify-content:center}
+    .search{flex:1;border:1px solid var(--line);background:var(--bg-soft);border-radius:14px;padding:10px 12px;color:var(--text);box-shadow:0 10px 28px rgba(0,0,0,.25)}
+    body.theme-light .search{box-shadow:0 10px 24px rgba(16,28,46,.08)}
+    .feed{max-width:760px;margin:12px auto 160px;padding:12px 0 150px;position:relative}
+    body.phone .feed{margin:12px auto 140px;padding:12px 12px 120px}
+    #feed{padding-bottom:120px}
+    body.phone #feed{padding-bottom:140px}
+    .end-msg{text-align:center;color:var(--muted);font-size:12px;padding:12px 0;margin:28px auto 80px;position:relative}
     .hidden{display:none!important}
 
     .post{position:relative;border:1px solid var(--line);background:var(--bg-soft);border-radius:20px;box-shadow:var(--shadow);padding:12px 14px;margin:14px auto}
@@ -134,6 +165,16 @@
     .imgs.four{grid-template-columns:1fr 1fr}
     .thumb{width:100%;height:100%;object-fit:cover;border-radius:16px;border:1px solid var(--line);max-height:420px;cursor:zoom-in}
     .imgs.three .thumb:first-child{grid-column:1 / -1;aspect-ratio:16/9}
+    .gallery{display:grid;gap:32px}
+    .gallery-section{display:grid;gap:16px;padding:12px 0;border-bottom:1px solid rgba(111,220,255,.12)}
+    .gallery-section:last-child{border-bottom:0;padding-bottom:0}
+    .gallery-date{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+    .gallery-thumb{border:0;padding:0;background:transparent;border-radius:16px;overflow:hidden;cursor:pointer;position:relative;transition:transform .2s,box-shadow .2s}
+    .gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;border:1px solid var(--line)}
+    .gallery-thumb:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(0,0,0,.32)}
+    .gallery-empty{color:var(--muted);font-size:14px;text-align:center;margin:40px 0}
+    body.phone .gallery-grid{grid-template-columns:repeat(2,1fr)}
 
     .info-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--bg);display:grid;place-items:center}
     .info-btn svg{width:14px;height:14px;stroke:var(--muted);stroke-width:1.8;fill:none}
@@ -154,10 +195,22 @@
     .tag-edit-row button{height:32px;min-width:32px;padding:0;border-radius:10px}
     body.modal-open{overflow:hidden}
 
-    .composer{position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--bg-soft);border-top:1px solid var(--line);padding-top:12px}
-    .composer .inner{max-width:1180px;margin:0 auto;padding:0 16px 16px}
-    .box{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;border:1px solid var(--line);background:var(--bg);border-radius:24px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-    .ta{width:100%;min-height:24px;max-height:200px;resize:none;border:0;outline:0;background:transparent;color:var(--text);font:inherit;padding:4px 0;line-height:1.5}
+    .composer{position:fixed;left:0;right:0;bottom:0;z-index:80;background:rgba(11,16,24,.98);border-top:1px solid var(--line);padding:10px 0;backdrop-filter:blur(18px)}
+    body.theme-light .composer{background:rgba(249,252,255,.95)}
+    .composer .inner{max-width:1180px;margin:0 auto;padding:0 24px calc(18px + env(safe-area-inset-bottom))}
+    .box{display:grid;gap:16px;background:var(--surface);border:1px solid rgba(111,220,255,.18);border-radius:24px;padding:18px 20px;box-shadow:0 22px 44px rgba(0,0,0,.38)}
+    body.theme-light .box{background:rgba(255,255,255,.94);border-color:rgba(111,220,255,.25);box-shadow:0 18px 36px rgba(16,28,46,.12)}
+    .composer-main{display:grid;grid-template-columns:auto 1fr;align-items:flex-start;gap:14px}
+    .ta{width:100%;min-height:36px;max-height:220px;resize:none;border:0;outline:0;background:transparent;color:var(--text);font:inherit;padding:4px 0;line-height:1.5}
+    .ta::placeholder{color:var(--muted)}
+    .composer-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .composer-quick{display:flex;gap:8px;flex-wrap:wrap}
+    .chip-btn{border-radius:999px;padding:6px 16px;font-size:12px}
+    .chip-btn:hover{border-color:rgba(111,220,255,.4)}
+    .chip-btn.active{background:rgba(111,220,255,.2);border-color:rgba(111,220,255,.45);color:var(--primary)}
+    body.theme-light .chip-btn.active{background:rgba(111,220,255,.35);color:#0b0f14}
+    .composer-send{display:flex;align-items:center;gap:8px;padding:0 18px;height:42px;border-radius:16px;font-weight:600;box-shadow:0 10px 24px rgba(111,220,255,.35)}
+    .composer-send svg{width:18px;height:18px}
     .btn{display:inline-grid;place-items:center;height:38px;min-width:38px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg-soft);color:var(--text);cursor:pointer}
     .btn:hover{border-color:rgba(111,220,255,.55)}
     .btn.primary{background:var(--primary);border-color:var(--primary);color:#000}
@@ -167,14 +220,68 @@
     .btn.ghost{background:transparent;color:var(--muted)}
     .btn.ghost:hover{color:var(--text);border-color:var(--primary)}
     .btn.icon{width:38px;padding:0;display:grid;place-items:center;font-size:22px;color:var(--primary)}
-    .attachs{display:flex;gap:6px;align-items:center;padding:6px}
+    .composer-attach{width:42px;height:42px;border-radius:14px;background:rgba(111,220,255,.12);border:1px solid rgba(111,220,255,.35);color:var(--primary);display:flex;align-items:center;justify-content:center;transition:background .2s,border .2s,color .2s}
+    .composer-attach:hover{background:rgba(111,220,255,.22);border-color:rgba(111,220,255,.5)}
+    .composer-attach svg{width:20px;height:20px}
+    body.theme-light .composer-attach{background:rgba(111,220,255,.18);color:#0b0f14}
+    .attachs{display:flex;gap:8px;align-items:center;padding:8px 4px;flex-wrap:wrap}
+    body.phone .attachs{justify-content:center}
     .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:6px 8px;border:1px dashed var(--line);border-radius:999px}
     .chip img{width:18px;height:18px;object-fit:cover;border-radius:6px;border:1px solid var(--line)}
     .chip button{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:14px}
+    body.phone .composer{padding:0;border-top-left-radius:18px;border-top-right-radius:18px;box-shadow:0 -10px 28px rgba(0,0,0,.38)}
+    body.phone .composer .inner{padding:0 14px calc(16px + env(safe-area-inset-bottom))}
+    body.phone .box{padding:16px;border-radius:22px;gap:12px}
+    body.phone .composer-main{grid-template-columns:1fr;gap:10px}
+    body.phone .composer-attach{width:100%;height:42px}
+    body.phone .composer-actions{flex-direction:column;align-items:stretch;gap:10px}
+    body.phone .composer-quick{justify-content:center}
+    body.phone .composer-send{width:100%;justify-content:center}
 
-    .panel{position:fixed;top:74px;right:16px;z-index:60;width:380px;max-width:calc(100vw - 32px);border:1px solid var(--line);border-radius:16px;background:var(--bg-soft);box-shadow:var(--shadow);padding:14px;display:none}
-    .panel.open{display:block}
-    .panel h3{margin:6px 0 12px;font-size:14px;color:var(--muted);font-weight:600}
+    .settings-overlay{position:fixed;inset:0;display:none;z-index:140;background:rgba(8,12,18,.88);backdrop-filter:blur(22px);padding:0;align-items:stretch;justify-content:center}
+    .settings-overlay.open{display:flex}
+    .settings-shell{display:flex;flex:1;max-width:1400px;width:100%;margin:0;background:var(--bg-soft);border:1px solid rgba(111,220,255,.16);box-shadow:0 28px 80px rgba(0,0,0,.45);border-radius:0;overflow:hidden;min-height:100dvh;position:relative}
+    body.theme-light .settings-shell{background:rgba(250,252,255,.97);border-color:rgba(111,220,255,.2);box-shadow:0 24px 64px rgba(16,28,46,.16)}
+    .settings-nav{width:280px;display:flex;flex-direction:column;gap:20px;padding:28px 22px;background:var(--panel);border-right:1px solid rgba(111,220,255,.18);overflow-y:auto;backdrop-filter:blur(14px);box-shadow:inset -1px 0 0 rgba(255,255,255,.04)}
+    body.theme-light .settings-nav{background:var(--panel-light);border-right:1px solid rgba(111,220,255,.22)}
+    .settings-nav-header{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;background:inherit;padding-bottom:12px;z-index:2}
+    .settings-nav-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--text);text-transform:uppercase;letter-spacing:.08em}
+    .settings-close{display:flex;border:1px solid rgba(111,220,255,.22);background:rgba(8,12,18,.6);color:var(--text);border-radius:10px;width:34px;height:34px;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.3)}
+    body.theme-light .settings-close{background:rgba(255,255,255,.8);color:var(--text)}
+    .settings-nav-list{display:flex;flex-direction:column;gap:10px;padding-top:12px}
+    .settings-tab{display:flex;align-items:center;gap:12px;border:1px solid transparent;background:rgba(255,255,255,.02);color:var(--muted);border-radius:14px;padding:12px 14px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,border .2s,color .2s,transform .2s}
+    .settings-tab svg{width:18px;height:18px;opacity:.8}
+    .settings-tab:hover{background:rgba(111,220,255,.12);color:var(--text);transform:translateX(2px)}
+    .settings-tab.active{background:rgba(111,220,255,.2);border-color:rgba(111,220,255,.4);color:var(--primary);box-shadow:0 12px 24px rgba(111,220,255,.18)}
+    body.theme-light .settings-tab{background:rgba(255,255,255,.6)}
+    body.theme-light .settings-tab:hover{background:rgba(111,220,255,.18)}
+    body.theme-light .settings-tab.active{background:rgba(111,220,255,.32)}
+    .settings-back{margin-top:auto;border:1px solid rgba(111,220,255,.22);background:rgba(8,12,18,.6);color:var(--text);border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;justify-content:center}
+    body.theme-light .settings-back{background:rgba(255,255,255,.85);color:var(--text)}
+    .settings-content{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg);position:relative}
+    .settings-content-head{display:flex;align-items:center;justify-content:space-between;padding:28px 40px;border-bottom:1px solid var(--line);gap:16px;position:sticky;top:0;background:inherit;z-index:5}
+    .settings-content-head h2{margin:0;font-size:22px}
+    .settings-content-head p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+    .settings-scroll{flex:1;overflow-y:auto;padding:32px 40px;display:grid;gap:28px;scrollbar-gutter:stable}
+    .settings-scroll::-webkit-scrollbar{width:8px}
+    .settings-scroll::-webkit-scrollbar-thumb{background:rgba(111,220,255,.2);border-radius:8px}
+    .settings-scroll::-webkit-scrollbar-track{background:transparent}
+    .settings-section{display:none;flex-direction:column;gap:18px}
+    .settings-section.active{display:flex}
+    .settings-group{display:grid;gap:14px}
+    .cloud-buttons{display:flex;gap:8px;flex-wrap:wrap}
+    .cloud-buttons .btn{min-width:160px}
+    body.phone .cloud-buttons{flex-direction:column;width:100%}
+    body.phone .cloud-buttons .btn{width:100%}
+    .settings-footnote{margin:0;font-size:12px;color:var(--muted);text-align:center;padding:16px 0;border-top:1px solid var(--line)}
+    #cloudStatus{font-weight:600;color:var(--primary)}
+    body.phone .settings-shell{flex-direction:column;border-radius:0}
+    body.phone .settings-nav{width:100%;flex-direction:column;align-items:stretch;gap:16px;padding:20px;border-right:0;border-bottom:1px solid var(--line);overflow:visible}
+    body.phone .settings-nav-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+    body.phone .settings-tab{flex-direction:column;min-height:88px;justify-content:center;text-align:center}
+    body.phone .settings-close.mobile{display:flex;width:40px;height:40px}
+    body.phone .settings-content-head{position:static;padding:20px}
+    body.phone .settings-scroll{padding:24px}
     .row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin:4px 0}
     .row>div{display:flex;flex-direction:column}
     .row input[type="color"], .row input[type="datetime-local"], .row input[type="text"], .row input[type="search"], .row select{width:auto;min-width:180px;height:34px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--text);padding:6px 10px}
@@ -193,6 +300,10 @@
     .cal-cell{aspect-ratio:1/1;border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;font-size:12px;color:var(--muted);cursor:pointer}
     .cal-cell.active{background:rgba(111,220,255,.2);color:var(--text);border-color:var(--primary)}
     .streak{font-size:12px;color:var(--muted)}
+    body.phone #main-habits .feed{display:flex;flex-direction:column;align-items:center}
+    body.phone #main-habits .feed>.card{width:100%;max-width:560px}
+    body.phone #habitStats{grid-template-columns:repeat(2,minmax(0,1fr))!important;justify-items:center;text-align:center}
+    body.phone #habitStats>div{padding:8px 0}
 
     .switch{appearance:none;-webkit-appearance:none;width:48px;height:28px;border-radius:999px;background:#303a4a;position:relative;outline:none;border:1px solid var(--line);cursor:pointer;transition:background .2s}
     .switch::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .2s}
@@ -221,8 +332,8 @@
             <div class="tabs">
               <button class="tab" data-tab="dashboard">Dashboard</button>
               <button class="tab active" data-tab="feed">Feed</button>
-              <button class="tab" data-tab="habits">Hǭbitos</button>
-              <button class="tab" data-tab="images">Imǭgenes</button>
+              <button class="tab" data-tab="habits">Hábitos</button>
+              <button class="tab" data-tab="images">Imágenes</button>
               <button class="tab" data-tab="rewards">Rewards</button>
             </div>
           </div>
@@ -237,99 +348,155 @@
             </button>
           </div>
         </div>
-        <div class="tabs tabs-mobile">
-          <button class="tab" data-tab="dashboard">Dashboard</button>
-          <button class="tab" data-tab="feed">Feed</button>
-          <button class="tab" data-tab="habits">Hǭbitos</button>
-          <button class="tab" data-tab="images">Imǭgenes</button>
-          <button class="tab" data-tab="rewards">Rewards</button>
+        <div class="tabs tabs-mobile" role="tablist">
+          <button class="tab" data-tab="dashboard" aria-label="Dashboard">
+            <span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+            <span class="tab-label">Inicio</span>
+          </button>
+          <button class="tab" data-tab="feed" aria-label="Feed">
+            <span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2h-4l-3.5 3-3.5-3H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+            <span class="tab-label">Feed</span>
+          </button>
+          <button class="tab" data-tab="habits" aria-label="Hábitos">
+            <span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.5 17 19 7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="tab-label">Hábitos</span>
+          </button>
+          <button class="tab" data-tab="images" aria-label="Imágenes">
+            <span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 13.5 11 11l4 4 2-2 2 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="9" r="1.2" fill="currentColor"/></svg></span>
+            <span class="tab-label">Imágenes</span>
+          </button>
+          <button class="tab" data-tab="rewards" aria-label="Rewards">
+            <span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v2a3 3 0 1 1-2.4 4.8L14 21l-2-2-2 2-1.6-9.2A3 3 0 1 1 6 7V5a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="tab-label">Rewards</span>
+          </button>
         </div>
       </div>
-  <section id="panel" class="panel" aria-label="Panel de configuración">
-    <h3>Configuración</h3>
-    <details class="row"><summary>Tema y Visual</summary>
-      <div class="adv-wrap" style="display:grid;gap:4px;margin-top:4px">
-    <div class="row"><div><label>Acento</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Color principal usado en botones y elementos destacados</p></div><input id="accent" type="color" value="#6fdcff" /></div>
-    <div class="row"><div><label>Tema claro</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Activa el modo de tema claro (fondo claro)</p></div><input id="themeLight" type="checkbox" class="switch" /></div>
-    <div class="row"><div><label>Negro puro</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Usa fondo completamente negro en modo oscuro</p></div><input id="pureBlack" type="checkbox" class="switch" /></div>
-    <div class="row"><div><label>Minimalista</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Reduce elementos visuales para una interfaz más limpia</p></div><input id="minimal" type="checkbox" class="switch" /></div>
-      </div>
-    </details>
-    <details class="row"><summary>Aparencia</summary>
-      <div class="adv-wrap" style="display:grid;gap:4px;margin-top:4px">
-        <div class="row"><div><label>Tamaño de fuente</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Ajusta el tamaño del texto en toda la aplicación</p></div>
-          <select id="fontSize">
-            <option value="1">Pequeño</option>
-            <option value="1.1" selected>Normal</option>
-            <option value="1.2">Grande</option>
-            <option value="1.3">Muy Grande</option>
-          </select>
-        </div>
-        <div class="row"><div><label>Densidad</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Controla el espaciado entre elementos</p></div>
-          <select id="density">
-            <option value="0.9">Compacta</option>
-            <option value="1" selected>Normal</option>
-            <option value="1.1">Espaciada</option>
-          </select>
-        </div>
-        <div class="row"><div><label>Editar avatar</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Cambia tu imagen de perfil</p></div>
-          <label class="fake-file" for="avatarFile">Elegir imagen</label>
-          <input id="avatarFile" class="hidden" type="file" accept="image/*" />
-        </div>
-      </div>
-    </details>
-    <details class="row"><summary>Fecha y Hora</summary>
-      <div class="adv-wrap" style="display:grid;gap:4px;margin-top:4px">
-    <div class="row"><div><label>Mostrar hora</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Muestra la hora local en los posts del feed</p></div><input id="showTime" type="checkbox" class="switch" checked /></div>
-    <div class="row"><div><label>Zona horaria</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Define la zona horaria para fechas y horas. Auto usa la del sistema</p></div>
-      <select id="tzSelect">
-        <option value="">Auto</option>
-        <option>America/Santiago</option>
-        <option>America/Bogota</option>
-        <option>America/Mexico_City</option>
-        <option>America/Argentina/Buenos_Aires</option>
-        <option>America/Lima</option>
-        <option>Europe/Madrid</option>
-        <option>Europe/Lisbon</option>
-        <option>UTC</option>
-      </select>
-    </div>
-      </div>
-    </details>
-    <details class="row"><summary>Comportamiento</summary>
-      <div class="adv-wrap" style="display:grid;gap:4px;margin-top:4px">
-        <div class="row"><div><label>Sonidos al completar</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Reproduce sonidos cuando completas hábitos o metas</p></div><input id="soundsEnabled" type="checkbox" class="switch" checked /></div>
-        <div class="row"><div><label>Animaciones</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Activa transiciones y efectos visuales</p></div><input id="animationsEnabled" type="checkbox" class="switch" checked /></div>
-        <div class="row"><div><label>Auto-resumen semanal</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Genera automáticamente un resumen de la semana en hábitos</p></div><input id="autoWeeklySummary" type="checkbox" class="switch" checked /></div>
-        <div class="row"><div><label>Sugerencias inteligentes</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Muestra sugerencias contextuales basadas en tu actividad</p></div><input id="smartSuggestions" type="checkbox" class="switch" checked /></div>
-        <div class="row"><div><label>Notificaciones</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Habilita notificaciones del navegador para recordatorios</p></div><input id="notificationsEnabled" type="checkbox" class="switch" checked /></div>
-      </div>
-    </details>
-    <details class="row"><summary>Dispositivo</summary>
-      <div class="adv-wrap" style="display:grid;gap:4px;margin-top:4px">
-        <div class="row"><div><label>Modo Teléfono</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Activa el diseño optimizado para pantallas pequeñas</p></div><input id="phoneMode" type="checkbox" class="switch" /></div>
-    </div>
-    </details>
-    <details class="row"><summary>Avanzado</summary>
-      <div class="adv-wrap" style="display:grid;gap:4px;margin-top:4px">
-        <div class="row"><div><label>Guardado automático local</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda automáticamente todos tus datos cada 10 minutos en el almacenamiento local</p></div><input id="autoSaveLocal" type="checkbox" class="switch" checked /></div>
-        <div class="row"><div><label>Guardar</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda manualmente todos tus datos ahora para asegurarte de que no se pierda información</p></div><button id="manualSave" class="btn">Guardar</button></div>
-        <div class="row"><div><label>Exportar respaldo</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Descarga una copia de todos tus datos en formato JSON</p></div><button id="export" class="btn">Exportar</button></div>
-        <div class="row"><div><label>Importar respaldo</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Restaura tus datos desde un archivo JSON exportado previamente</p></div>
-          <label class="fake-file" for="importFile">Elegir JSON</label>
-          <input id="importFile" type="file" accept="application/json" class="hidden" />
-          <button id="import" class="btn">Importar</button>
-          <div id="autoBackupRestore" style="display:none;margin-top:8px">
-            <button id="restoreAutoBackup" class="btn" style="width:100%">Restaurar respaldo automático (<span id="autoBackupDate"></span>)</button>
+  
+  <section id="panel" class="settings-overlay" aria-label="Panel de configuración" role="dialog" aria-modal="true">
+    <div class="settings-shell">
+      <aside class="settings-nav" role="tablist" aria-orientation="vertical">
+        <div class="settings-nav-header">
+          <div class="settings-nav-brand">
+            <span class="dot" aria-hidden="true"></span>
+            <span>Configuración</span>
           </div>
+          <button id="settingsCloseMobile" class="settings-close mobile" type="button" aria-label="Cerrar configuración">×</button>
         </div>
-        <div class="row"><div><label>Recordatorio</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Programa notificaciones para recordatorios específicos</p></div><input id="remindAt" type="datetime-local"/><button id="addReminder" class="btn">Añadir</button></div>
-        <div id="reminders"></div>
-        <div class="row"><div><label>Reset</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Elimina todos los datos y restablece la aplicación a su estado inicial. Esta acción no se puede deshacer.</p></div><button id="reset" class="btn danger">Reset</button></div>
+        <nav class="settings-nav-list">
+          <button type="button" class="settings-tab active" data-settings-tab="visual"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v14a1 1 0 0 1-1.53.85L12 16.2l-6.47 3.65A1 1 0 0 1 4 19Z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Visual</span></button>
+          <button type="button" class="settings-tab" data-settings-tab="appearance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><span>Apariencia</span></button>
+          <button type="button" class="settings-tab" data-settings-tab="time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Fecha y hora</span></button>
+          <button type="button" class="settings-tab" data-settings-tab="behavior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6l4 5v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 4v4H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Comportamiento</span></button>
+          <button type="button" class="settings-tab" data-settings-tab="device"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg><span>Dispositivo</span></button>
+          <button type="button" class="settings-tab" data-settings-tab="advanced"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h4l2-5 4 10 2-5h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Avanzado</span></button>
+        </nav>
+        <button id="settingsBackHome" type="button" class="settings-back">← Volver al inicio</button>
+      </aside>
+      <div class="settings-content">
+        <div class="settings-content-head">
+          <div>
+            <h2>Configuración</h2>
+            <p>Personaliza la experiencia y sincroniza cada cambio en la nube.</p>
+          </div>
+          <button id="settingsClose" type="button" class="btn ghost small">Cerrar</button>
+        </div>
+        <div class="settings-scroll">
+          <section class="settings-section active" data-settings-tab="visual">
+            <h3>Tema y visual</h3>
+            <div class="settings-group">
+              <div class="row"><div><label>Acento</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Color principal usado en botones y elementos destacados</p></div><input id="accent" type="color" value="#6fdcff" /></div>
+              <div class="row"><div><label>Tema claro</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Activa el modo de tema claro (fondo claro)</p></div><input id="themeLight" type="checkbox" class="switch" /></div>
+              <div class="row"><div><label>Negro puro</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Usa fondo completamente negro en modo oscuro</p></div><input id="pureBlack" type="checkbox" class="switch" /></div>
+              <div class="row"><div><label>Minimalista</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Reduce elementos visuales para una interfaz más limpia</p></div><input id="minimal" type="checkbox" class="switch" /></div>
+            </div>
+          </section>
+          <section class="settings-section" data-settings-tab="appearance">
+            <h3>Apariencia</h3>
+            <div class="settings-group">
+              <div class="row"><div><label>Tamaño de fuente</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Ajusta el tamaño del texto en toda la aplicación</p></div>
+                <select id="fontSize">
+                  <option value="1">Pequeño</option>
+                  <option value="1.1" selected>Normal</option>
+                  <option value="1.2">Grande</option>
+                  <option value="1.3">Muy Grande</option>
+                </select>
+              </div>
+              <div class="row"><div><label>Densidad</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Controla el espaciado entre elementos</p></div>
+                <select id="density">
+                  <option value="0.9">Compacta</option>
+                  <option value="1" selected>Normal</option>
+                  <option value="1.1">Espaciada</option>
+                </select>
+              </div>
+              <div class="row"><div><label>Editar avatar</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Cambia tu imagen de perfil</p></div>
+                <label class="fake-file" for="avatarFile">Elegir imagen</label>
+                <input id="avatarFile" class="hidden" type="file" accept="image/*" />
+              </div>
+            </div>
+          </section>
+          <section class="settings-section" data-settings-tab="time">
+            <h3>Fecha y hora</h3>
+            <div class="settings-group">
+              <div class="row"><div><label>Mostrar hora</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Muestra la hora local en los posts del feed</p></div><input id="showTime" type="checkbox" class="switch" checked /></div>
+              <div class="row"><div><label>Zona horaria</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Define la zona horaria para fechas y horas. Auto usa la del sistema</p></div>
+                <select id="tzSelect">
+                  <option value="">Auto</option>
+                  <option>America/Santiago</option>
+                  <option>America/Bogota</option>
+                  <option>America/Mexico_City</option>
+                  <option>America/Argentina/Buenos_Aires</option>
+                  <option>America/Lima</option>
+                  <option>Europe/Madrid</option>
+                  <option>Europe/Lisbon</option>
+                  <option>UTC</option>
+                </select>
+              </div>
+            </div>
+          </section>
+          <section class="settings-section" data-settings-tab="behavior">
+            <h3>Comportamiento</h3>
+            <div class="settings-group">
+              <div class="row"><div><label>Sonidos al completar</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Activa efectos de sonido al completar metas o hábitos</p></div><input id="soundsEnabled" type="checkbox" class="switch" checked /></div>
+              <div class="row"><div><label>Animaciones</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Muestra animaciones al registrar progreso</p></div><input id="animationsEnabled" type="checkbox" class="switch" checked /></div>
+              <div class="row"><div><label>Resumen semanal automático</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Genera automáticamente el resumen semanal al final de la semana</p></div><input id="autoWeeklySummary" type="checkbox" class="switch" checked /></div>
+              <div class="row"><div><label>Sugerencias inteligentes</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Muestra sugerencias contextuales basadas en tu actividad</p></div><input id="smartSuggestions" type="checkbox" class="switch" checked /></div>
+              <div class="row"><div><label>Notificaciones</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Habilita notificaciones del navegador para recordatorios</p></div><input id="notificationsEnabled" type="checkbox" class="switch" checked /></div>
+            </div>
+          </section>
+          <section class="settings-section" data-settings-tab="device">
+            <h3>Dispositivo</h3>
+            <div class="settings-group">
+              <div class="row"><div><label>Modo Teléfono</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Activa el diseño optimizado para pantallas pequeñas</p></div><input id="phoneMode" type="checkbox" class="switch" /></div>
+            </div>
+          </section>
+          <section class="settings-section" data-settings-tab="advanced">
+            <h3>Avanzado</h3>
+            <div class="settings-group">
+              <div class="row"><div><label>Guardado automático local</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda automáticamente todos tus datos cada 10 minutos como respaldo en este dispositivo</p></div><input id="autoSaveLocal" type="checkbox" class="switch" checked /></div>
+              <div class="row cloud-row"><div><label>Sincronización en la nube</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda o restaura tus datos manualmente desde Supabase</p><p class="hint" style="font-size:11px;color:var(--muted);margin:6px 0 0">Estado: <span id="cloudStatus">Sincronizando…</span></p></div>
+                <div class="cloud-buttons"><button id="cloudSave" class="btn small" type="button">Guardar en la nube</button><button id="cloudRestore" class="btn small" type="button">Restaurar de la nube</button></div>
+              </div>
+              <div class="row"><div><label>Guardar</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda manualmente todos tus datos ahora</p></div><button id="manualSave" class="btn">Guardar</button></div>
+              <div class="row"><div><label>Exportar respaldo</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Descarga una copia de todos tus datos en formato JSON</p></div><button id="export" class="btn">Exportar</button></div>
+              <div class="row"><div><label>Importar respaldo</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Restaura tus datos desde un archivo JSON exportado previamente</p></div>
+                <label class="fake-file" for="importFile">Elegir JSON</label>
+                <input id="importFile" type="file" accept="application/json" class="hidden" />
+                <button id="import" class="btn">Importar</button>
+                <div id="autoBackupRestore" style="display:none;margin-top:8px;width:100%">
+                  <button id="restoreAutoBackup" class="btn" style="width:100%">Restaurar respaldo automático (<span id="autoBackupDate"></span>)</button>
+                </div>
+              </div>
+              <div class="row"><div><label>Recordatorio</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Programa notificaciones para recordatorios específicos</p></div><input id="remindAt" type="datetime-local"/><button id="addReminder" class="btn">Añadir</button></div>
+              <div id="reminders"></div>
+              <div class="row"><div><label>Reset</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Elimina todos los datos y restablece la aplicación a su estado inicial. Esta acción no se puede deshacer.</p></div><button id="reset" class="btn danger">Reset</button></div>
+            </div>
+          </section>
+          <p class="settings-footnote">Todos los cambios se guardan automáticamente en la nube y cuentan con respaldo local.</p>
+        </div>
       </div>
-    </details>
-    <p class="hint">Preferencias, posts y metas se guardan localmente.</p>
+    </div>
   </section>
+
 
   <div class="wrap">
     <div class="layout">
@@ -430,7 +597,7 @@
             </div>
           </div>
           <div class="feed" id="feed" aria-live="polite"></div>
-          <div id="endMsg" class="end-msg hidden" style="margin-top:-310px;margin-bottom:180px;padding:4px 0">Has llegado al inicio del Feed</div>
+          <div id="endMsg" class="end-msg hidden">Has llegado al inicio del Feed</div>
         </div>
 
         <div id="main-habits" class="panel-view hidden">
@@ -505,7 +672,7 @@
         <div id="main-images" class="panel-view hidden">
           <div class="feed" style="max-width:760px">
             <h2>Imágenes</h2>
-            <div id="gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
+            <div id="gallery" class="gallery"></div>
             <div id="galleryInfo" style="margin-top:12px;display:none;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg-soft)">
               <div id="galleryInfoText" style="font-size:14px;color:var(--text)"></div>
             </div>
@@ -554,15 +721,22 @@
 
   <footer class="composer" aria-label="Caja de publicación">
     <div class="inner">
-      <div class="box" style="display:grid;grid-template-rows:auto auto;gap:8px">
-        <div style="display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:end">
-          <button id="addFileBtn" class="btn icon" title="Adjuntar" style="width:28px;height:28px;padding:0;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:end;aspect-ratio:1;min-width:28px;min-height:28px">+</button>
-          <textarea id="text" class="ta" placeholder="Escribe algo para el feed…" rows="1"></textarea>
+      <div class="box">
+        <div class="composer-main">
+          <button id="addFileBtn" class="btn icon composer-attach" title="Adjuntar" aria-label="Adjuntar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 8.5 11 15a3 3 0 1 1-4.5-4l8-8a4 4 0 1 1 5.5 5.8l-8.6 8.7a5 5 0 0 1-7.2-7l8.7-8.7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <textarea id="text" class="ta" placeholder="Comparte tu progreso o una nueva idea…" rows="1"></textarea>
         </div>
-        <div style="display:flex;gap:6px;align-items:center;justify-content:flex-end">
-          <button id="quickModeNote" class="btn" style="height:28px;padding:0 12px;border-radius:14px;font-size:12px;line-height:1;white-space:nowrap;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:var(--text);display:flex;align-items:center;justify-content:center">Nota</button>
-          <button id="quickModeReflection" class="btn" style="height:28px;padding:0 12px;border-radius:14px;font-size:12px;line-height:1;white-space:nowrap;display:flex;align-items:center;justify-content:center">Reflexión</button>
-          <button id="send" class="btn primary" title="Publicar" style="width:32px;height:32px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;aspect-ratio:1;min-width:32px;min-height:32px">→</button>
+        <div class="composer-actions">
+          <div class="composer-quick">
+            <button id="quickModeNote" class="btn ghost small chip-btn" type="button">Nota</button>
+            <button id="quickModeReflection" class="btn ghost small chip-btn" type="button">Reflexión</button>
+          </div>
+          <button id="send" class="btn primary composer-send" title="Publicar" aria-label="Publicar">
+            <span>Publicar</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-8-4 8 4 8Z" fill="none" stroke="#000" stroke-width="1.7" stroke-linejoin="round"/><path d="M5 12h10" stroke="#000" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </button>
         </div>
       </div>
       <input id="file" type="file" accept="image/*,.txt,.md,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.zip,.rar,.7z,.exe" multiple class="hidden" />
@@ -576,7 +750,7 @@
   const DEFAULT_TAGS=['meta','progreso','reflexion','imagen','pdf'];
   const MAX_SUGGESTED_TAGS=7;
   const MAX_TAG_LENGTH=10;
-  const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice()};
+  const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice(),suggestionSnooze:{},lastSuggestionAt:0};
   const XP_DAILY_DEFAULT={date:'',xp:0,posts:false,reflections:false,habitsDone:[],goalsDone:[]};
   const DEFAULT_REWARDS=[{id:'r1',name:'Desbloquea Notas',req:50,type:'xp',description:''},{id:'r2',name:'Avatar Personalizado',req:100,type:'xp',description:''},{id:'r3',name:'Tema Especial',req:200,type:'xp',description:''},{id:'r4',name:'Nivel 5',req:5,type:'level',description:''},{id:'r5',name:'Nivel 10',req:10,type:'level',description:''},{id:'r6',name:'Badge Estrella',req:15,type:'level',description:''}];
   let posts=[];
@@ -627,7 +801,9 @@
     if(!Array.isArray(target.posts))target.posts=[];
     posts=target.posts;
     target.prefs={...PREFS_DEFAULT,...(target.prefs||{})};
+    if(!target.prefs.suggestionSnooze||typeof target.prefs.suggestionSnooze!=='object')target.prefs.suggestionSnooze={};
     prefs=target.prefs;
+    if(!Number.isFinite(prefs.lastSuggestionAt))prefs.lastSuggestionAt=0;
     const incomingGoals=target.goals&&typeof target.goals==='object'?target.goals:{};
     target.goals={week:Array.isArray(incomingGoals.week)?incomingGoals.week:[],month:Array.isArray(incomingGoals.month)?incomingGoals.month:[]};
     goals=target.goals;
@@ -678,7 +854,7 @@
   snapshotState();
 
   function saveLocal(state){const snapshot=state||snapshotState();try{localStorage.setItem(STORE_POSTS,JSON.stringify(snapshot.posts||[]));localStorage.setItem(STORE_PREFS,JSON.stringify(snapshot.prefs||{}));localStorage.setItem(STORE_GOALS,JSON.stringify(snapshot.goals||{week:[],month:[]}));localStorage.setItem(STORE_REMIND,JSON.stringify(snapshot.reminders||[]));localStorage.setItem(STORE_HABITS,JSON.stringify(snapshot.habits||{}));localStorage.setItem(STORE_HABITLIST,JSON.stringify(snapshot.habitList||[]));localStorage.setItem(STORE_REFLECTIONS,JSON.stringify(snapshot.reflections||{}));localStorage.setItem('rafesy:xpDaily',JSON.stringify(snapshot.xpDaily||XP_DAILY_DEFAULT));localStorage.setItem('rafesy:rewards',JSON.stringify(snapshot.rewards||[]));localStorage.setItem(STORE_APP_START,String(snapshot.appStartTime||Date.now()));if(snapshot.avatar){localStorage.setItem(STORE_AVATAR,snapshot.avatar);}else{localStorage.removeItem(STORE_AVATAR);}autoBackup();}catch(e){console.warn('No se pudo guardar en localStorage',e)}return snapshot}
-  function save(){return saveLocal()}
+  function save(){const snapshot=snapshotState();return window.saveAll?window.saveAll(snapshot):saveLocal(snapshot)}
   window.saveLocal=saveLocal;
   function autoBackup(){const today=new Date().toISOString().slice(0,10);const lastBackup=localStorage.getItem('rafesy:lastBackupDate');if(lastBackup!==today){try{const backup={posts,prefs,goals,reminders,habits,habitList,reflections,rewards,xpDaily,appStartTime,avatar:avatarData,date:today};localStorage.setItem(STORE_AUTO_BACKUP,JSON.stringify(backup));localStorage.setItem('rafesy:lastBackupDate',today);}catch(e){}}}
   function getAutoBackup(){try{const backup=localStorage.getItem(STORE_AUTO_BACKUP);return backup?JSON.parse(backup):null}catch(e){return null}}
@@ -698,13 +874,55 @@
   function saveTagDrafts(){prefs.suggestedTags=sanitizeTags(tagDrafts);save();renderFilterChips();closeTagEditor();activeFilter='';updateClearButton();renderInit()}
   function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
   function esc(s=''){return s.replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[x]))}
+  function normalizeText(str=''){return String(str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s#]/g,'').trim()}
+  function formatGalleryDate(key){const today=new Date().toISOString().slice(0,10);const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);if(key===today)return 'Hoy';if(key===yesterday)return 'Ayer';try{return new Date(key).toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});}catch{return key}}
+  function setCloudStatus(text){const el=$('#cloudStatus');if(el)el.textContent=text}
+  window.setCloudStatus=setCloudStatus;
   function updateLocalTime(){const now=new Date();const opts={hour:'2-digit',minute:'2-digit',hour12:false,timeZone:prefs.tz||undefined};const timeStr=now.toLocaleTimeString('es-CL',opts);const timeHtml=`<span style="font-size:18px;font-weight:400;color:var(--text)">${timeStr}</span>`;if($('#localTime'))$('#localTime').innerHTML=timeHtml;if($('#localTimeMobile'))$('#localTimeMobile').innerHTML=timeHtml}
   function fmt(ts,show){const d=new Date(ts);const opts={day:'2-digit',month:'short',year:'numeric',timeZone:prefs.tz||undefined};const base=new Intl.DateTimeFormat('es-CL',opts).format(d);if(!show)return base;const t=d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',timeZone:prefs.tz||undefined});return `${base} · ${t}`}
   function weekday(ts){return new Intl.DateTimeFormat('es-CL',{weekday:'long',timeZone:prefs.tz||undefined}).format(new Date(ts))}
   function rel(ts){const s=Math.floor((Date.now()-ts)/1000),m=Math.floor(s/60),h=Math.floor(m/60),d=Math.floor(h/24);if(d>0)return `hace ${d}d ${h%24}h`;if(h>0)return `hace ${h}h ${m%60}m`;if(m>0)return `hace ${m}m`;return 'ahora'}
   function parseTags(text){return Array.from(new Set((text.match(/(^|\s)#([\p{L}\p{N}_]{2,30})/gu)||[]).map(t=>t.trim().replace(/^#/,'').toLowerCase())))}
 
-  function applyPrefs(){document.documentElement.style.setProperty('--primary',prefs.primary);document.documentElement.style.setProperty('--density',String(prefs.density||1));document.body.classList.toggle('theme-light',prefs.theme==='light');document.body.classList.toggle('phone',prefs.phoneMode||window.innerWidth<=768);if(prefs.theme==='dark'){if(prefs.pureBlack){document.documentElement.style.setProperty('--bg','#000');document.documentElement.style.setProperty('--bg-soft','#0a0a0a');document.documentElement.style.setProperty('--line','#1b1b1b');}else{document.documentElement.style.setProperty('--bg','#0b0f14');document.documentElement.style.setProperty('--bg-soft','#11161c');document.documentElement.style.setProperty('--line','#1a2230');}}$('#accent').value=prefs.primary;$('#themeLight').checked=prefs.theme==='light';$('#pureBlack').checked=!!prefs.pureBlack;$('#minimal').checked=!!prefs.minimal;$('#showTime').checked=!!prefs.showTime;$('#phoneMode').checked=!!prefs.phoneMode;$('#soundsEnabled').checked=prefs.soundsEnabled!==false;$('#animationsEnabled').checked=prefs.animationsEnabled!==false;$('#autoWeeklySummary').checked=prefs.autoWeeklySummary!==false;$('#smartSuggestions').checked=prefs.smartSuggestions!==false;$('#notificationsEnabled').checked=prefs.notificationsEnabled!==false;$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;$('#fontSize').value=String(prefs.fontSize||1.1);$('#density').value=String(prefs.density||1);$('#tzSelect').value=prefs.tz||'';ensureSuggestedTags();renderFilterChips();initAutoSave()}
+  function applyPrefs(){
+    document.documentElement.style.setProperty('--primary',prefs.primary);
+    document.documentElement.style.setProperty('--density',String(prefs.density||1));
+    document.body.classList.toggle('theme-light',prefs.theme==='light');
+    document.body.classList.toggle('phone',prefs.phoneMode||window.innerWidth<=768);
+    if(prefs.theme==='dark'){
+      if(prefs.pureBlack){
+        document.documentElement.style.setProperty('--bg','#000');
+        document.documentElement.style.setProperty('--bg-soft','#0a0a0a');
+        document.documentElement.style.setProperty('--line','#1b1b1b');
+        document.documentElement.style.setProperty('--surface','#05080c');
+      }else{
+        document.documentElement.style.setProperty('--bg','#0b0f14');
+        document.documentElement.style.setProperty('--bg-soft','#11161c');
+        document.documentElement.style.setProperty('--line','#1a2230');
+        document.documentElement.style.setProperty('--surface','#0f151f');
+      }
+    }else{
+      document.documentElement.style.setProperty('--surface','#f0f4fb');
+    }
+    $('#accent').value=prefs.primary;
+    $('#themeLight').checked=prefs.theme==='light';
+    $('#pureBlack').checked=!!prefs.pureBlack;
+    $('#minimal').checked=!!prefs.minimal;
+    $('#showTime').checked=!!prefs.showTime;
+    $('#phoneMode').checked=!!prefs.phoneMode;
+    $('#soundsEnabled').checked=prefs.soundsEnabled!==false;
+    $('#animationsEnabled').checked=prefs.animationsEnabled!==false;
+    $('#autoWeeklySummary').checked=prefs.autoWeeklySummary!==false;
+    $('#smartSuggestions').checked=prefs.smartSuggestions!==false;
+    $('#notificationsEnabled').checked=prefs.notificationsEnabled!==false;
+    $('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;
+    $('#fontSize').value=String(prefs.fontSize||1.1);
+    $('#density').value=String(prefs.density||1);
+    $('#tzSelect').value=prefs.tz||'';
+    ensureSuggestedTags();
+    renderFilterChips();
+    initAutoSave();
+  }
 
   const PAGE=8;let idx=0;let query='';
   function postInfo(p){const tz=prefs.tz||Intl.DateTimeFormat().resolvedOptions().timeZone;const words=(p.text||'').trim().split(/\s+/).filter(Boolean).length;const chars=(p.text||'').length;const imgs=p.media?.length||0;const idShort=p.id.slice(-6);return `<div class="popover"><div><strong>Fecha exacta:</strong> ${new Date(p.created).toLocaleString('es-CL',{timeZone:prefs.tz||undefined})} (${tz})</div><div><strong>Autor:</strong> Rafael Sotomayor</div><div><strong>ID:</strong> …${idShort}</div><div><strong>Día:</strong> ${weekday(p.created)}</div><div><strong>Hace:</strong> ${rel(p.created)}</div><div><strong>Texto:</strong> ${words} palabras, ${chars} caracteres</div><div><strong>Imágenes:</strong> ${imgs}</div></div>`}
@@ -728,9 +946,10 @@
   function postHtml(p){const images=p.media||[];const grid=images.length===1?'one':images.length===2?'two':images.length===3?'three':images.length>=4?'four':'';const imgs=images.slice(0,4).map((m,i)=>`<img class=\"thumb\" data-idx=\"${i}\" data-full=\"${m.full||m}\" src=\"${m.thumb||m}\" alt=\"imagen\" loading=\"lazy\" decoding=\"async\"/>`).join('');let doc='';if(p.doc){if(p.doc.type==='text'){doc=`<details class=\"doc-preview\"><summary>Archivo: ${esc(p.doc.name)}</summary><pre>${esc(p.doc.text.slice(0,8000))}</pre></details>`}else if(p.doc.type==='pdf'){doc=`<details class=\"doc-preview\"><summary>PDF: ${esc(p.doc.name)}</summary><embed src=\"${p.doc.url}\" type=\"application/pdf\" style=\"width:100%;height:260px;border:0;border-radius:10px\"/></details>`}else{doc=`<div class=\"doc-preview\">Archivo: ${esc(p.doc.name)} — <a download=\"${esc(p.doc.name)}\" href=\"${p.doc.url}\">descargar</a></div>`}}
   const needsMore=(p.text||'').length>320;const txt=p.text?`<div class=\"content${needsMore?'':' expanded'}\">${highlightTags(p.text)}</div>${needsMore?'<div class=\"show-more\">Mostrar más</div>':''}`:'';const tags=p.tags?.length?`<div class=\"tags\">${p.tags.map(t=>`<span class=\"tag\" data-tag=\"${t}\">#${t}</span>`).join('')}</div>`:'';const reply=p.replyTo?`<div class=\"p-sub\">Respuesta a <a href=\"#\" class=\"go-reply\" data-ref=\"${p.replyTo}\">mensaje</a>: ${esc((posts.find(x=>x.id===p.replyTo)?.text||'').slice(0,80))}${(posts.find(x=>x.id===p.replyTo)?.text||'').length>80?'…':''}</div>`:'';const author=p.author||'Rafesy';return `<article class=\"post${prefs.minimal?' min':''}\" data-id=\"${p.id}\"><div class=\"meta\"><span class=\"who\">${author}</span><div class=\"right\"><button class=\"btn btn-reply\" data-reply=\"${p.id}\" style=\"height:28px;padding:0 10px\">Reply</button><time datetime=\"${new Date(p.created).toISOString()}\">${fmt(p.created,prefs.showTime)}</time><button class=\"info-btn\" title=\"Info\">${iconInfo()}</button></div></div>${reply}${doc}${txt}${images.length?`<div class=\"imgs ${grid}\">${imgs}</div>`:''}${tags}${postInfo(p)}</article>`}
   function attachPostEvents(root){root.querySelectorAll('.post').forEach(card=>{const btn=card.querySelector('.info-btn');const pop=card.querySelector('.popover');if(btn&&pop){btn.onclick=e=>{e.stopPropagation();$$('.popover').forEach(x=>x.classList.remove('open'));pop.classList.toggle('open')}}const rb=card.querySelector('[data-reply]');if(rb){rb.onclick=()=>{pending.replyTo=rb.getAttribute('data-reply');renderAttachs();const el=document.querySelector(`.post[data-id='${pending.replyTo}']`);el?.scrollIntoView({behavior:'smooth',block:'center'})}}card.querySelectorAll('.go-reply').forEach(a=>a.onclick=(e)=>{e.preventDefault();const ref=a.getAttribute('data-ref');document.querySelector(`.post[data-id='${ref}']`)?.scrollIntoView({behavior:'smooth',block:'center'})});const content=card.querySelector('.content');const more=card.querySelector('.show-more');if(more){more.onclick=()=>{if(content)content.classList.add('expanded');more.remove()}}});root.querySelectorAll('.thumb').forEach(img=>{img.addEventListener('click',e=>{e.preventDefault();const lb=$('#lightbox');if(lb){const lbImg=lb.querySelector('img');if(lbImg)lbImg.src=img.getAttribute('data-full')||img.src;lb.classList.add('open')}})});root.querySelectorAll('.tag').forEach(t=>{t.onclick=()=>{query='#'+t.dataset.tag;const search=$('#search');if(search)search.value=query;renderInit()}})}
-  function renderInit(){const feed=$('#feed');feed.innerHTML='';idx=0;$('#endMsg').classList.add('hidden');const list=posts.filter(matchQuery);if(!list.length){feed.innerHTML=`<div class=\"post\"><div class=\"meta\"><span class=\"who\">Rafesy</span><div class=\"right\"><time>${fmt(Date.now(),prefs.showTime)}</time></div></div><div class=\"content\">No hay resultados. Publica algo o cambia el filtro.</div></div>`;const end=$('#endMsg');end.textContent='Has llegado al inicio del Feed';end.classList.remove('hidden');return}appendMore(list)}
-  function appendMore(list){const feed=$('#feed');const next=list.slice(idx,idx+PAGE);next.forEach(p=>feed.insertAdjacentHTML('beforeend',postHtml(p)));idx+=next.length;attachPostEvents(feed);if(idx>=list.length){const end=$('#endMsg');if(end){end.textContent='Has llegado al inicio del Feed';end.classList.remove('hidden');setTimeout(()=>{const composerHeight=document.querySelector('.composer')?.offsetHeight||120;const scrollTarget=end.offsetTop+end.offsetHeight+50;window.scrollTo({top:Math.max(0,scrollTarget-window.innerHeight+composerHeight),behavior:'smooth'})},500)}}}
-  function onScroll(){const sh=document.documentElement.scrollHeight;const near=window.innerHeight+window.scrollY>=sh-200;if(near){const list=posts.filter(matchQuery);if(idx<list.length)appendMore(list)}}
+  function currentScrollContainer(){return document.body.classList.contains('phone')?window:document.querySelector('main')||window}
+  function renderInit(){const feed=$('#feed');feed.innerHTML='';idx=0;$('#endMsg').classList.add('hidden');const list=posts.filter(matchQuery);if(!list.length){feed.innerHTML=`<div class=\"post\"><div class=\"meta\"><span class=\"who\">Rafesy</span><div class=\"right\"><time>${fmt(Date.now(),prefs.showTime)}</time></div></div><div class=\"content\">No hay resultados. Publica algo o cambia el filtro.</div></div>`;const end=$('#endMsg');if(end){end.textContent='Has llegado al inicio del Feed';end.classList.remove('hidden');feed.insertAdjacentElement('afterend',end);}return}appendMore(list,currentScrollContainer())}
+  function appendMore(list,source){const feed=$('#feed');const next=list.slice(idx,idx+PAGE);next.forEach(p=>feed.insertAdjacentHTML('beforeend',postHtml(p)));idx+=next.length;attachPostEvents(feed);if(idx>=list.length){const end=$('#endMsg');if(end){end.textContent='Has llegado al inicio del Feed';end.classList.remove('hidden');if(end.previousElementSibling!==feed)feed.insertAdjacentElement('afterend',end);requestAnimationFrame(()=>{const composerHeight=document.querySelector('.composer')?.offsetHeight||120;if(source&&source!==window){const maxScroll=feed.scrollHeight-source.clientHeight+composerHeight+32;source.scrollTo({top:Math.max(0,maxScroll),behavior:'smooth'})}else{const target=feed.offsetTop+feed.scrollHeight-window.innerHeight+composerHeight+32;window.scrollTo({top:Math.max(0,target),behavior:'smooth'})}})}}}
+  function onScroll(source){const container=source&&source!==window?source:document.documentElement;const viewport=source&&source!==window?source.clientHeight:window.innerHeight;const scrollTop=source&&source!==window?source.scrollTop:window.scrollY;const scrollHeight=source&&source!==window?source.scrollHeight:container.scrollHeight;const near=viewport+scrollTop>=scrollHeight-200;if(near){const list=posts.filter(matchQuery);if(idx<list.length)appendMore(list,source)}}
 
   const pending={media:[],textFromFiles:'',files:[],doc:null,replyTo:null};
   async function readFiles(files){const arr=Array.from(files||[]);for(const f of arr){pending.files.push(f);if(f.type.startsWith('image/')){const full=await fileToDataURL(f);const thumb=await downscale(full,680);pending.media.push({thumb,full});}else if(/(plain|markdown)/.test(f.type)||/\.(txt|md)$/i.test(f.name)){const txt=await f.text();pending.doc={type:'text',name:f.name,text:String(txt).slice(0,20000)};}else if(f.type==='application/pdf'||/\.pdf$/i.test(f.name)){const pdf=await fileToDataURL(f);pending.doc={type:'pdf',name:f.name,url:pdf};}else{const url=URL.createObjectURL(f);pending.doc={type:'download',name:f.name,url};}}renderAttachs()}
@@ -753,9 +972,19 @@
 
   function updateWeekMonthLabels(){const now=new Date();const weekStart=new Date(now);weekStart.setDate(now.getDate()-((now.getDay()+6)%7));const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);$('#weekLabel').textContent=`${weekStart.toLocaleDateString()} – ${weekEnd.toLocaleDateString()}`;$('#monthLabel').textContent=now.toLocaleDateString('es-CL',{month:'long',year:'numeric'})}
 
-  $('#gear')?.addEventListener('click',()=>$('#panel').classList.toggle('open'))
-  $('#gearMobile')?.addEventListener('click',()=>$('#panel').classList.toggle('open'))
-  document.addEventListener('click',e=>{const p=$('#panel');if(!p.classList.contains('open'))return;if(!p.contains(e.target)&&!e.target.closest('#gear')&&!e.target.closest('#gearMobile'))p.classList.remove('open')})
+  const settingsOverlay=$('#panel');
+  const settingsTabs=$$('.settings-tab');
+  const settingsSections=$$('.settings-section');
+  function openSettings(){if(!settingsOverlay)return;settingsOverlay.classList.add('open');document.body.classList.add('settings-open')}
+  function closeSettings(){if(!settingsOverlay)return;settingsOverlay.classList.remove('open');document.body.classList.remove('settings-open')}
+  $('#gear')?.addEventListener('click',openSettings)
+  $('#gearMobile')?.addEventListener('click',openSettings)
+  $('#settingsClose')?.addEventListener('click',closeSettings)
+  $('#settingsCloseMobile')?.addEventListener('click',closeSettings)
+  $('#settingsBackHome')?.addEventListener('click',closeSettings)
+  settingsOverlay?.addEventListener('click',e=>{if(e.target===settingsOverlay)closeSettings()})
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&settingsOverlay?.classList.contains('open'))closeSettings()})
+  settingsTabs.forEach(btn=>btn.addEventListener('click',()=>{const tab=btn.dataset.settingsTab;settingsTabs.forEach(b=>b.classList.toggle('active',b===btn));settingsSections.forEach(section=>section.classList.toggle('active',section.dataset.settingsTab===tab));if(window.innerWidth<=768)settingsOverlay?.querySelector('.settings-scroll')?.scrollTo({top:0,behavior:'smooth'})}))
   $('#accent').addEventListener('input',e=>{prefs.primary=e.target.value;document.documentElement.style.setProperty('--primary',prefs.primary);save()})
   $('#themeLight').addEventListener('change',e=>{prefs.theme=e.target.checked?'light':'dark';applyPrefs();save()})
   $('#pureBlack').addEventListener('change',e=>{prefs.pureBlack=e.target.checked;applyPrefs();save()})
@@ -788,8 +1017,8 @@
 
   function updateAge(){const now=new Date(),dob=new Date(2007,11,29,10,0,0);let y=now.getFullYear()-dob.getFullYear(),m=now.getMonth()-dob.getMonth(),d=now.getDate()-dob.getDate();if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate()}if(m<0){y--;m+=12}$('#age').textContent=`${y} años, ${m} meses, ${d} días`;const next=new Date(now.getFullYear(),11,29);if(next<now)next.setFullYear(now.getFullYear()+1);const diff=Math.ceil((next-now)/86400000);$('#nextBirthday').textContent=`Próximo cumpleaños en: ${diff} días`}
 
-  $('#lightbox').addEventListener('click',()=>$('#lightbox').classList.remove('open'))
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lightbox').classList.remove('open')})
+  $('#lightbox').addEventListener('click',()=>{const lb=$('#lightbox');lb.classList.remove('open');const info=$('#galleryInfo');if(info)info.style.display='none'})
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){const lb=$('#lightbox');lb.classList.remove('open');const info=$('#galleryInfo');if(info)info.style.display='none'}})
 
   function fileToDataURL(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.readAsDataURL(file)})}
   function downscale(dataURL,max){return new Promise(resolve=>{const img=new Image();img.onload=()=>{const s=Math.min(max/img.width,max/img.height,1);const w=Math.round(img.width*s),h=Math.round(img.height*s);const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',0.88))};img.src=dataURL})}
@@ -833,7 +1062,7 @@
   
   function renderHabitsPanel(){const q=TATE[Math.floor(Math.random()*TATE.length)];const quoteEl=$('#quoteText');if(quoteEl)quoteEl.textContent=q;const month=calState.date;const y=month.getFullYear(),m=month.getMonth();const days=new Date(y,m+1,0).getDate();let list='<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">';for(let d=1;d<=days;d++){const key=new Date(y,m,d).toISOString().slice(0,10);const dayData=habits[key]||{};const completed=habitList.filter(h=>dayData[h.id]).length;const total=habitList.length;const percent=total?(completed/total)*100:0;let bg='';if(percent===100)bg='rgba(40,209,124,.3)';else if(percent>=70)bg='rgba(111,220,255,.15)';else if(percent>=40)bg='rgba(255,170,0,.15)';else if(total>0)bg='rgba(255,74,74,.15)';list+=`<div style="border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center;${bg?`background:${bg}`:''}" data-day="${key}">${d}</div>`}list+='</div>';const listEl=$('#habitList');if(listEl)listEl.innerHTML=list;listEl?.querySelectorAll('[data-day]').forEach(el=>el.onclick=()=>{const k=el.getAttribute('data-day');if(!habits[k])habits[k]={};const dayData=habits[k];const first=habitList[0];if(first)dayData[first.id]=!dayData[first.id];setDayData(new Date(k),dayData);renderCalendar();renderHabitsPanel();updateAllStats();renderDailyChecklist()});const canvas=$('#habitChart');if(canvas){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);const w=canvas.width,h=canvas.height;const margin=24;ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--line');ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--primary');ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(margin,margin);ctx.lineTo(margin,h-margin);ctx.lineTo(w-margin,h-margin);ctx.stroke();const total=days;let done=0;for(let d=1;d<=days;d++){const k=new Date(y,m,d).toISOString().slice(0,10);const dayData=habits[k]||{};if(habitList.length&&habitList.every(h=>dayData[h.id]))done++}const ratio=done/total;const barW=w-2*margin;const barH=(h-2*margin)*ratio;ctx.fillRect(margin,(h-margin)-barH,barW,barH)}updateAllStats();renderDailyChecklist();renderWeeklyChart();renderMonthlyComparison();renderWeeklySummary();renderPersonalRanking();const todayRef=$('#dailyReflection');if(todayRef){const today=getTodayKey();todayRef.value=reflections[today]||''}}
 
-  function renderGallery(){const box=$('#gallery');const infoBox=$('#galleryInfo');const infoText=$('#galleryInfoText');if(!box)return;const imgs=[];posts.forEach(p=>{if(p.media)p.media.forEach(m=>imgs.push({p,m,created:p.created}))});box.innerHTML=imgs.map((o,i)=>`<div style="position:relative"><img data-i="${i}" src="${o.m.thumb||o.m}" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in"/></div>`).join('');box.querySelectorAll('img').forEach(im=>{im.onclick=()=>{const idx=Number(im.dataset.i);const img=imgs[idx];if(!img)return;const lb=$('#lightbox');if(lb){const lbImg=lb.querySelector('img');if(lbImg)lbImg.src=img.m.full||img.m;lb.classList.add('open');if(infoBox&&infoText){infoBox.style.display='block';infoText.innerHTML=`<div style="font-weight:600;margin-bottom:6px">Subida: ${new Date(img.created).toLocaleString('es-CL')}</div><div style="color:var(--muted)">${esc((img.p.text||'').slice(0,200))}${(img.p.text||'').length>200?'…':''}</div>`}}}})}
+  function renderGallery(){const box=$('#gallery');const infoBox=$('#galleryInfo');const infoText=$('#galleryInfoText');if(!box)return;const imgs=[];posts.forEach(p=>{if(Array.isArray(p.media)){p.media.forEach(m=>imgs.push({post:p,media:m,created:p.created||Date.now()}))}});const groups=new Map();imgs.forEach((entry,index)=>{const key=new Date(entry.created).toISOString().slice(0,10);if(!groups.has(key))groups.set(key,[]);groups.get(key).push({entry,index})});const sorted=Array.from(groups.entries()).sort((a,b)=>b[0].localeCompare(a[0]));if(!sorted.length){box.innerHTML='<p class="gallery-empty">Todavía no has subido imágenes.</p>';return}box.innerHTML=sorted.map(([date,list])=>{const human=formatGalleryDate(date);const items=list.map(({entry,index})=>`<button class="gallery-thumb" data-i="${index}" aria-label="Abrir imagen de ${human}"><img src="${entry.media.thumb||entry.media}" alt="Imagen de ${human}" loading="lazy"/></button>`).join('');return `<section class="gallery-section"><div class="gallery-date">${human}</div><div class="gallery-grid">${items}</div></section>`}).join('');box.querySelectorAll('.gallery-thumb').forEach(btn=>{btn.onclick=()=>{const idx=Number(btn.dataset.i);const img=imgs[idx];if(!img)return;const lb=$('#lightbox');if(lb){const lbImg=lb.querySelector('img');if(lbImg)lbImg.src=img.media.full||img.media;lb.classList.add('open');if(infoBox&&infoText){infoBox.style.display='block';const when=new Date(img.created).toLocaleString('es-CL',{dateStyle:'long',timeStyle:'short'});infoText.innerHTML=`<div style="font-weight:600;margin-bottom:6px">Subida: ${when}</div><div style="color:var(--muted)">${esc((img.post.text||'').slice(0,220))}${(img.post.text||'').length>220?'…':''}</div>`}}}})}
 
   $('#addHabit')?.addEventListener('click',()=>{const name=$('#newHabitName')?.value.trim();const minutes=Number($('#newHabitMinutes')?.value||0);if(!name)return;habitList.push({id:uid(),name,minutes});$('#newHabitName').value='';$('#newHabitMinutes').value='';save();renderDailyChecklist();updateAllStats()})
   $('#saveReflection')?.addEventListener('click',()=>{const text=$('#dailyReflection')?.value.trim();const today=getTodayKey();reflections[today]=text;save();alert('Reflexión guardada')})
@@ -855,14 +1084,15 @@
   function playSound(){if(!prefs.soundsEnabled)return;const ctx=new (window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=800;gain.gain.setValueAtTime(0.3,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.2);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.2)}
   function playAnimation(el){if(!prefs.animationsEnabled||!el)return;el.style.transform='scale(1.2)';el.style.transition='transform 0.3s';setTimeout(()=>{el.style.transform='';setTimeout(()=>el.style.transition='',300)},300)}
   function renderReflectionHistory(){const box=$('#reflectionHistoryList');if(!box)return;const keys=Object.keys(reflections).sort().reverse();if(!keys.length){box.innerHTML='<p style="color:var(--muted);font-size:13px">No hay reflexiones guardadas.</p>';return}box.innerHTML=keys.slice(0,20).map(k=>`<div style="padding:10px;border-bottom:1px solid var(--line)"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">${new Date(k).toLocaleDateString('es-CL')}</div><div style="font-size:13px;color:var(--text);white-space:pre-wrap">${esc(reflections[k])}</div></div>`).join('')}
-  function smartSuggestions(){if(!prefs.smartSuggestions||habitList.length>=10)return;const suggestions={leer:['Leer 10 páginas diarias','Leer 30 minutos','Leer 1 capítulo'],ejercicio:['Gimnasio','Correr 30 minutos','Ejercicio 1 hora'],estudio:['Estudiar 2 horas','Repaso diario','Leer apuntes'],meditacion:['Meditar 10 minutos','Respiración profunda','Yoga'],comida:['Comer saludable','Beber agua','Desayunar temprano'],planificacion:['Planificar día','Revisar metas','Reflexión nocturna']};const allText=posts.map(p=>(p.text||'').toLowerCase()).join(' ');const found=[];Object.keys(suggestions).forEach(k=>{if(allText.includes(k)&&!habitList.some(h=>h.name.toLowerCase().includes(k)))found.push(...suggestions[k].slice(0,1))});if(found.length){const sug=found[0];if(confirm(`¿Agregar hábito sugerido: "${sug}"?`)){habitList.push({id:uid(),name:sug,minutes:30});save();renderDailyChecklist();updateAllStats()}}}
+  function smartSuggestions(){if(!prefs.smartSuggestions||habitList.length>=10)return;const now=Date.now();const week=7*24*60*60*1000;if(now-Number(prefs.lastSuggestionAt||0)<week)return;const suggestions={leer:['Leer 10 páginas diarias','Leer 30 minutos','Leer 1 capítulo'],ejercicio:['Gimnasio','Correr 30 minutos','Ejercicio 1 hora'],estudio:['Estudiar 2 horas','Repaso diario','Leer apuntes'],meditacion:['Meditar 10 minutos','Respiración profunda','Yoga'],comida:['Comer saludable','Beber agua','Desayunar temprano'],planificacion:['Planificar día','Revisar metas','Reflexión nocturna']};const allText=normalizeText(posts.map(p=>p.text||'').join(' '));const existing=new Set(habitList.map(h=>normalizeText(h.name||'')));const snoozed=prefs.suggestionSnooze||{};const pool=[];Object.entries(suggestions).forEach(([keyword,list])=>{if(!allText.includes(keyword))return;list.forEach(name=>{const norm=normalizeText(name);if(!norm||existing.has(norm))return;const last=Number(snoozed[norm])||0;if(now-last<week)return;pool.push({name:name.trim(),norm})})});if(!pool.length)return;const choice=pool[Math.floor(Math.random()*pool.length)];prefs.lastSuggestionAt=now;snoozed[choice.norm]=now;prefs.suggestionSnooze=snoozed;const confirmed=confirm(`¿Agregar hábito sugerido: "${choice.name}"?`);if(confirmed){if(!habitList.some(h=>normalizeText(h.name||'')===choice.norm)){habitList.push({id:uid(),name:choice.name,minutes:30});}save();renderDailyChecklist();updateAllStats();renderHabitsPanel()}else{save()}}
   function autoWeeklySummary(){if(!prefs.autoWeeklySummary)return;const now=new Date();if(now.getDay()===0){const lastSunday=new Date(now);lastSunday.setDate(now.getDate()-7);const key=lastSunday.toISOString().slice(0,10);const lastPost=posts[0];if(lastPost&&lastPost.autoSummary!==key){const weekly=calculateWeeklyStats();const hours=calculateProductiveHours();const quote=TATE[Math.floor(Math.random()*TATE.length)];const summary=`📊 Resumen Semanal Automático\n\n✅ Progreso: ${weekly.percent}% (${weekly.completed}/${weekly.total} hábitos)\n⏱️ Horas productivas: ${hours}h\n📈 Puntos acumulados: ${calculatePoints()}\n\n💭 ${quote}`;const entry={id:uid(),text:summary,created:Date.now(),autoSummary:key,author:'Mamá Bot'};posts.unshift(entry);save();renderInit()}}}
   
   $$('.tab').forEach(t=>{t.onclick=()=>{const id=t.dataset.tab;$$('.tab').forEach(x=>x.classList.remove('active'));$$('.tab[data-tab="'+id+'"]').forEach(x=>x.classList.add('active'));$('#main-dashboard').classList.toggle('hidden',id!=='dashboard');$('#main-feed').classList.toggle('hidden',id!=='feed');$('#main-habits').classList.toggle('hidden',id!=='habits');$('#main-images').classList.toggle('hidden',id!=='images');$('#main-rewards').classList.toggle('hidden',id!=='rewards');if(id==='images')renderGallery();if(id==='habits')renderHabitsPanel();if(id==='dashboard')updateDashboard();if(id==='rewards')renderRewards()}})
   
   $('#viewReflectionHistory')?.addEventListener('click',()=>{$('#reflectionHistory').classList.toggle('hidden');renderReflectionHistory()})
-  $('#quickModeReflection')?.addEventListener('click',()=>{quickMode='reflection';$('#text').placeholder='Escribe tu reflexión…';$('#quickModeReflection').style.background='rgba(255,255,255,.15)';$('#quickModeReflection').style.borderColor='rgba(255,255,255,.3)';$('#quickModeNote').style.background='';$('#quickModeNote').style.borderColor=''})
-  $('#quickModeNote')?.addEventListener('click',()=>{quickMode='note';$('#text').placeholder='Escribe algo para el feed…';$('#quickModeNote').style.background='rgba(255,255,255,.15)';$('#quickModeNote').style.borderColor='rgba(255,255,255,.3)';$('#quickModeReflection').style.background='';$('#quickModeReflection').style.borderColor=''})
+  function setQuickMode(mode){quickMode=mode;const noteBtn=$('#quickModeNote');const reflectionBtn=$('#quickModeReflection');if(mode==='reflection'){$('#text').placeholder='Escribe tu reflexión…';}else{$('#text').placeholder='Comparte tu progreso o una nueva idea…';}noteBtn?.classList.toggle('active',mode==='note');reflectionBtn?.classList.toggle('active',mode==='reflection')}
+  $('#quickModeReflection')?.addEventListener('click',()=>setQuickMode('reflection'))
+  $('#quickModeNote')?.addEventListener('click',()=>setQuickMode('note'))
   $('#sidebarToggle')?.addEventListener('click',()=>{$('#left').classList.toggle('open')})
   $('#addReward')?.addEventListener('click',addNewReward)
   function initPhoneMode(){if(window.innerWidth<=768){document.body.classList.add('phone');prefs.phoneMode=true;$('#left').classList.remove('open');save();return true}return false}
@@ -877,11 +1107,12 @@
   $('#notificationsEnabled')?.addEventListener('change',e=>{prefs.notificationsEnabled=e.target.checked;save()})
 
   function initAutoSave(){if(autoSaveInterval)clearInterval(autoSaveInterval);if(prefs.autoSaveLocal){autoSaveInterval=setInterval(()=>{save()},600000)}}
-  $$('.panel details.row').forEach(d=>{d.addEventListener('toggle',()=>{if(d.open){$$('.panel details.row').forEach(other=>{if(other!==d&&other.open)other.open=false})}})})
   $('#autoSaveLocal')?.addEventListener('change',e=>{prefs.autoSaveLocal=e.target.checked;save();initAutoSave()})
-  $('#manualSave')?.addEventListener('click',()=>{save();alert('Datos guardados correctamente')})
-  load();applyPrefs();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);if($('#quickModeNote')){$('#quickModeNote').style.background='rgba(255,255,255,.15)';$('#quickModeNote').style.borderColor='rgba(255,255,255,.3)'}
-  let ticking=false;window.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onScroll()})})
+  $('#manualSave')?.addEventListener('click',async()=>{await save();alert('Datos guardados correctamente')})
+  $('#cloudSave')?.addEventListener('click',async()=>{setCloudStatus('Guardando…');try{if(window.saveAll){await window.saveAll();setCloudStatus(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);alert('Datos guardados en la nube')}else{saveLocal();setCloudStatus('Guardado en este dispositivo');alert('No hay conexión con la nube. Se creó un respaldo local.')}}catch(err){console.error('Error al guardar en la nube',err);setCloudStatus('Error al guardar');alert('No se pudo guardar en la nube')}})
+  $('#cloudRestore')?.addEventListener('click',async()=>{setCloudStatus('Restaurando…');try{if(window.loadCloud){await window.loadCloud();setCloudStatus('Datos restaurados desde la nube');alert('Datos restaurados desde la nube')}else{setCloudStatus('Sin conexión a la nube');alert('No hay sincronización en la nube disponible')}}catch(err){console.error('Error al restaurar desde la nube',err);setCloudStatus('Error al restaurar');alert('No se pudo restaurar desde la nube')}})
+  load();applyPrefs();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);setQuickMode('note')
+  let ticking=false;const scrollSources=[window,document.querySelector('main')].filter(Boolean);scrollSources.forEach(src=>{src.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onScroll(src)})},{passive:true})})
   document.addEventListener('click',()=>$$('.popover').forEach(p=>p.classList.remove('open')))
   $('#reset').addEventListener('click',async ()=>{if(!confirm('¿Estás seguro de que quieres restablecer todo? Esta acción eliminará todos tus datos permanentemente.'))return;if(!confirm('ADVERTENCIA: Esta acción no se puede deshacer. ¿Realmente quieres continuar?'))return;try{if(window.supabase && window.supabaseUser){await window.supabase.from('users_data').delete().eq('id',window.supabaseUser.id);}}catch(err){console.warn('No se pudo limpiar Supabase',err)}localStorage.clear();window.__APP_STATE__=window.createDefaultState?.();hydrateFromState(window.__APP_STATE__);snapshotState();saveLocal(window.__APP_STATE__);location.reload()})
 
@@ -913,13 +1144,13 @@
     }
   }
 
-  if (!user) {
-    console.warn('Supabase no disponible; se usará solo el almacenamiento local.');
-    window.loadCloud = async ()=>{};
-    window.saveAll = async ()=>window.saveLocal?.();
-    window.save = () => window.saveLocal?.();
-    return;
-  }
+    if (!user) {
+      console.warn('Supabase no disponible; se usará solo el almacenamiento local.');
+      window.loadCloud = async ()=>{};
+      window.saveAll = async next=>window.saveLocal?.(next);
+      window.setCloudStatus?.('Modo sin conexión');
+      return;
+    }
 
   window.supabase = supabase;
   window.supabaseUser = user;
@@ -937,6 +1168,7 @@
         window.hydrateFromState?.(window.__APP_STATE__);
         window.saveLocal?.(window.__APP_STATE__);
         await saveAll(window.__APP_STATE__);
+        window.setCloudStatus?.('Datos iniciales guardados en la nube');
         window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
       }
       return;
@@ -948,6 +1180,7 @@
     window.snapshotState?.();
     window.saveLocal?.(window.__APP_STATE__);
     window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+    window.setCloudStatus?.('Sincronizado con la nube');
   }
 
   async function saveAll(nextState) {
@@ -955,20 +1188,24 @@
     const currentState = nextState || window.snapshotState?.() || window.__APP_STATE__;
     if (!currentState) return;
     window.saveLocal?.(currentState);
+    window.setCloudStatus?.('Sincronizando con la nube…');
     const { error } = await supabase.from("users_data").upsert({ id: user.id, data: currentState, updated_at: new Date().toISOString() });
     if (error) {
       console.error('Supabase save error', error);
+      window.setCloudStatus?.('Error al sincronizar');
+    } else {
+      window.setCloudStatus?.(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);
     }
   }
 
   window.loadCloud = loadCloud;
   window.saveAll = saveAll;
-  window.save = () => saveAll();
 
   try {
     await loadCloud();
   } catch (err) {
     console.error('No se pudo cargar el estado desde Supabase', err);
+    window.setCloudStatus?.('Error al cargar desde la nube');
   }
 
   try {
@@ -981,6 +1218,7 @@
         window.snapshotState?.();
         window.saveLocal?.(window.__APP_STATE__);
         window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+        window.setCloudStatus?.('Actualizado desde la nube');
       })
       .subscribe();
   } catch (err) {
