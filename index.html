@@ -366,6 +366,11 @@
     .cloud-buttons .btn{min-width:160px}
     body.phone .cloud-buttons{flex-direction:column;width:100%}
     body.phone .cloud-buttons .btn{width:100%}
+    .cloud-link-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:360px}
+    .cloud-link-controls input{flex:1;min-width:180px;height:34px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--text);padding:6px 10px;font-family:inherit}
+    body.phone .cloud-link-controls{flex-direction:column;align-items:stretch;max-width:none}
+    body.phone .cloud-link-controls input{width:100%}
+    .cloud-link-hint{font-size:11px;color:var(--muted);margin:6px 0 0}
     .settings-footnote{margin:0;font-size:12px;color:var(--muted);text-align:center;padding:16px 0;border-top:1px solid var(--line)}
     #cloudStatus{font-weight:600;color:var(--primary)}
     body.phone .settings-shell{flex-direction:column;border-radius:0}
@@ -575,6 +580,9 @@
               <div class="row"><div><label>Guardado automático local</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda automáticamente todos tus datos cada 10 minutos como respaldo en este dispositivo</p></div><input id="autoSaveLocal" type="checkbox" class="switch" checked /></div>
               <div class="row cloud-row"><div><label>Sincronización en la nube</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda o restaura tus datos manualmente desde Supabase</p><p class="hint" style="font-size:11px;color:var(--muted);margin:6px 0 0">Estado: <span id="cloudStatus">Sincronizando…</span></p></div>
                 <div class="cloud-buttons"><button id="cloudSave" class="btn small" type="button">Guardar en la nube</button><button id="cloudRestore" class="btn small" type="button">Restaurar de la nube</button></div>
+              </div>
+              <div class="row cloud-link-row"><div><label>Código de sincronización</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Usa el mismo código en todos tus dispositivos para compartir los datos guardados.</p><p class="cloud-link-hint" id="cloudLinkHint">Código actual: —</p></div>
+                <div class="cloud-link-controls"><input id="cloudLinkInput" type="text" placeholder="Pega o edita tu código" autocomplete="off" /><button id="copyCloudLink" class="btn small" type="button">Copiar</button><button id="applyCloudLink" class="btn small primary" type="button">Usar código</button></div>
               </div>
               <div class="row"><div><label>Guardar</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Guarda manualmente todos tus datos ahora</p></div><button id="manualSave" class="btn">Guardar</button></div>
               <div class="row"><div><label>Exportar respaldo</label><p class="hint" style="font-size:11px;color:var(--muted);margin:2px 0 0">Descarga una copia de todos tus datos en formato JSON</p></div><button id="export" class="btn">Exportar</button></div>
@@ -861,7 +869,7 @@
   const DEFAULT_TAGS=['meta','progreso','reflexion','imagen','pdf'];
   const MAX_SUGGESTED_TAGS=7;
   const MAX_TAG_LENGTH=10;
-  const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice(),suggestionSnooze:{},lastSuggestionAt:0};
+  const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice(),suggestionSnooze:{},lastSuggestionAt:0,cloudLinkId:''};
   const XP_DAILY_DEFAULT={date:'',xp:0,posts:false,reflections:false,habitsDone:[],goalsDone:[]};
   const DEFAULT_REWARDS=[{id:'r1',name:'Desbloquea Notas',req:50,type:'xp',description:''},{id:'r2',name:'Avatar Personalizado',req:100,type:'xp',description:''},{id:'r3',name:'Tema Especial',req:200,type:'xp',description:''},{id:'r4',name:'Nivel 5',req:5,type:'level',description:''},{id:'r5',name:'Nivel 10',req:10,type:'level',description:''},{id:'r6',name:'Badge Estrella',req:15,type:'level',description:''}];
   let posts=[];
@@ -990,6 +998,9 @@
   function normalizeText(str=''){return String(str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s#]/g,'').trim()}
   function formatGalleryDate(key){const today=new Date().toISOString().slice(0,10);const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);if(key===today)return 'Hoy';if(key===yesterday)return 'Ayer';try{return new Date(key).toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});}catch{return key}}
   function setCloudStatus(text){const el=$('#cloudStatus');if(el)el.textContent=text}
+  function getActiveCloudId(){const manual=(prefs.cloudLinkId||'').trim();if(manual)return manual;return window.supabaseUser?.id||''}
+  function updateCloudLinkUI(){const input=$('#cloudLinkInput');const hint=$('#cloudLinkHint');const current=getActiveCloudId();if(input&&(document.activeElement!==input||!input.value)){input.value=(prefs.cloudLinkId||'').trim()||current||''}if(hint)hint.textContent=`Código actual: ${current||'—'}`}
+  function setManualCloudId(id){prefs.cloudLinkId=(id||'').trim();save();updateCloudLinkUI();if(typeof window.refreshCloudChannel==='function')window.refreshCloudChannel()}
   window.setCloudStatus=setCloudStatus;
   function updateLocalTime(){const now=new Date();const opts={hour:'2-digit',minute:'2-digit',hour12:false,timeZone:prefs.tz||undefined};const timeStr=now.toLocaleTimeString('es-CL',opts);const timeHtml=`<span style="font-size:18px;font-weight:400;color:var(--text)">${timeStr}</span>`;if($('#localTime'))$('#localTime').innerHTML=timeHtml;if($('#localTimeMobile'))$('#localTimeMobile').innerHTML=timeHtml}
   function fmt(ts,show){const d=new Date(ts);const opts={day:'2-digit',month:'short',year:'numeric',timeZone:prefs.tz||undefined};const base=new Intl.DateTimeFormat('es-CL',opts).format(d);if(!show)return base;const t=d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',timeZone:prefs.tz||undefined});return `${base} · ${t}`}
@@ -1330,7 +1341,9 @@
   $('#manualSave')?.addEventListener('click',async()=>{await save();alert('Datos guardados correctamente')})
   $('#cloudSave')?.addEventListener('click',async()=>{setCloudStatus('Guardando…');try{if(window.saveAll){await window.saveAll();setCloudStatus(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);alert('Datos guardados en la nube')}else{saveLocal();setCloudStatus('Guardado en este dispositivo');alert('No hay conexión con la nube. Se creó un respaldo local.')}}catch(err){console.error('Error al guardar en la nube',err);setCloudStatus('Error al guardar');alert('No se pudo guardar en la nube')}})
   $('#cloudRestore')?.addEventListener('click',async()=>{setCloudStatus('Restaurando…');try{if(window.loadCloud){const restored=await window.loadCloud();if(restored){setCloudStatus('Datos restaurados desde la nube');alert('Datos restaurados desde la nube')}else{setCloudStatus('Sin datos en la nube');alert('No se encontraron datos guardados en la nube.')}}else{setCloudStatus('Sin conexión a la nube');alert('No hay sincronización en la nube disponible')}}catch(err){console.error('Error al restaurar desde la nube',err);setCloudStatus('Error al restaurar');alert('No se pudo restaurar desde la nube')}})
-  load();applyPrefs();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);setQuickMode('note');bootLoaded=true;
+  $('#applyCloudLink')?.addEventListener('click',()=>{const input=$('#cloudLinkInput');const value=(input?.value||'').trim();if(!value){setManualCloudId('');setCloudStatus('Se usará el código automático de este dispositivo.');alert('Código manual eliminado. Este dispositivo volverá a usar su propio ID.');return;}setManualCloudId(value);setCloudStatus('Código actualizado. Usa Guardar/Restaurar para sincronizar.');alert('Código aplicado. Ahora este dispositivo usará los mismos datos compartidos.')})
+  $('#copyCloudLink')?.addEventListener('click',async()=>{const source=($('#cloudLinkInput')?.value||'').trim()||getActiveCloudId();if(!source){alert('Aún no hay un código disponible. Guarda en la nube para generar uno.');return;}try{await navigator.clipboard.writeText(source);alert('Código copiado. Pégalo en tu otro dispositivo.')}catch(err){console.warn('Clipboard error',err);window.prompt('Copia tu código manualmente:',source)}})
+  load();applyPrefs();updateCloudLinkUI();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);setQuickMode('note');bootLoaded=true;
   let ticking=false;const scrollSources=[window,document.querySelector('main')].filter(Boolean);scrollSources.forEach(src=>{src.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onScroll(src)})},{passive:true})})
   document.addEventListener('click',()=>$$('.popover').forEach(p=>p.classList.remove('open')))
   $('#reset').addEventListener('click',async ()=>{if(!confirm('¿Estás seguro de que quieres restablecer todo? Esta acción eliminará todos tus datos permanentemente.'))return;if(!confirm('ADVERTENCIA: Esta acción no se puede deshacer. ¿Realmente quieres continuar?'))return;try{if(window.supabase && window.supabaseUser){await window.supabase.from('users_data').delete().eq('id',window.supabaseUser.id);}}catch(err){console.warn('No se pudo limpiar Supabase',err)}localStorage.clear();window.__APP_STATE__=window.createDefaultState?.();hydrateFromState(window.__APP_STATE__);snapshotState();saveLocal(window.__APP_STATE__);location.reload()})
@@ -1374,21 +1387,59 @@
 
     window.supabase = supabase;
     window.supabaseUser = user;
+    updateCloudLinkUI();
 
-    async function loadCloud() {
-      const { data, error } = await supabase.from("users_data").select("data").eq("id", user.id).single();
+    let realtimeChannel=null;
+    let subscribedId='';
+
+    const subscribeToCloud = id=>{
+      if(!id)return;
+      if(realtimeChannel){
+        supabase.removeChannel(realtimeChannel);
+        realtimeChannel=null;
+      }
+      try{
+        realtimeChannel = supabase.channel(`users_data_changes_${id}`)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'users_data', filter: `id=eq.${id}` }, payload => {
+            const incoming = payload.new?.data;
+            if (!incoming) return;
+            window.__APP_STATE__ = incoming;
+            window.hydrateFromState?.(window.__APP_STATE__);
+            window.snapshotState?.();
+            window.saveLocal?.(window.__APP_STATE__);
+            window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+            window.setCloudStatus?.('Actualizado desde la nube');
+          })
+          .subscribe();
+        subscribedId=id;
+      }catch(err){
+        console.warn('Supabase realtime subscription error', err);
+      }
+    };
+
+    window.refreshCloudChannel = ()=>{const target=getActiveCloudId();if(!target)return;if(target===subscribedId)return;subscribeToCloud(target)};
+
+    async function loadCloud(explicitId) {
+      const targetId=(explicitId||'').trim()||getActiveCloudId();
+      if(!targetId){
+        window.setCloudStatus?.('Define un código de sincronización para comenzar.');
+        return false;
+      }
+      const { data, error } = await supabase.from("users_data").select("data").eq("id", targetId).single();
       if (error && error.code !== 'PGRST116') {
         console.error('Supabase load error', error);
         return false;
       }
       if (!data?.data){
-        const localSnapshot = window.snapshotState?.() || window.__APP_STATE__ || window.createDefaultState?.();
-        if(localSnapshot){
-          window.__APP_STATE__=localSnapshot;
-          window.hydrateFromState?.(window.__APP_STATE__);
-          window.saveLocal?.(window.__APP_STATE__);
-          await saveAll(window.__APP_STATE__);
-          window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+        if(!(prefs.cloudLinkId||'').trim()){
+          const localSnapshot = window.snapshotState?.() || window.__APP_STATE__ || window.createDefaultState?.();
+          if(localSnapshot){
+            window.__APP_STATE__=localSnapshot;
+            window.hydrateFromState?.(window.__APP_STATE__);
+            window.saveLocal?.(window.__APP_STATE__);
+            await saveAll(window.__APP_STATE__);
+            window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+          }
         }
         window.setCloudStatus?.('Sin datos en la nube');
         return false;
@@ -1407,9 +1458,10 @@
     async function saveAll(nextState) {
       const currentState = nextState || window.snapshotState?.() || window.__APP_STATE__;
       if (!currentState) return;
+      const targetId=getActiveCloudId()||user.id;
       window.saveLocal?.(currentState);
       window.setCloudStatus?.('Sincronizando con la nube…');
-      const { error } = await supabase.from("users_data").upsert({ id: user.id, data: currentState, updated_at: new Date().toISOString() });
+      const { error } = await supabase.from("users_data").upsert({ id: targetId, data: currentState, updated_at: new Date().toISOString() });
       if (error) {
         console.error('Supabase save error', error);
         window.setCloudStatus?.('Error al sincronizar');
@@ -1427,23 +1479,7 @@
       console.error('No se pudo cargar el estado desde Supabase', err);
       window.setCloudStatus?.('Error al cargar desde la nube');
     }
-
-    try {
-      supabase.channel('users_data_changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'users_data', filter: `id=eq.${user.id}` }, payload => {
-          const incoming = payload.new?.data;
-          if (!incoming) return;
-          window.__APP_STATE__ = incoming;
-          window.hydrateFromState?.(window.__APP_STATE__);
-          window.snapshotState?.();
-          window.saveLocal?.(window.__APP_STATE__);
-          window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
-          window.setCloudStatus?.('Actualizado desde la nube');
-        })
-        .subscribe();
-    } catch (err) {
-      console.warn('Supabase realtime subscription error', err);
-    }
+    window.refreshCloudChannel();
   }
 
   initCloudSync();
