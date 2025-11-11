@@ -1329,7 +1329,7 @@
   $('#autoSaveLocal')?.addEventListener('change',e=>{prefs.autoSaveLocal=e.target.checked;save();initAutoSave()})
   $('#manualSave')?.addEventListener('click',async()=>{await save();alert('Datos guardados correctamente')})
   $('#cloudSave')?.addEventListener('click',async()=>{setCloudStatus('Guardando…');try{if(window.saveAll){await window.saveAll();setCloudStatus(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);alert('Datos guardados en la nube')}else{saveLocal();setCloudStatus('Guardado en este dispositivo');alert('No hay conexión con la nube. Se creó un respaldo local.')}}catch(err){console.error('Error al guardar en la nube',err);setCloudStatus('Error al guardar');alert('No se pudo guardar en la nube')}})
-  $('#cloudRestore')?.addEventListener('click',async()=>{setCloudStatus('Restaurando…');try{if(window.loadCloud){await window.loadCloud();setCloudStatus('Datos restaurados desde la nube');alert('Datos restaurados desde la nube')}else{setCloudStatus('Sin conexión a la nube');alert('No hay sincronización en la nube disponible')}}catch(err){console.error('Error al restaurar desde la nube',err);setCloudStatus('Error al restaurar');alert('No se pudo restaurar desde la nube')}})
+  $('#cloudRestore')?.addEventListener('click',async()=>{setCloudStatus('Restaurando…');try{if(window.loadCloud){const restored=await window.loadCloud();if(restored){setCloudStatus('Datos restaurados desde la nube');alert('Datos restaurados desde la nube')}else{setCloudStatus('Sin datos en la nube');alert('No se encontraron datos guardados en la nube.')}}else{setCloudStatus('Sin conexión a la nube');alert('No hay sincronización en la nube disponible')}}catch(err){console.error('Error al restaurar desde la nube',err);setCloudStatus('Error al restaurar');alert('No se pudo restaurar desde la nube')}})
   load();applyPrefs();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);setQuickMode('note');bootLoaded=true;
   let ticking=false;const scrollSources=[window,document.querySelector('main')].filter(Boolean);scrollSources.forEach(src=>{src.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onScroll(src)})},{passive:true})})
   document.addEventListener('click',()=>$$('.popover').forEach(p=>p.classList.remove('open')))
@@ -1379,6 +1379,7 @@
       const { data, error } = await supabase.from("users_data").select("data").eq("id", user.id).single();
       if (error && error.code !== 'PGRST116') {
         console.error('Supabase load error', error);
+        return false;
       }
       if (!data?.data){
         const localSnapshot = window.snapshotState?.() || window.__APP_STATE__ || window.createDefaultState?.();
@@ -1387,19 +1388,20 @@
           window.hydrateFromState?.(window.__APP_STATE__);
           window.saveLocal?.(window.__APP_STATE__);
           await saveAll(window.__APP_STATE__);
-          window.setCloudStatus?.('Datos iniciales guardados en la nube');
           window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
         }
-        return;
+        window.setCloudStatus?.('Sin datos en la nube');
+        return false;
       }
       const cloud = data.data && typeof data.data==='object' ? data.data : window.createDefaultState?.();
-      if (!cloud) return;
+      if (!cloud) return false;
       window.__APP_STATE__ = cloud;
       window.hydrateFromState?.(window.__APP_STATE__);
       window.snapshotState?.();
       window.saveLocal?.(window.__APP_STATE__);
       window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
       window.setCloudStatus?.('Sincronizado con la nube');
+      return true;
     }
 
     async function saveAll(nextState) {
