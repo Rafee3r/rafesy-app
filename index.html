@@ -1340,28 +1340,29 @@
   <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-  const SUPABASE_URL = "https://oiewxmssdztfwfwfuvah.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pZXd4bXNzZHp0Zndmd2Z1dmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MjM0MzMsImV4cCI6MjA3ODE5OTQzM30.QB0Tu4sANQgdCcfg420nkfLbvxRm0OOh7B1m9-9aFyg";
+  async function initCloudSync(){
+    const SUPABASE_URL = "https://oiewxmssdztfwfwfuvah.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pZXd4bXNzZHp0Zndmd2Z1dmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MjM0MzMsImV4cCI6MjA3ODE5OTQzM30.QB0Tu4sANQgdCcfg420nkfLbvxRm0OOh7B1m9-9aFyg";
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, detectSessionInUrl: false } });
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, detectSessionInUrl: false } });
 
-  async function ensureUser() {
-    const { data } = await supabase.auth.getUser();
-    if (data?.user) return data.user;
-    const { data: anonData, error } = await supabase.auth.signInAnonymously();
-    if (error) throw error;
-    return anonData.user;
-  }
-
-  let user;
-  try {
-    user = await ensureUser();
-  } catch (err) {
-    console.error('Supabase auth error', err);
-    if(String(err?.message||'').toLowerCase().includes('anonymous sign-ins are disabled')){
-      alert('Debes habilitar las sesiones anónimas en tu proyecto de Supabase (Auth → Providers → Anonymous) para sincronizar los datos en la nube.');
+    async function ensureUser() {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) return data.user;
+      const { data: anonData, error } = await supabase.auth.signInAnonymously();
+      if (error) throw error;
+      return anonData.user;
     }
-  }
+
+    let user;
+    try {
+      user = await ensureUser();
+    } catch (err) {
+      console.error('Supabase auth error', err);
+      if(String(err?.message||'').toLowerCase().includes('anonymous sign-ins are disabled')){
+        alert('Debes habilitar las sesiones anónimas en tu proyecto de Supabase (Auth → Providers → Anonymous) para sincronizar los datos en la nube.');
+      }
+    }
 
     if (!user) {
       console.warn('Supabase no disponible; se usará solo el almacenamiento local.');
@@ -1371,78 +1372,79 @@
       return;
     }
 
-  window.supabase = supabase;
-  window.supabaseUser = user;
+    window.supabase = supabase;
+    window.supabaseUser = user;
 
-  async function loadCloud() {
-    if (!user) return;
-    const { data, error } = await supabase.from("users_data").select("data").eq("id", user.id).single();
-    if (error && error.code !== 'PGRST116') {
-      console.error('Supabase load error', error);
-    }
-    if (!data?.data){
-      const localSnapshot = window.snapshotState?.() || window.__APP_STATE__ || window.createDefaultState?.();
-      if(localSnapshot){
-        window.__APP_STATE__=localSnapshot;
-        window.hydrateFromState?.(window.__APP_STATE__);
-        window.saveLocal?.(window.__APP_STATE__);
-        await saveAll(window.__APP_STATE__);
-        window.setCloudStatus?.('Datos iniciales guardados en la nube');
-        window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+    async function loadCloud() {
+      const { data, error } = await supabase.from("users_data").select("data").eq("id", user.id).single();
+      if (error && error.code !== 'PGRST116') {
+        console.error('Supabase load error', error);
       }
-      return;
+      if (!data?.data){
+        const localSnapshot = window.snapshotState?.() || window.__APP_STATE__ || window.createDefaultState?.();
+        if(localSnapshot){
+          window.__APP_STATE__=localSnapshot;
+          window.hydrateFromState?.(window.__APP_STATE__);
+          window.saveLocal?.(window.__APP_STATE__);
+          await saveAll(window.__APP_STATE__);
+          window.setCloudStatus?.('Datos iniciales guardados en la nube');
+          window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+        }
+        return;
+      }
+      const cloud = data.data && typeof data.data==='object' ? data.data : window.createDefaultState?.();
+      if (!cloud) return;
+      window.__APP_STATE__ = cloud;
+      window.hydrateFromState?.(window.__APP_STATE__);
+      window.snapshotState?.();
+      window.saveLocal?.(window.__APP_STATE__);
+      window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+      window.setCloudStatus?.('Sincronizado con la nube');
     }
-    const cloud = data.data && typeof data.data==='object' ? data.data : window.createDefaultState?.();
-    if (!cloud) return;
-    window.__APP_STATE__ = cloud;
-    window.hydrateFromState?.(window.__APP_STATE__);
-    window.snapshotState?.();
-    window.saveLocal?.(window.__APP_STATE__);
-    window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
-    window.setCloudStatus?.('Sincronizado con la nube');
-  }
 
-  async function saveAll(nextState) {
-    if (!user) return window.saveLocal?.();
-    const currentState = nextState || window.snapshotState?.() || window.__APP_STATE__;
-    if (!currentState) return;
-    window.saveLocal?.(currentState);
-    window.setCloudStatus?.('Sincronizando con la nube…');
-    const { error } = await supabase.from("users_data").upsert({ id: user.id, data: currentState, updated_at: new Date().toISOString() });
-    if (error) {
-      console.error('Supabase save error', error);
-      window.setCloudStatus?.('Error al sincronizar');
-    } else {
-      window.setCloudStatus?.(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);
+    async function saveAll(nextState) {
+      const currentState = nextState || window.snapshotState?.() || window.__APP_STATE__;
+      if (!currentState) return;
+      window.saveLocal?.(currentState);
+      window.setCloudStatus?.('Sincronizando con la nube…');
+      const { error } = await supabase.from("users_data").upsert({ id: user.id, data: currentState, updated_at: new Date().toISOString() });
+      if (error) {
+        console.error('Supabase save error', error);
+        window.setCloudStatus?.('Error al sincronizar');
+      } else {
+        window.setCloudStatus?.(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);
+      }
+    }
+
+    window.loadCloud = loadCloud;
+    window.saveAll = saveAll;
+
+    try {
+      await loadCloud();
+    } catch (err) {
+      console.error('No se pudo cargar el estado desde Supabase', err);
+      window.setCloudStatus?.('Error al cargar desde la nube');
+    }
+
+    try {
+      supabase.channel('users_data_changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'users_data', filter: `id=eq.${user.id}` }, payload => {
+          const incoming = payload.new?.data;
+          if (!incoming) return;
+          window.__APP_STATE__ = incoming;
+          window.hydrateFromState?.(window.__APP_STATE__);
+          window.snapshotState?.();
+          window.saveLocal?.(window.__APP_STATE__);
+          window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
+          window.setCloudStatus?.('Actualizado desde la nube');
+        })
+        .subscribe();
+    } catch (err) {
+      console.warn('Supabase realtime subscription error', err);
     }
   }
 
-  window.loadCloud = loadCloud;
-  window.saveAll = saveAll;
-
-  try {
-    await loadCloud();
-  } catch (err) {
-    console.error('No se pudo cargar el estado desde Supabase', err);
-    window.setCloudStatus?.('Error al cargar desde la nube');
-  }
-
-  try {
-    supabase.channel('users_data_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'users_data', filter: `id=eq.${user.id}` }, payload => {
-        const incoming = payload.new?.data;
-        if (!incoming) return;
-        window.__APP_STATE__ = incoming;
-        window.hydrateFromState?.(window.__APP_STATE__);
-        window.snapshotState?.();
-        window.saveLocal?.(window.__APP_STATE__);
-        window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
-        window.setCloudStatus?.('Actualizado desde la nube');
-      })
-      .subscribe();
-  } catch (err) {
-    console.warn('Supabase realtime subscription error', err);
-  }
+  initCloudSync();
   </script>
 </body>
 </html>
