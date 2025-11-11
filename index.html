@@ -867,6 +867,25 @@
   const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
   const STORE_POSTS='rafesy:posts:v7'; const STORE_PREFS='rafesy:prefs:v7'; const STORE_GOALS='rafesy:goals:v5'; const STORE_AVATAR='rafesy:avatar:v1'; const STORE_REMIND='rafesy:reminders:v2'; const STORE_HABITS='rafesy:habits:v2'; const STORE_HABITLIST='rafesy:habitlist:v1'; const STORE_REFLECTIONS='rafesy:reflections:v1'; const STORE_APP_START='rafesy:appStart:v1'; const STORE_XP='rafesy:xp:v1'; const STORE_AUTO_BACKUP='rafesy:autoBackup';
   const DEFAULT_TAGS=['meta','progreso','reflexion','imagen','pdf'];
+  const DEVICE_ID_KEY='rafesy:deviceId';
+  function generateDeviceId(){
+    try{
+      if(typeof crypto!=='undefined'&&crypto.randomUUID)return crypto.randomUUID();
+    }catch(e){}
+    return 'dev-'+Math.random().toString(16).slice(2)+Date.now().toString(16);
+  }
+  const DEVICE_ID=(()=>{
+    try{
+      const stored=localStorage.getItem(DEVICE_ID_KEY);
+      if(stored)return stored;
+      const next=generateDeviceId();
+      localStorage.setItem(DEVICE_ID_KEY,next);
+      return next;
+    }catch(e){
+      return generateDeviceId();
+    }
+  })();
+  window.RAFESY_DEVICE_ID=DEVICE_ID;
   const MAX_SUGGESTED_TAGS=7;
   const MAX_TAG_LENGTH=10;
   const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice(),suggestionSnooze:{},lastSuggestionAt:0,cloudLinkId:''};
@@ -919,6 +938,8 @@
   }
   function hydrateFromState(state){
     const target=state&&typeof state==='object'?state:createDefaultState();
+    if(!target.meta||typeof target.meta!=='object')target.meta={};
+    if(!target.meta.deviceId)target.meta.deviceId=DEVICE_ID;
     if(!Array.isArray(target.posts))target.posts=[];
     posts=target.posts;
     target.prefs={...PREFS_DEFAULT,...(target.prefs||{})};
@@ -954,6 +975,9 @@
   function syncAppState(){return hydrateFromState(window.__APP_STATE__||createDefaultState())}
   function snapshotState(){
     const state=window.__APP_STATE__||createDefaultState();
+    if(!state.meta||typeof state.meta!=='object')state.meta={};
+    state.meta.deviceId=DEVICE_ID;
+    state.meta.updatedAt=Date.now();
     state.posts=posts;
     state.prefs=prefs;
     state.goals=goals;
@@ -973,6 +997,27 @@
   window.__APP_STATE__=window.__APP_STATE__||createDefaultState();
   hydrateFromState(window.__APP_STATE__);
   snapshotState();
+
+  function refreshAllViews(){
+    renderInit();
+    renderGoals();
+    renderCalendar();
+    renderHabitsPanel();
+    updateDashboard();
+    renderRewards();
+    renderGallery();
+  }
+  window.refreshAllViews=refreshAllViews;
+
+  function applyStateAndRender(nextState){
+    if(!nextState)return;
+    hydrateFromState(nextState);
+    const snapshot=snapshotState();
+    saveLocal(snapshot);
+    applyPrefs();
+    refreshAllViews();
+  }
+  window.applyStateAndRender=applyStateAndRender;
 
   function saveLocal(state){const snapshot=state||snapshotState();try{localStorage.setItem(STORE_POSTS,JSON.stringify(snapshot.posts||[]));localStorage.setItem(STORE_PREFS,JSON.stringify(snapshot.prefs||{}));localStorage.setItem(STORE_GOALS,JSON.stringify(snapshot.goals||{week:[],month:[]}));localStorage.setItem(STORE_REMIND,JSON.stringify(snapshot.reminders||[]));localStorage.setItem(STORE_HABITS,JSON.stringify(snapshot.habits||{}));localStorage.setItem(STORE_HABITLIST,JSON.stringify(snapshot.habitList||[]));localStorage.setItem(STORE_REFLECTIONS,JSON.stringify(snapshot.reflections||{}));localStorage.setItem('rafesy:xpDaily',JSON.stringify(snapshot.xpDaily||XP_DAILY_DEFAULT));localStorage.setItem('rafesy:rewards',JSON.stringify(snapshot.rewards||[]));localStorage.setItem(STORE_APP_START,String(snapshot.appStartTime||Date.now()));if(snapshot.avatar){localStorage.setItem(STORE_AVATAR,snapshot.avatar);}else{localStorage.removeItem(STORE_AVATAR);}autoBackup();}catch(e){console.warn('No se pudo guardar en localStorage',e)}return snapshot}
   function save(){const snapshot=snapshotState();return window.saveAll?window.saveAll(snapshot):saveLocal(snapshot)}
@@ -1005,7 +1050,10 @@
     const snapshot=snapshotState();
     saveLocal(snapshot);
     updateCloudLinkUI();
-    if(typeof window.refreshCloudChannel==='function')window.refreshCloudChannel();
+    if(typeof window.refreshCloudChannel==='function')window.refreshCloudChannel(true);
+    if(window.cloudSync&&typeof window.cloudSync.handleManualCodeChange==='function'){
+      window.cloudSync.handleManualCodeChange().catch(err=>console.warn('Manual cloud link sync failed',err));
+    }
   }
   window.setCloudStatus=setCloudStatus;
   function updateLocalTime(){const now=new Date();const opts={hour:'2-digit',minute:'2-digit',hour12:false,timeZone:prefs.tz||undefined};const timeStr=now.toLocaleTimeString('es-CL',opts);const timeHtml=`<span style="font-size:18px;font-weight:400;color:var(--text)">${timeStr}</span>`;if($('#localTime'))$('#localTime').innerHTML=timeHtml;if($('#localTimeMobile'))$('#localTimeMobile').innerHTML=timeHtml}
@@ -1345,9 +1393,87 @@
   function initAutoSave(){if(autoSaveInterval)clearInterval(autoSaveInterval);if(prefs.autoSaveLocal){autoSaveInterval=setInterval(()=>{save()},600000)}}
   $('#autoSaveLocal')?.addEventListener('change',e=>{prefs.autoSaveLocal=e.target.checked;save();initAutoSave()})
   $('#manualSave')?.addEventListener('click',async()=>{await save();alert('Datos guardados correctamente')})
-  $('#cloudSave')?.addEventListener('click',async()=>{setCloudStatus('Guardando…');try{if(window.saveAll){await window.saveAll();setCloudStatus(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);alert('Datos guardados en la nube')}else{saveLocal();setCloudStatus('Guardado en este dispositivo');alert('No hay conexión con la nube. Se creó un respaldo local.')}}catch(err){console.error('Error al guardar en la nube',err);setCloudStatus('Error al guardar');alert('No se pudo guardar en la nube')}})
-  $('#cloudRestore')?.addEventListener('click',async()=>{setCloudStatus('Restaurando…');try{if(window.loadCloud){const restored=await window.loadCloud();if(restored){setCloudStatus('Datos restaurados desde la nube');alert('Datos restaurados desde la nube')}else{setCloudStatus('Sin datos en la nube');alert('No se encontraron datos guardados en la nube.')}}else{setCloudStatus('Sin conexión a la nube');alert('No hay sincronización en la nube disponible')}}catch(err){console.error('Error al restaurar desde la nube',err);setCloudStatus('Error al restaurar');alert('No se pudo restaurar desde la nube')}})
-  $('#applyCloudLink')?.addEventListener('click',async()=>{const input=$('#cloudLinkInput');const value=(input?.value||'').trim();if(!value){setManualCloudId('');setCloudStatus('Se usará el código automático de este dispositivo.');if(window.loadCloud){try{await window.loadCloud()}catch(e){console.warn('Reload after clearing cloud link failed',e)}}alert('Código manual eliminado. Este dispositivo volverá a usar su propio ID.');return;}setManualCloudId(value);setCloudStatus('Código actualizado. Buscando datos compartidos…');if(window.loadCloud){try{const restored=await window.loadCloud(value);if(restored){setCloudStatus('Datos sincronizados desde el código compartido');alert('Código aplicado y datos sincronizados correctamente.')}else{setCloudStatus('Sin datos en la nube');alert('Código aplicado, pero todavía no hay datos guardados con ese código.')}}catch(err){console.error('Error al sincronizar con código personalizado',err);setCloudStatus('No se pudo sincronizar. Intenta nuevamente.');alert('No se pudo cargar la información del código compartido. Revisa tu conexión e inténtalo otra vez.')}}else{setCloudStatus('Código aplicado. Usa Guardar/Restaurar para sincronizar.');alert('Código aplicado. Cuando la conexión esté lista, toca “Restaurar de la nube”.')}})
+  $('#cloudSave')?.addEventListener('click',async()=>{
+    setCloudStatus('Guardando…');
+    try{
+      if(window.cloudSync&&typeof window.cloudSync.flushNow==='function'){
+        await window.cloudSync.flushNow('manual');
+        setCloudStatus(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);
+        alert('Datos guardados en la nube');
+      }else{
+        const snapshot=snapshotState();
+        saveLocal(snapshot);
+        setCloudStatus('Guardado en este dispositivo');
+        alert('No hay conexión con la nube. Se creó un respaldo local.');
+      }
+    }catch(err){
+      console.error('Error al guardar en la nube',err);
+      setCloudStatus('Error al guardar');
+      alert('No se pudo guardar en la nube');
+    }
+  })
+  $('#cloudRestore')?.addEventListener('click',async()=>{
+    setCloudStatus('Restaurando…');
+    try{
+      if(window.loadCloud){
+        const restored=await window.loadCloud();
+        if(restored==='loaded'){
+          setCloudStatus('Datos restaurados desde la nube');
+          alert('Datos restaurados desde la nube');
+        }else if(restored==='empty'){
+          setCloudStatus('Sin datos en la nube');
+          alert('No se encontraron datos guardados en la nube.');
+        }else{
+          setCloudStatus('Error al restaurar');
+          alert('No se pudo restaurar desde la nube');
+        }
+      }else{
+        setCloudStatus('Sin conexión a la nube');
+        alert('No hay sincronización en la nube disponible');
+      }
+    }catch(err){
+      console.error('Error al restaurar desde la nube',err);
+      setCloudStatus('Error al restaurar');
+      alert('No se pudo restaurar desde la nube');
+    }
+  })
+  $('#applyCloudLink')?.addEventListener('click',async()=>{
+    const input=$('#cloudLinkInput');
+    const value=(input?.value||'').trim();
+    if(!value){
+      setManualCloudId('');
+      setCloudStatus('Se usará el código automático de este dispositivo.');
+      if(window.loadCloud){
+        try{await window.loadCloud();}catch(e){console.warn('Reload after clearing cloud link failed',e)}
+      }
+      alert('Código manual eliminado. Este dispositivo volverá a usar su propio ID.');
+      return;
+    }
+    setManualCloudId(value);
+    setCloudStatus('Código actualizado. Buscando datos compartidos…');
+    if(window.loadCloud){
+      try{
+        const restored=await window.loadCloud(value);
+        if(restored==='loaded'){
+          setCloudStatus('Datos sincronizados desde el código compartido');
+          alert('Código aplicado y datos sincronizados correctamente.');
+        }else if(restored==='empty'){
+          setCloudStatus('Sin datos en la nube');
+          alert('Código aplicado, pero todavía no hay datos guardados con ese código.');
+        }else{
+          setCloudStatus('No se pudo sincronizar. Intenta nuevamente.');
+          alert('No se pudo cargar la información del código compartido. Revisa tu conexión e inténtalo otra vez.');
+        }
+      }catch(err){
+        console.error('Error al sincronizar con código personalizado',err);
+        setCloudStatus('No se pudo sincronizar. Intenta nuevamente.');
+        alert('No se pudo cargar la información del código compartido. Revisa tu conexión e inténtalo otra vez.');
+      }
+    }else{
+      setCloudStatus('Código aplicado. Usa Guardar/Restaurar para sincronizar.');
+      alert('Código aplicado. Cuando la conexión esté lista, toca “Restaurar de la nube”.');
+    }
+  })
   $('#copyCloudLink')?.addEventListener('click',async()=>{const source=($('#cloudLinkInput')?.value||'').trim()||getActiveCloudId();if(!source){alert('Aún no hay un código disponible. Guarda en la nube para generar uno.');return;}try{await navigator.clipboard.writeText(source);alert('Código copiado. Pégalo en tu otro dispositivo.')}catch(err){console.warn('Clipboard error',err);window.prompt('Copia tu código manualmente:',source)}})
   load();applyPrefs();updateCloudLinkUI();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);setQuickMode('note');bootLoaded=true;
   let ticking=false;const scrollSources=[window,document.querySelector('main')].filter(Boolean);scrollSources.forEach(src=>{src.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onScroll(src)})},{passive:true})})
@@ -1359,133 +1485,259 @@
   <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+  const SUPABASE_URL = "https://oiewxmssdztfwfwfuvah.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pZXd4bXNzZHp0Zndmd2Z1dmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MjM0MzMsImV4cCI6MjA3ODE5OTQzM30.QB0Tu4sANQgdCcfg420nkfLbvxRm0OOh7B1m9-9aFyg";
+  const CLOUD_TABLE='users_data';
+  const CLOUD_TABLE_SQL=`
+create table if not exists public.users_data (
+  id text primary key,
+  data jsonb not null,
+  updated_at timestamptz not null default now(),
+  device_id text
+);
+
+alter table public.users_data enable row level security;
+
+create policy "authenticated_full_access" on public.users_data
+  for all
+  using (auth.role() = 'authenticated')
+  with check (auth.role() = 'authenticated');
+`;
+  let missingTableWarned=false;
+
+  const updateStatus=text=>window.setCloudStatus?.(text);
+
+  function showMissingTableHelp(){
+    if(missingTableWarned)return;
+    missingTableWarned=true;
+    console.warn('Falta la tabla public.users_data en Supabase.');
+    alert('Tu proyecto de Supabase no tiene la tabla public.users_data.\nEjecuta este SQL en el editor de Supabase:\n\n'+CLOUD_TABLE_SQL.trim());
+  }
+
   async function initCloudSync(){
-    const SUPABASE_URL = "https://oiewxmssdztfwfwfuvah.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pZXd4bXNzZHp0Zndmd2Z1dmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2MjM0MzMsImV4cCI6MjA3ODE5OTQzM30.QB0Tu4sANQgdCcfg420nkfLbvxRm0OOh7B1m9-9aFyg";
+    const supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,detectSessionInUrl:false}});
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, detectSessionInUrl: false } });
-
-    async function ensureUser() {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) return data.user;
-      const { data: anonData, error } = await supabase.auth.signInAnonymously();
-      if (error) throw error;
+    async function ensureUser(){
+      const { data }=await supabase.auth.getUser();
+      if(data?.user)return data.user;
+      const { data:anonData,error }=await supabase.auth.signInAnonymously();
+      if(error)throw error;
       return anonData.user;
     }
 
-    let user;
-    try {
-      user = await ensureUser();
-    } catch (err) {
-      console.error('Supabase auth error', err);
+    let user=null;
+    try{
+      user=await ensureUser();
+    }catch(err){
+      console.error('Supabase auth error',err);
       if(String(err?.message||'').toLowerCase().includes('anonymous sign-ins are disabled')){
-        alert('Debes habilitar las sesiones anónimas en tu proyecto de Supabase (Auth → Providers → Anonymous) para sincronizar los datos en la nube.');
+        alert('Debes habilitar las sesiones anónimas en tu proyecto de Supabase (Auth → Providers → Anonymous) para sincronizar.');
       }
     }
 
-    if (!user) {
+    if(!user){
       console.warn('Supabase no disponible; se usará solo el almacenamiento local.');
-      window.loadCloud = async ()=>{};
-      window.saveAll = async next=>window.saveLocal?.(next);
-      window.setCloudStatus?.('Modo sin conexión');
+      window.cloudSync=null;
+      window.loadCloud=async()=>false;
+      window.saveAll=next=>window.saveLocal?.(next);
+      window.refreshCloudChannel=()=>{};
+      updateStatus('Modo sin conexión');
       return;
     }
 
-    window.supabase = supabase;
-    window.supabaseUser = user;
+    window.supabase=supabase;
+    window.supabaseUser=user;
     updateCloudLinkUI();
 
+    const cloudSync=createCloudManager({supabase,user});
+    window.cloudSync=cloudSync;
+    window.saveAll=snapshot=>cloudSync.queueSave(snapshot);
+    window.loadCloud=cloudSync.pullLatest;
+    window.refreshCloudChannel=force=>cloudSync.refreshChannel(force);
+
+    let initialLoadResult=false;
+    try{
+      initialLoadResult=await cloudSync.pullLatest();
+    }catch(err){
+      console.error('No se pudo cargar el estado desde Supabase',err);
+      updateStatus('Error al cargar desde la nube');
+    }
+
+    if(initialLoadResult==='empty'){
+      await cloudSync.queueSave(window.snapshotState?.(),{force:true,reason:'bootstrap'});
+    }
+
+    cloudSync.refreshChannel(true);
+  }
+
+  function createCloudManager({supabase,user}){
     let realtimeChannel=null;
     let subscribedId='';
+    let pendingSnapshot=null;
+    let saveTimer=null;
+    let pushing=false;
+    let applyingRemote=false;
+    let lastServerStamp=window.__APP_STATE__?.meta?.updatedAt||0;
+    const SAVE_DELAY=1400;
 
-    const subscribeToCloud = id=>{
+    const getTargetId=()=> (prefs.cloudLinkId||'').trim()||user.id;
+
+    function queueSave(snapshot,options={}){
+      const state=snapshot||window.snapshotState?.()||window.__APP_STATE__;
+      if(!state)return Promise.resolve();
+      if(applyingRemote){
+        window.saveLocal?.(state);
+        return Promise.resolve();
+      }
+      pendingSnapshot=state;
+      window.saveLocal?.(state);
+      if(options.force){
+        return pushNow(options.reason||'manual');
+      }
+      if(saveTimer)clearTimeout(saveTimer);
+      const delay=('delay'in options)?options.delay:SAVE_DELAY;
+      return new Promise(resolve=>{
+        saveTimer=setTimeout(()=>{
+          saveTimer=null;
+          pushNow(options.reason||'auto').then(resolve).catch(resolve);
+        },delay);
+      });
+    }
+
+    async function pushNow(reason='auto'){
+      if(!pendingSnapshot){
+        const fallback=window.snapshotState?.()||window.__APP_STATE__;
+        if(!fallback)return;
+        window.saveLocal?.(fallback);
+        pendingSnapshot=fallback;
+      }
+      if(pushing)return;
+      pushing=true;
+      try{
+        while(pendingSnapshot){
+          const state=pendingSnapshot;
+          pendingSnapshot=null;
+          await upsertState(state,reason);
+          reason='auto';
+        }
+      }finally{
+        pushing=false;
+      }
+    }
+
+    async function upsertState(state,reason){
+      const targetId=getTargetId();
+      if(!targetId){
+        updateStatus('Define un código de sincronización para la nube.');
+        return;
+      }
+      if(!state.meta||typeof state.meta!=='object')state.meta={};
+      state.meta.deviceId=window.RAFESY_DEVICE_ID;
+      state.meta.updatedAt=Date.now();
+      updateStatus(reason==='manual'?'Guardando en la nube…':'Sincronizando…');
+      try{
+        const { data,error }=await supabase
+          .from(CLOUD_TABLE)
+          .upsert({id:targetId,data:state,device_id:window.RAFESY_DEVICE_ID,updated_at:new Date().toISOString()},{onConflict:'id'})
+          .select('updated_at')
+          .single();
+        if(error)throw error;
+        const ts=new Date(data?.updated_at||Date.now()).getTime();
+        if(Number.isFinite(ts))lastServerStamp=ts;
+        updateStatus(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);
+      }catch(err){
+        handleCloudError(err);
+        pendingSnapshot=state;
+        throw err;
+      }
+    }
+
+    function handleCloudError(err){
+      console.error('Supabase cloud error',err);
+      if(err?.code==='42P01')showMissingTableHelp();
+      updateStatus('Error al sincronizar');
+    }
+
+    async function pullLatest(explicitId){
+      const targetId=(explicitId||'').trim()||getTargetId();
+      if(!targetId){
+        updateStatus('Define un código de sincronización para comenzar.');
+        return false;
+      }
+      updateStatus('Cargando datos de la nube…');
+      try{
+        const { data,error }=await supabase
+          .from(CLOUD_TABLE)
+          .select('data, updated_at')
+          .eq('id',targetId)
+          .maybeSingle();
+        if(error){
+          if(error.code==='42P01'){showMissingTableHelp();return false;}
+          throw error;
+        }
+        if(!data){
+          updateStatus('Sin datos en la nube');
+          return 'empty';
+        }
+        const ts=new Date(data.updated_at||Date.now()).getTime();
+        applyingRemote=true;
+        window.applyStateAndRender?.(data.data);
+        applyingRemote=false;
+        if(Number.isFinite(ts))lastServerStamp=ts;
+        updateStatus('Sincronizado con la nube');
+        return 'loaded';
+      }catch(err){
+        applyingRemote=false;
+        handleCloudError(err);
+        return false;
+      }
+    }
+
+    function subscribeTo(id){
       if(!id)return;
       if(realtimeChannel){
         supabase.removeChannel(realtimeChannel);
         realtimeChannel=null;
       }
       try{
-        realtimeChannel = supabase.channel(`users_data_changes_${id}`)
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'users_data', filter: `id=eq.${id}` }, payload => {
-            const incoming = payload.new?.data;
-            if (!incoming) return;
-            window.__APP_STATE__ = incoming;
-            window.hydrateFromState?.(window.__APP_STATE__);
-            window.snapshotState?.();
-            window.saveLocal?.(window.__APP_STATE__);
-            window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
-            window.setCloudStatus?.('Actualizado desde la nube');
+        realtimeChannel=supabase.channel(`users_data_${id}`)
+          .on('postgres_changes',{event:'*',schema:'public',table:CLOUD_TABLE,filter:`id=eq.${id}`},payload=>{
+            const incoming=payload.new;
+            if(!incoming?.data)return;
+            const ts=new Date(incoming.updated_at||Date.now()).getTime();
+            if(Number.isFinite(ts)&&ts<=lastServerStamp)return;
+            if(Number.isFinite(ts))lastServerStamp=ts;
+            applyingRemote=true;
+            window.applyStateAndRender?.(incoming.data);
+            applyingRemote=false;
+            updateStatus('Actualizado desde la nube');
           })
           .subscribe();
         subscribedId=id;
       }catch(err){
-        console.warn('Supabase realtime subscription error', err);
+        console.warn('Supabase realtime subscription error',err);
       }
+    }
+
+    function refreshChannel(force=false){
+      const target=getTargetId();
+      if(!target)return;
+      if(!force&&target===subscribedId)return;
+      subscribeTo(target);
+    }
+
+    async function handleManualCodeChange(){
+      refreshChannel(true);
+      await pushNow('code-change');
+    }
+
+    return{
+      queueSave,
+      flushNow:(reason='manual')=>queueSave(window.snapshotState?.(),{force:true,reason,delay:0}),
+      pullLatest,
+      refreshChannel,
+      handleManualCodeChange
     };
-
-    window.refreshCloudChannel = ()=>{const target=getActiveCloudId();if(!target)return;if(target===subscribedId)return;subscribeToCloud(target)};
-
-    async function loadCloud(explicitId) {
-      const targetId=(explicitId||'').trim()||getActiveCloudId();
-      if(!targetId){
-        window.setCloudStatus?.('Define un código de sincronización para comenzar.');
-        return false;
-      }
-      const { data, error } = await supabase.from("users_data").select("data").eq("id", targetId).single();
-      if (error && error.code !== 'PGRST116') {
-        console.error('Supabase load error', error);
-        return false;
-      }
-      if (!data?.data){
-        if(!(prefs.cloudLinkId||'').trim()){
-          const localSnapshot = window.snapshotState?.() || window.__APP_STATE__ || window.createDefaultState?.();
-          if(localSnapshot){
-            window.__APP_STATE__=localSnapshot;
-            window.hydrateFromState?.(window.__APP_STATE__);
-            window.saveLocal?.(window.__APP_STATE__);
-            await saveAll(window.__APP_STATE__);
-            window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
-          }
-        }
-        window.setCloudStatus?.('Sin datos en la nube');
-        return false;
-      }
-      const cloud = data.data && typeof data.data==='object' ? data.data : window.createDefaultState?.();
-      if (!cloud) return false;
-      window.__APP_STATE__ = cloud;
-      window.hydrateFromState?.(window.__APP_STATE__);
-      window.snapshotState?.();
-      window.saveLocal?.(window.__APP_STATE__);
-      window.renderInit?.(); window.renderGoals?.(); window.renderCalendar?.(); window.renderHabitsPanel?.(); window.updateDashboard?.(); window.renderRewards?.(); window.renderGallery?.();
-      window.setCloudStatus?.('Sincronizado con la nube');
-      return true;
-    }
-
-    async function saveAll(nextState) {
-      const currentState = nextState || window.snapshotState?.() || window.__APP_STATE__;
-      if (!currentState) return;
-      const targetId=getActiveCloudId()||user.id;
-      window.saveLocal?.(currentState);
-      window.setCloudStatus?.('Sincronizando con la nube…');
-      const { error } = await supabase.from("users_data").upsert({ id: targetId, data: currentState, updated_at: new Date().toISOString() });
-      if (error) {
-        console.error('Supabase save error', error);
-        window.setCloudStatus?.('Error al sincronizar');
-      } else {
-        window.setCloudStatus?.(`Última sincronización: ${new Date().toLocaleTimeString('es-CL')}`);
-      }
-    }
-
-    window.loadCloud = loadCloud;
-    window.saveAll = saveAll;
-
-    try {
-      await loadCloud();
-    } catch (err) {
-      console.error('No se pudo cargar el estado desde Supabase', err);
-      window.setCloudStatus?.('Error al cargar desde la nube');
-    }
-    window.refreshCloudChannel();
   }
 
   initCloudSync();
