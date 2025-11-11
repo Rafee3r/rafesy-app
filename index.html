@@ -11,19 +11,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
   <title>Rafesy — Business</title>
   <style>
-    :root{--bg:#05070b;--bg-soft:#0c1118;--line:#151c26;--text:#e8f1ff;--muted:#90a0b5;--primary:#6fdcff;--shadow:0 8px 24px rgba(0,0,0,.35);--radius:16px;--density:1;--danger:#ff4a4a;--success:#28d17c;--panel:linear-gradient(180deg,rgba(24,30,42,.95),rgba(10,14,22,.92));--panel-light:linear-gradient(180deg,rgba(247,249,255,.96),rgba(226,235,250,.92));--surface:#05080c}
+    :root{--bg:#05070b;--bg-soft:#0c1118;--line:#151c26;--text:#e8f1ff;--muted:#90a0b5;--primary:#6fdcff;--shadow:0 8px 24px rgba(0,0,0,.35);--radius:16px;--density:1;--danger:#ff4a4a;--success:#28d17c;--panel:linear-gradient(180deg,rgba(24,30,42,.95),rgba(10,14,22,.92));--panel-light:linear-gradient(180deg,rgba(247,249,255,.96),rgba(226,235,250,.92));--surface:#05080c;--safe-top:env(safe-area-inset-top,0px);--wrap-pad:clamp(14px,3vw,32px);--panel-max:1180px}
     body.theme-light{--bg:#f3f6fb;--bg-soft:#ffffff;--line:#d8e1ee;--text:#0b1220;--muted:#5b6b80;--surface:#f0f4fb}
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font:calc(15px*var(--density))/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;overflow-x:hidden;min-height:100dvh;display:flex;flex-direction:column}
+    body{margin:0;background:var(--bg);color:var(--text);font:calc(15px*var(--density))/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;overflow-x:hidden;min-height:100dvh;display:flex;flex-direction:column;padding-top:calc(64px + var(--safe-top))}
     a{color:var(--primary);text-decoration:none}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .wrap{max-width:1180px;margin:0 auto;padding:0 16px;flex:1 1 auto;width:100%}
+    .wrap{max-width:var(--panel-max);margin:0 auto;padding:0 var(--wrap-pad);flex:1 1 auto;width:100%}
     header>.wrap{position:relative}
 
     body.settings-open{overflow:hidden}
+    body.pomodoro-open{overflow:hidden}
 
-    header{position:fixed;top:0;left:0;right:0;z-index:60;backdrop-filter:saturate(140%) blur(12px);background:rgba(11,15,20,.88);border-bottom:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+    header{position:fixed;top:0;left:0;right:0;z-index:60;backdrop-filter:saturate(140%) blur(12px);background:rgba(11,15,20,.88);border-bottom:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.35);padding-top:var(--safe-top)}
     body.theme-light header{background:rgba(243,246,251,.9);box-shadow:0 6px 18px rgba(16,28,46,.14)}
     .bar{display:flex;align-items:center;height:64px;gap:12px}
     .bar-main{display:flex;align-items:center;width:100%;gap:18px}
@@ -49,10 +50,10 @@
     #localTimeMobile{display:none}
     #gearMobile{display:none}
     body.phone #localTimeMobile{display:none!important}
-    body.phone #gearMobile{display:grid!important;flex-shrink:0;position:fixed;top:12px;right:16px;z-index:100}
+    body.phone #gearMobile{display:grid!important;flex-shrink:0;position:fixed;top:calc(12px + var(--safe-top));right:16px;z-index:100}
     body.phone .bar-right{display:none}
     body.phone .bar{height:58px;padding:0 56px;justify-content:center}
-    body.phone #sidebarToggle{position:fixed;left:12px;top:12px;transform:none;margin:0;border-radius:10px;width:36px;height:36px;z-index:100}
+    body.phone #sidebarToggle{position:fixed;left:12px;top:calc(12px + var(--safe-top));transform:none;margin:0;border-radius:10px;width:36px;height:36px;z-index:100}
     body.phone .brand{margin:0 auto;text-align:center;font-size:18px;display:flex;align-items:center;gap:6px}
     body.phone .brand span:last-child{display:inline}
     body.phone .brand .dot{margin-right:0}
@@ -70,17 +71,17 @@
     body.phone .tabs-mobile .tab.active{color:var(--primary);background:rgba(111,220,255,.12);border-color:rgba(111,220,255,.2);transform:translateY(-2px)}
     body.phone .tabs-mobile .tab.active .tab-icon{background:var(--primary);color:#000;transform:scale(1.08)}
     .mobile-tabs-container{display:none}
-    body.phone .mobile-tabs-container{display:block;position:sticky;top:58px;z-index:65;background:var(--bg);padding:0;border-bottom:1px solid var(--line);box-shadow:0 12px 24px rgba(0,0,0,.45);margin-top:-1px}
+    body.phone .mobile-tabs-container{display:block;position:sticky;top:calc(58px + var(--safe-top));z-index:65;background:var(--bg);padding:0;border-bottom:1px solid var(--line);box-shadow:0 12px 24px rgba(0,0,0,.45);margin-top:-1px}
     body.phone .mobile-tabs-container .tabs-mobile{display:flex!important;gap:8px;overflow-x:auto;padding:8px 16px;margin:0 auto}
     @media (max-width:768px){
       header .tabs:not(.tabs-mobile){display:none!important}
       header #gear,header #localTime{display:none!important}
-      header #gearMobile{display:grid!important;flex-shrink:0;position:fixed;top:12px;right:16px;z-index:100}
+      header #gearMobile{display:grid!important;flex-shrink:0;position:fixed;top:calc(12px + var(--safe-top));right:16px;z-index:100}
       header .bar{height:58px;padding:0 56px;justify-content:center}
       header .bar-right{display:none}
       header .bar-main{gap:6px;justify-content:center;width:100%}
       header .bar-left{gap:8px;justify-content:center;flex:1;position:relative}
-      #sidebarToggle{display:inline-flex;position:fixed;left:12px;top:12px;margin:0;flex-shrink:0;border-radius:10px;width:36px;height:36px;z-index:110}
+      #sidebarToggle{display:inline-flex;position:fixed;left:12px;top:calc(12px + var(--safe-top));margin:0;flex-shrink:0;border-radius:10px;width:36px;height:36px;z-index:110}
       header .brand{margin:0 auto;text-align:center;font-size:18px}
       header .brand .dot{margin-right:0}
       main{padding-bottom:calc(320px + env(safe-area-inset-bottom))}
@@ -88,11 +89,11 @@
       .composer{padding:0;border-top-left-radius:18px;border-top-right-radius:18px;bottom:0}
     }
 
-    .layout{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start;min-height:calc(100dvh - 64px);padding-top:20px}
+    .layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start;min-height:calc(100dvh - 64px);padding-top:20px}
     body.phone .layout{grid-template-columns:1fr;padding-top:12px}
-    body.phone{padding-top:64px!important}
-    .panel-view{max-width:860px;margin:0 auto;padding:0 4px 260px}
-    body.phone .panel-view{padding:0 0 200px}
+    body.phone{padding-top:calc(64px + var(--safe-top))!important}
+    .panel-view{max-width:var(--panel-max);margin:0 auto;padding:0 var(--wrap-pad) clamp(220px,24vh,280px)}
+    body.phone .panel-view{padding:0 clamp(10px,4vw,18px) clamp(220px,32vh,320px);width:100%;max-width:100%;margin:0}
 
     aside.left{position:sticky;top:84px;align-self:start;display:grid;gap:18px;max-height:calc(100vh - 96px);overflow-y:auto;overflow-x:visible;padding:24px 22px 240px;margin-left:-2px;background:var(--panel);border:1px solid rgba(111,220,255,.24);border-radius:26px;box-shadow:0 24px 68px rgba(0,0,0,.32);backdrop-filter:blur(12px);scrollbar-width:none;-ms-overflow-style:none}
     body.theme-light aside.left{background:var(--panel-light);border-color:rgba(111,220,255,.24);box-shadow:0 24px 60px rgba(16,28,46,.16)}
@@ -108,7 +109,7 @@
     body.theme-light.phone aside.left{background:var(--panel-light)}
     body.phone aside.left.open{left:0}
     #sidebarToggle{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--primary);color:#000;box-shadow:0 10px 22px rgba(111,220,255,.35);cursor:pointer;font-size:20px}
-    body.phone #sidebarToggle{display:inline-flex;position:fixed;left:12px;top:12px;margin:0;flex-shrink:0;border-radius:10px;width:36px;height:36px;z-index:100}
+    body.phone #sidebarToggle{display:inline-flex;position:fixed;left:12px;top:calc(12px + var(--safe-top));margin:0;flex-shrink:0;border-radius:10px;width:36px;height:36px;z-index:100}
     .card{border:1px solid var(--line);background:var(--bg-soft);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;position:relative;margin-right:8px;margin-left:0}
     .profile{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center}
     .avatar{width:64px;height:64px;border-radius:50%;border:2px solid var(--line);object-fit:cover}
@@ -183,7 +184,7 @@
     .tag-edit-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
     body.theme-light .tag-edit-btn{background:rgba(111,220,255,.18);color:#0b0f14}
     body.phone .feed-head{position:relative;top:auto}
-    body.phone .feed-search-row{flex-direction:column;align-items:stretch;border-radius:0;padding:0;gap:10px;min-height:auto}
+    body.phone .feed-search-row{flex-direction:column;align-items:stretch;border-radius:0;padding:0 12px;gap:10px;min-height:auto}
     body.phone .search-input{width:100%}
     body.phone #clearSearch{align-self:auto}
     body.phone .search-tags-wrap{display:none;flex:1 1 100%;width:auto;max-width:none;min-width:120px;padding:10px 14px;height:auto;border:1px solid rgba(111,220,255,.3);background:rgba(111,220,255,.08);backdrop-filter:blur(10px);white-space:normal;align-items:flex-start;flex-wrap:wrap;border-radius:16px;box-shadow:0 12px 26px rgba(0,0,0,.35);opacity:0;transform:translateY(-6px);pointer-events:none}
@@ -201,7 +202,8 @@
     }
     .search{flex:1;border:1px solid var(--line);background:var(--bg-soft);border-radius:14px;padding:10px 12px;color:var(--text);box-shadow:0 10px 28px rgba(0,0,0,.25)}
     body.theme-light .search{box-shadow:0 10px 24px rgba(16,28,46,.08)}
-    .feed{width:100%;max-width:min(760px,90vw);margin:0 auto 160px;padding:0 8px 140px;position:relative}
+    .feed{width:100%;max-width:min(900px,94vw);margin:0 auto clamp(140px,20vh,200px);padding:0 var(--wrap-pad) clamp(160px,24vh,220px);position:relative}
+    .feed.feed-narrow{max-width:min(760px,94vw)}
     @media (max-width:1100px){
       .feed{max-width:min(680px,94vw)}
     }
@@ -214,7 +216,7 @@
     @media (orientation:portrait) and (min-width:600px){
       body:not(.phone) .feed{max-width:min(620px,92vw)}
     }
-    body.phone .feed{margin:0 auto 240px;padding:0 12px calc(220px + env(safe-area-inset-bottom))}
+    body.phone .feed{margin:0 auto clamp(220px,32vh,320px);padding:0 clamp(12px,5vw,24px) calc(220px + env(safe-area-inset-bottom))}
     .feed-list{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:12px;padding:0}
     .feed-list .post{margin:0;width:100%;max-width:100%}
     @media (max-width:540px){
@@ -399,14 +401,225 @@
     .cal-cell{aspect-ratio:1/1;border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;font-size:12px;color:var(--muted);cursor:pointer}
     .cal-cell.active{background:rgba(111,220,255,.2);color:var(--text);border-color:var(--primary)}
     .streak{font-size:12px;color:var(--muted)}
-    #main-habits .feed{width:100%;max-width:100%;margin:0 auto 200px;padding:0 8px 140px}
-    #main-habits .feed>.card{width:100%}
-    body.phone #main-habits .feed{display:flex;flex-direction:column;padding:0 6px calc(220px + env(safe-area-inset-bottom));margin:0 auto 240px}
-    body.phone #main-habits .feed>.card{width:100%;max-width:100%;margin:0 0 12px}
-    #main-habits .card{margin:0 0 12px;width:100%}
+    #main-habits.panel-view{max-width:min(1180px,96vw);width:100%}
+    #main-habits .feed{width:100%;max-width:100%;margin:0 auto 200px;padding:0 12px 140px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;grid-auto-flow:row dense;align-items:start}
+    @media (max-width:1100px){
+      #main-habits.panel-view{max-width:min(1000px,94vw)}
+      #main-habits .feed{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    }
+    @media (max-width:900px){
+      #main-habits.panel-view{max-width:min(860px,96vw)}
+      #main-habits .feed{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    }
+    body.phone #main-habits .feed{margin:0 auto 240px;padding:0 16px calc(220px + env(safe-area-inset-bottom));max-width:100%;width:100%;display:flex;flex-direction:column;gap:12px}
+    #main-habits .feed> :first-child{grid-column:1/-1}
+    #main-habits .feed>.card{width:100%;height:100%}
+    #main-habits .card{margin:0!important;width:100%;background:rgba(8,12,18,.88);border:1px solid rgba(255,255,255,.05);box-shadow:none}
+    body.theme-light #main-habits .card{background:rgba(255,255,255,.92);border-color:rgba(16,28,46,.1)}
+    body.pure-black #main-habits .card{background:#000;border-color:#0f0f0f}
+    #main-habits .habits-head{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0}
+    #main-habits .habits-head h2{margin:0;font-size:26px}
+    #main-habits .habits-head .btn{flex-shrink:0}
+    #main-habits .habit-full{grid-column:1/-1}
+    @media (min-width:980px){
+      #main-habits .habit-span-2{grid-column:span 2}
+    }
     #main-habits .card:last-child{margin-bottom:0}
+    #tate{padding:24px;display:flex;align-items:center;justify-content:space-between;gap:18px;text-align:left;line-height:1.6;position:relative;background:linear-gradient(135deg,rgba(18,28,44,.95),rgba(6,12,20,.9));border:1px solid rgba(111,220,255,.25)}
+    body.theme-light #tate{background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(230,240,255,.94));border-color:rgba(111,220,255,.35)}
+    body.pure-black #tate{background:linear-gradient(135deg,#020202,#050505);border-color:#111}
+    #tate .habit-quote__text{flex:1;display:flex;flex-direction:column;gap:4px}
+    .habit-quote__hint{margin:0;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+    #quoteText{margin:0;font-size:15px;color:var(--text)}
+    #tate .habit-quote__btn{position:static;width:44px;height:44px;border-radius:50%;padding:0}
+    #habitStats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;text-align:center}
+    .habit-metric{padding:14px;border-radius:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;min-height:96px}
+    body.theme-light .habit-metric{background:rgba(255,255,255,.9);border-color:rgba(16,28,46,.08)}
+    body.pure-black .habit-metric{background:#070707;border-color:#111}
+    .habit-metric__value{font-size:26px;font-weight:700;color:var(--primary)}
+    .habit-metric__label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .habit-checklist #dailyHabitsChecklist{display:flex;flex-direction:column;gap:10px}
+    .habit-card-title{margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600}
+    .habit-duo{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+    .habit-reflection textarea{width:100%;min-height:80px;max-height:200px;resize:vertical;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.02);color:var(--text);padding:10px}
+    body.theme-light .habit-reflection textarea{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:var(--text)}
+    body.pure-black .habit-reflection textarea{background:#050505;border-color:#111}
+    .habit-summary{display:flex;flex-direction:column;gap:8px}
+    .habit-summary h3{margin-bottom:4px!important}
+    .habit-chart canvas{width:100%!important}
+    #reflectionHistoryList{max-height:300px;overflow-y:auto}
+    #reflectionHistoryList::-webkit-scrollbar{width:8px}
+    #reflectionHistoryList::-webkit-scrollbar-track{background:transparent}
+    #reflectionHistoryList::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+    #reflectionHistoryList::-webkit-scrollbar-thumb:hover{background:rgba(111,220,255,.4)}
+    @media (max-width:600px){
+      #habitStats{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+    }
     body.phone #habitStats{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))!important;justify-items:center;text-align:center;gap:10px}
     body.phone #habitStats>div{padding:8px 0}
+    .habit-form{display:flex;gap:8px;margin-top:12px}
+    .habit-form input,
+    .habit-form button{min-height:42px}
+    #newHabitName{flex:1}
+    #newHabitMinutes{width:110px}
+    @media (max-width:640px){
+      .habit-form{flex-direction:column;align-items:stretch}
+      .habit-form input,
+      .habit-form button{width:100%}
+      #newHabitMinutes{width:100%}
+    }
+    .habit-reflection__actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .habit-calendar #habitList{margin-top:12px}
+    .habit-calendar canvas{margin-top:12px}
+    .habit-row{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.01);transition:background .2s,border .2s}
+    .habit-row.done{background:rgba(40,209,124,.08);border-color:rgba(40,209,124,.35)}
+    body.pure-black .habit-row{background:#060606;border-color:#131313}
+    body.pure-black .habit-row.done{background:rgba(40,209,124,.14);border-color:#1f3d2e}
+    .habit-row__check{display:flex;align-items:center}
+    .habit-row__check input{width:20px;height:20px;cursor:pointer}
+    .habit-row__content{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+    .habit-row__name{font-size:14px;font-weight:600;color:var(--text);word-break:break-word}
+    .habit-row__minutes{font-size:12px;color:var(--muted)}
+    .habit-row__actions{display:flex;gap:8px;align-items:center}
+    .habit-row__delete{height:32px;padding:0 12px;font-size:14px}
+    @media (max-width:600px){
+      .habit-row{flex-wrap:wrap}
+      .habit-row input[type="checkbox"]{width:20px;height:20px}
+      .habit-row__actions{width:100%;justify-content:flex-end}
+    }
+    #main-habits canvas{width:100%!important;max-width:100%;height:auto;max-height:260px}
+    @media (max-width:600px){
+      #main-habits canvas{max-height:220px}
+    }
+    body.phone #main-habits .feed{gap:20px;padding-top:20px;scroll-snap-type:y proximity}
+    body.phone #main-habits .feed>.card{animation-delay:.05s}
+    body.phone #main-habits .card,
+    body.phone #main-habits .habit-duo>.card{position:relative;scroll-snap-align:start;border-radius:24px;border:1px solid rgba(111,220,255,.28);background:linear-gradient(145deg,rgba(111,220,255,.08),rgba(8,12,18,.96));box-shadow:0 22px 46px rgba(0,0,0,.45);overflow:hidden;animation:habitCardPop .55s ease}
+    body.theme-light.phone #main-habits .card,
+    body.theme-light.phone #main-habits .habit-duo>.card{background:linear-gradient(145deg,rgba(111,220,255,.18),rgba(255,255,255,.98));border-color:rgba(16,28,46,.18);box-shadow:0 18px 36px rgba(16,28,46,.18)}
+    body.pure-black.phone #main-habits .card,
+    body.pure-black.phone #main-habits .habit-duo>.card{background:linear-gradient(145deg,#020202,#090909);border-color:#131313;box-shadow:none}
+    body.phone #main-habits .card::after,
+    body.phone #main-habits .habit-duo>.card::after{content:"";position:absolute;inset:auto 0 0 0;height:4px;background:linear-gradient(90deg,var(--primary),transparent);opacity:.85}
+    body.phone #main-habits .habits-head{flex-direction:column;align-items:flex-start;gap:6px;padding-bottom:4px}
+    #focusMode{display:inline-flex;align-items:center;gap:8px;padding:0 18px;font-weight:600;letter-spacing:.02em}
+    #focusMode svg{width:18px;height:18px}
+    body.phone #focusMode{width:100%}
+    .habits-head__title{display:flex;flex-direction:column;gap:4px}
+    .habit-head-tagline{margin:0;font-size:13px;color:var(--muted);letter-spacing:.04em}
+    body.phone .habit-head-tagline{font-size:14px;color:var(--primary);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+    #main-habits .habit-card-title{transition:color .2s}
+    body.phone #main-habits .habit-card-title{color:var(--text);display:flex;align-items:center;gap:8px;font-size:15px;margin-bottom:14px}
+    .habit-card-title[data-emoji]::before{content:attr(data-emoji);font-size:20px;line-height:1}
+    body.phone #tate{flex-direction:column;text-align:center;gap:14px;padding:26px;background:linear-gradient(150deg,rgba(111,220,255,.16),rgba(6,12,20,.92))}
+    body.theme-light.phone #tate{background:linear-gradient(150deg,rgba(111,220,255,.18),rgba(250,252,255,.98))}
+    #habitStats{position:relative}
+    body.phone #habitStats{padding:22px 18px 18px;gap:14px}
+    body.phone #habitStats::before{content:"Pulso de h\u00e1bitos";display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;margin-bottom:4px}
+    body.phone #habitStats .habit-metric{position:relative;width:100%;padding:16px 12px 14px;align-items:flex-start;text-align:left;min-height:104px;border:1px solid rgba(111,220,255,.35);background:rgba(6,10,18,.9);box-shadow:0 12px 28px rgba(0,0,0,.35)}
+    body.theme-light.phone #habitStats .habit-metric{background:rgba(255,255,255,.95);border-color:rgba(16,28,46,.18)}
+    body.pure-black.phone #habitStats .habit-metric{background:#040404;border-color:#151515;box-shadow:none}
+    body.phone #habitStats .habit-metric::before{content:attr(data-emoji);font-size:18px;position:absolute;top:-12px;left:12px}
+    body.phone #habitStats .habit-metric__value{font-size:24px}
+    body.phone #habitStats .habit-metric__label{font-size:11px}
+    body.phone #main-habits .habit-duo{display:flex;flex-direction:column;gap:16px}
+    body.phone #main-habits .habit-reflection textarea{min-height:130px;border-radius:16px;border:1px solid rgba(111,220,255,.28);background:rgba(0,0,0,.25);box-shadow:inset 0 6px 18px rgba(0,0,0,.35)}
+    body.theme-light.phone #main-habits .habit-reflection textarea{background:rgba(255,255,255,.96);border-color:rgba(16,28,46,.18);box-shadow:inset 0 6px 18px rgba(16,28,46,.12)}
+    body.phone #main-habits .habit-reflection__actions{flex-direction:column;align-items:stretch}
+    body.phone #main-habits .habit-reflection__actions .btn{width:100%}
+    body.phone #main-habits .habit-summary{border-left:4px solid var(--primary);background:rgba(255,255,255,.02);padding:10px 14px;border-radius:18px}
+    body.theme-light.phone #main-habits .habit-summary{background:rgba(111,220,255,.08)}
+    body.phone #main-habits .habit-checklist{padding:24px 20px 26px}
+    body.phone #main-habits .habit-form{flex-direction:column;gap:10px;background:rgba(255,255,255,.02);border-radius:18px;padding:12px}
+    body.theme-light.phone #main-habits .habit-form{background:rgba(0,0,0,.04)}
+    body.phone #main-habits .habit-form input,
+    body.phone #main-habits .habit-form button{width:100%}
+    body.phone #main-habits .habit-row{border:1px dashed rgba(111,220,255,.35);background:rgba(111,220,255,.04);border-radius:16px;padding:12px;transform-origin:center;transition:transform .2s,box-shadow .2s}
+    body.phone #main-habits .habit-row:active{transform:scale(.99)}
+    body.theme-light.phone #main-habits .habit-row{background:rgba(111,220,255,.12);border-color:rgba(111,220,255,.35)}
+    body.phone #main-habits .habit-row.done{background:rgba(40,209,124,.18);border-color:rgba(40,209,124,.5)}
+    body.phone #main-habits .habit-row__actions{width:100%;justify-content:space-between}
+    body.phone #main-habits .habit-row__delete{flex:1}
+    body.phone #main-habits .habit-chart canvas,
+    body.phone #main-habits .habit-calendar canvas{background:rgba(0,0,0,.3);border-radius:18px;padding:10px}
+    body.theme-light.phone #main-habits .habit-chart canvas,
+    body.theme-light.phone #main-habits .habit-calendar canvas{background:rgba(255,255,255,.9)}
+    body.phone #main-habits .habit-calendar .streak{font-size:13px;color:var(--primary);font-weight:600}
+    body.phone #main-habits #reflectionHistory{border-left:4px solid rgba(111,220,255,.4)}
+    @media (min-width:1280px){
+      #main-habits .feed{grid-template-columns:repeat(12,minmax(0,1fr));gap:22px;grid-auto-flow:row dense}
+      #main-habits .habits-head{grid-column:1/-1}
+      #tate{grid-column:1/span5}
+      #habitStats{grid-column:6/span7}
+      #main-habits .card.habit-checklist{grid-column:1/span7}
+      #main-habits .habit-duo{grid-column:8/span5;grid-template-columns:1fr}
+      #reflectionHistory{grid-column:8/span5}
+      #main-habits .habit-chart{grid-column:1/span8}
+      .card-ranking{grid-column:9/span4}
+      .card-monthly{grid-column:1/span6}
+      #main-habits .habit-calendar{grid-column:7/span6}
+    }
+    @keyframes habitCardPop{
+      0%{transform:translateY(18px) scale(.97);opacity:0}
+      100%{transform:translateY(0) scale(1);opacity:1}
+    }
+    .pomodoro-overlay{position:fixed;inset:0;padding:24px;background:rgba(5,7,12,.85);backdrop-filter:blur(22px);display:flex;align-items:center;justify-content:center;z-index:140}
+    .pomodoro-overlay.hidden{display:none}
+    .pomodoro-card{width:min(520px,96vw);border-radius:32px;background:linear-gradient(180deg,rgba(18,24,36,.95),rgba(8,12,20,.94));border:1px solid rgba(111,220,255,.25);box-shadow:0 28px 80px rgba(0,0,0,.55);padding:32px;position:relative}
+    body.theme-light .pomodoro-overlay{background:rgba(240,244,252,.92)}
+    body.theme-light .pomodoro-card{background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(232,238,250,.94));border-color:rgba(16,28,46,.08);box-shadow:0 24px 64px rgba(16,28,46,.2)}
+    body.pure-black .pomodoro-overlay{background:rgba(0,0,0,.92)}
+    body.pure-black .pomodoro-card{background:#020202;border-color:#111;box-shadow:0 28px 52px rgba(0,0,0,.85)}
+    .pomodoro-close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
+    .pomodoro-kicker{margin:0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+    .pomodoro-card h3{margin:6px 0 4px;font-size:24px}
+    .pomodoro-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:18px 0 10px}
+    .pomodoro-tab{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.02);cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.08em}
+    .pomodoro-tab.active{color:var(--primary);border-color:var(--primary);background:rgba(111,220,255,.18);box-shadow:0 12px 28px rgba(111,220,255,.22)}
+    body.theme-light .pomodoro-tab{background:rgba(255,255,255,.8);border-color:rgba(16,28,46,.08)}
+    body.theme-light .pomodoro-tab.active{background:rgba(111,220,255,.28)}
+    .pomodoro-timer{text-align:center;margin:14px 0 18px}
+    .pomodoro-time{font-size:64px;font-weight:800;letter-spacing:.08em;color:var(--text)}
+    .pomodoro-status{font-size:14px;color:var(--muted);margin-top:6px}
+    .pomodoro-progress{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:18px}
+    .pomodoro-progress>div{height:100%;width:0%;background:var(--primary);transition:width .3s ease}
+    .pomodoro-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0 6px}
+    .pomodoro-actions .btn{flex:1 1 150px}
+    .pomodoro-main{font-size:16px;font-weight:700;min-height:52px}
+    .pomodoro-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}
+    .pomodoro-stats div{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:12px;text-align:center}
+    body.theme-light .pomodoro-stats div{background:rgba(255,255,255,.9);border-color:rgba(16,28,46,.08)}
+    .pomodoro-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:6px}
+    .pomodoro-config{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:10px}
+    .pomodoro-field{display:flex;flex-direction:column;gap:4px}
+    .pomodoro-field label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+    .pomodoro-field input{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--bg);color:var(--text);font-size:14px}
+    body.theme-light .pomodoro-field input{background:#fff;color:#0b1220}
+    .pomodoro-field small{font-size:11px;color:var(--muted)}
+    .pomodoro-toggle{display:flex;align-items:center;gap:8px;padding:10px;border-radius:14px;border:1px dashed rgba(255,255,255,.15);background:rgba(255,255,255,.02);font-size:13px;color:var(--text)}
+    .pomodoro-toggle input{width:18px;height:18px}
+    body.theme-light .pomodoro-toggle{background:rgba(255,255,255,.9);border-color:rgba(16,28,46,.12)}
+    body.phone .pomodoro-card{width:100%;padding:24px}
+    body.phone .pomodoro-actions .btn{flex:1 1 100%}
+    body.phone .pomodoro-config{grid-template-columns:1fr}
+    @media (max-width:1200px){
+      body:not(.phone) .layout{grid-template-columns:260px minmax(0,1fr);gap:20px}
+      body:not(.phone) aside.left{padding:20px 18px 220px}
+    }
+    @media (max-width:1024px){
+      body:not(.phone) .layout{grid-template-columns:230px minmax(0,1fr)}
+      body:not(.phone) aside.left{top:72px}
+    }
+    @media (max-width:900px){
+      body:not(.phone) .layout{grid-template-columns:1fr;gap:18px}
+      body:not(.phone) aside.left{position:relative;top:auto;width:100%;max-height:none;margin:0 auto 18px;padding:18px 16px 32px;border-radius:22px}
+      body:not(.phone) main{padding:12px 0 clamp(230px,32vh,300px)}
+    }
+    @media (max-width:640px){
+      body:not(.phone) .wrap{padding:0 clamp(10px,5vw,16px)}
+      body:not(.phone) .panel-view{padding:0 clamp(10px,5vw,16px) clamp(200px,30vh,300px)}
+      body:not(.phone) .feed{padding:0 clamp(10px,5vw,16px) clamp(200px,32vh,320px)}
+    }
 
     .switch{appearance:none;-webkit-appearance:none;width:48px;height:28px;border-radius:999px;background:#303a4a;position:relative;outline:none;border:1px solid var(--line);cursor:pointer;transition:background .2s}
     .switch::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:transform .2s}
@@ -419,7 +632,7 @@
     details.row[open]>summary::after{transform:rotate(180deg)}
   </style>
 </head>
-<body style="padding-top:64px">
+<body>
   <header>
     <div class="wrap">
       <div class="bar">
@@ -662,7 +875,7 @@
 
       <main>
         <div id="main-dashboard" class="panel-view hidden">
-          <div class="feed" style="max-width:760px">
+          <div class="feed feed-narrow">
             <h2>Dashboard Personal</h2>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
               <div class="card" style="text-align:center">
@@ -722,75 +935,92 @@
 
         <div id="main-habits" class="panel-view hidden">
           <div class="feed">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-              <h2 style="margin:0">Hábitos</h2>
-              <button id="focusMode" class="btn">Modo Focus</button>
+            <div class="habits-head">
+              <div class="habits-head__title">
+                <h2>Hábitos</h2>
+                <p class="habit-head-tagline">Pequeños retos, grandes victorias</p>
+              </div>
+              <button id="focusMode" class="btn" type="button" aria-haspopup="dialog">Pomodoro</button>
             </div>
-            <div id="tate" class="card" style="padding:16px;margin-bottom:12px;font-size:15px;line-height:1.6;text-align:center;position:relative">
-              <button id="playQuote" class="btn" style="position:absolute;top:8px;right:8px;width:32px;height:32px;padding:0">▶</button>
-              <p id="quoteText" class="p-sub" style="margin:0"></p>
+            <div id="tate" class="card habit-full habit-quote">
+              <div class="habit-quote__text">
+                <p class="habit-quote__hint">Asume responsabilidad: tu vida es tu responsabilidad, no la de otros.</p>
+                <p id="quoteText" class="p-sub"></p>
+              </div>
+              <button id="playQuote" class="btn habit-quote__btn" type="button" aria-label="Reproducir frase">▶</button>
             </div>
-            <div id="habitStats" class="card" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px;text-align:center">
-              <div><div style="font-size:24px;font-weight:700;color:var(--primary)" id="dailyPercent">0%</div><div style="font-size:12px;color:var(--muted)">Hoy</div></div>
-              <div><div style="font-size:24px;font-weight:700;color:var(--primary)" id="weeklyPercent">0%</div><div style="font-size:12px;color:var(--muted)">Semana</div></div>
-              <div><div style="font-size:24px;font-weight:700;color:var(--primary)" id="monthlyPercent">0%</div><div style="font-size:12px;color:var(--muted)">Mes</div></div>
-              <div><div style="font-size:24px;font-weight:700;color:var(--primary)" id="totalPoints">0</div><div style="font-size:12px;color:var(--muted)">Puntos</div></div>
-              <div><div style="font-size:24px;font-weight:700;color:var(--primary)" id="productiveHours">0h</div><div style="font-size:12px;color:var(--muted)">Horas</div></div>
+            <div id="habitStats" class="card habit-full habit-metrics">
+              <div class="habit-metric" data-emoji="⚡">
+                <span id="dailyPercent" class="habit-metric__value">0%</span>
+                <span class="habit-metric__label">Hoy</span>
+              </div>
+              <div class="habit-metric" data-emoji="📅">
+                <span id="weeklyPercent" class="habit-metric__value">0%</span>
+                <span class="habit-metric__label">Semana</span>
+              </div>
+              <div class="habit-metric" data-emoji="🌙">
+                <span id="monthlyPercent" class="habit-metric__value">0%</span>
+                <span class="habit-metric__label">Mes</span>
+              </div>
+              <div class="habit-metric" data-emoji="🎯">
+                <span id="totalPoints" class="habit-metric__value">0</span>
+                <span class="habit-metric__label">Puntos</span>
+              </div>
+              <div class="habit-metric" data-emoji="⏱️">
+                <span id="productiveHours" class="habit-metric__value">0h</span>
+                <span class="habit-metric__label">Horas</span>
+              </div>
             </div>
-            <div class="card" style="margin-bottom:12px">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Checklist de Hábitos Diarios</h3>
+            <div class="card habit-checklist habit-full">
+              <h3 class="habit-card-title" data-emoji="🧩">Checklist de Hábitos Diarios</h3>
               <div id="dailyHabitsChecklist"></div>
-              <div style="display:flex;gap:8px;margin-top:12px">
-                <input id="newHabitName" class="search" placeholder="Nombre del hábito..." style="flex:1"/>
-                <input id="newHabitMinutes" type="number" class="search" placeholder="Minutos" style="width:100px" min="0"/>
+              <div class="habit-form">
+                <input id="newHabitName" class="search" placeholder="Nombre del hábito..."/>
+                <input id="newHabitMinutes" type="number" class="search" placeholder="Minutos" min="0"/>
                 <button id="addHabit" class="btn">Agregar</button>
               </div>
             </div>
-            <div class="card" style="margin-bottom:12px">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Reflexión del Día</h3>
-              <textarea id="dailyReflection" class="ta" placeholder="¿Qué hice bien hoy? ¿Qué puedo mejorar?..." style="min-height:80px;max-height:200px;width:100%;resize:vertical"></textarea>
-              <div style="display:flex;gap:8px;margin-top:8px">
-                <button id="saveReflection" class="btn">Guardar</button>
-                <button id="viewReflectionHistory" class="btn">Ver Historial</button>
+            <div class="habit-duo habit-full">
+              <div class="card habit-reflection">
+                <h3 class="habit-card-title" data-emoji="🌙">Reflexión del Día</h3>
+                <textarea id="dailyReflection" class="ta" placeholder="¿Qué hice bien hoy? ¿Qué puedo mejorar?…"></textarea>
+                <div class="habit-reflection__actions">
+                  <button id="saveReflection" class="btn">Guardar</button>
+                  <button id="viewReflectionHistory" class="btn">Ver Historial</button>
+                </div>
+              </div>
+              <div class="card habit-summary">
+                <h3 class="habit-card-title" data-emoji="📌">Resumen Semanal</h3>
+                <div id="weeklySummary"></div>
               </div>
             </div>
-            <div id="reflectionHistory" class="card hidden" style="margin-bottom:12px">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Historial de Reflexiones</h3>
-              <div id="reflectionHistoryList" style="max-height:300px;overflow-y:auto"></div>
-            <style>
-            #reflectionHistoryList::-webkit-scrollbar{width:8px}
-            #reflectionHistoryList::-webkit-scrollbar-track{background:transparent}
-            #reflectionHistoryList::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
-            #reflectionHistoryList::-webkit-scrollbar-thumb:hover{background:rgba(111,220,255,.4)}
-            </style>
+            <div id="reflectionHistory" class="card habit-full hidden">
+              <h3 class="habit-card-title" data-emoji="🕰️">Historial de Reflexiones</h3>
+              <div id="reflectionHistoryList"></div>
             </div>
-            <div class="card" style="margin-bottom:12px">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Progreso Semanal</h3>
-              <canvas id="weeklyChart" width="720" height="200" style="width:100%;height:200px"></canvas>
+            <div class="card habit-span-2 habit-chart">
+              <h3 class="habit-card-title" data-emoji="📈">Progreso Semanal</h3>
+              <canvas id="weeklyChart" width="720" height="200"></canvas>
             </div>
-            <div class="card" style="margin-bottom:12px">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Resumen Semanal</h3>
-              <div id="weeklySummary"></div>
-            </div>
-            <div class="card" style="margin-bottom:12px">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Ranking Personal</h3>
+            <div class="card card-ranking">
+              <h3 class="habit-card-title" data-emoji="🏅">Ranking Personal</h3>
               <div id="personalRanking"></div>
             </div>
-            <div class="card" style="margin-bottom:12px">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Comparación Mes a Mes</h3>
-              <canvas id="monthlyComparison" width="720" height="180" style="width:100%;height:180px"></canvas>
+            <div class="card card-monthly">
+              <h3 class="habit-card-title" data-emoji="📊">Comparación Mes a Mes</h3>
+              <canvas id="monthlyComparison" width="720" height="180"></canvas>
             </div>
-            <div class="card">
-              <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);font-weight:600">Calendario y Racha</h3>
+            <div class="card habit-full habit-calendar">
+              <h3 class="habit-card-title" data-emoji="📆">Calendario y Racha</h3>
               <div class="streak">Racha actual: <span id="streakCount">0</span> días</div>
-              <div id="habitList" style="margin-top:12px"></div>
-              <canvas id="habitChart" width="720" height="180" style="width:100%;height:180px;margin-top:12px"></canvas>
+              <div id="habitList"></div>
+              <canvas id="habitChart" width="720" height="180"></canvas>
             </div>
           </div>
         </div>
 
         <div id="main-images" class="panel-view hidden">
-          <div class="feed" style="max-width:760px">
+          <div class="feed feed-narrow">
             <h2>Imágenes</h2>
             <div id="gallery" class="gallery"></div>
             <div id="galleryInfo" style="margin-top:12px;display:none;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg-soft)">
@@ -799,7 +1029,7 @@
           </div>
         </div>
         <div id="main-rewards" class="panel-view hidden">
-          <div class="feed" style="max-width:760px">
+          <div class="feed feed-narrow">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
               <h2 style="margin:0">Rewards</h2>
               <button id="addReward" class="btn">+ Agregar Recompensa</button>
@@ -821,6 +1051,66 @@
   </div>
 
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true"><img alt="imagen"/></div>
+
+  <div id="pomodoroOverlay" class="pomodoro-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="pomodoroTitle">
+    <div class="pomodoro-card">
+      <button id="closePomodoro" class="pomodoro-close" type="button" aria-label="Cerrar Pomodoro">×</button>
+      <p class="pomodoro-kicker">Ritmo constante</p>
+      <h3 id="pomodoroTitle">Sesión Pomodoro</h3>
+      <div class="pomodoro-tabs" role="tablist">
+        <button type="button" class="pomodoro-tab active" data-mode="work">Enfoque</button>
+        <button type="button" class="pomodoro-tab" data-mode="short">Descanso corto</button>
+        <button type="button" class="pomodoro-tab" data-mode="long">Descanso largo</button>
+      </div>
+      <div class="pomodoro-timer">
+        <div id="pomodoroTime" class="pomodoro-time">25:00</div>
+        <div id="pomodoroStatus" class="pomodoro-status">Listo para enfocarte</div>
+        <div class="pomodoro-progress"><div id="pomodoroProgress"></div></div>
+      </div>
+      <div class="pomodoro-actions">
+        <button id="pomodoroPrimary" class="btn primary pomodoro-main" type="button">Iniciar</button>
+        <button id="pomodoroSkip" class="btn ghost" type="button">Saltar</button>
+        <button id="pomodoroReset" class="btn ghost" type="button">Reiniciar</button>
+      </div>
+      <div class="pomodoro-stats">
+        <div>
+          <span class="pomodoro-label">Ciclos completados</span>
+          <strong id="pomodoroCycles">0</strong>
+        </div>
+        <div>
+          <span class="pomodoro-label">Próximo descanso</span>
+          <strong id="pomodoroNext">Descanso corto</strong>
+        </div>
+      </div>
+      <div class="pomodoro-config">
+        <div class="pomodoro-field">
+          <label for="pomodoroWork">Enfoque (min)</label>
+          <input id="pomodoroWork" type="number" min="5" max="120" inputmode="numeric"/>
+        </div>
+        <div class="pomodoro-field">
+          <label for="pomodoroShort">Descanso corto</label>
+          <input id="pomodoroShort" type="number" min="3" max="60" inputmode="numeric"/>
+        </div>
+        <div class="pomodoro-field">
+          <label for="pomodoroLong">Descanso largo</label>
+          <input id="pomodoroLong" type="number" min="5" max="90" inputmode="numeric"/>
+        </div>
+        <div class="pomodoro-field">
+          <label for="pomodoroLongEvery">Descanso largo cada</label>
+          <input id="pomodoroLongEvery" type="number" min="1" max="8" inputmode="numeric"/>
+          <small>ciclos de enfoque</small>
+        </div>
+        <label class="pomodoro-toggle">
+          <input id="pomodoroAutoBreaks" type="checkbox"/>
+          Iniciar descansos automáticamente
+        </label>
+        <label class="pomodoro-toggle">
+          <input id="pomodoroAutoWork" type="checkbox"/>
+          Reanudar enfoque al terminar descansos
+        </label>
+      </div>
+    </div>
+  </div>
 
   <div id="tagEditor" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tagEditorTitle">
     <div class="modal-card">
@@ -889,7 +1179,8 @@
   window.RAFESY_DEVICE_ID=DEVICE_ID;
   const MAX_SUGGESTED_TAGS=7;
   const MAX_TAG_LENGTH=10;
-  const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice(),suggestionSnooze:{},lastSuggestionAt:0,cloudLinkId:''};
+  const POMODORO_DEFAULT={work:25,short:5,long:15,longEvery:4,autoStartBreaks:true,autoStartFocus:false,cycles:0};
+  const PREFS_DEFAULT={primary:'#6fdcff',theme:'dark',pureBlack:false,minimal:false,showTime:true,tz:'',phoneMode:false,soundsEnabled:true,animationsEnabled:true,autoWeeklySummary:true,smartSuggestions:true,fontSize:1.1,density:1,notificationsEnabled:true,xp:0,level:1,rewardsClaimed:[],autoSaveLocal:true,suggestedTags:DEFAULT_TAGS.slice(),suggestionSnooze:{},lastSuggestionAt:0,cloudLinkId:'',pomodoro:{...POMODORO_DEFAULT}};
   const XP_DAILY_DEFAULT={date:'',xp:0,posts:false,reflections:false,habitsDone:[],goalsDone:[]};
   const DEFAULT_REWARDS=[{id:'r1',name:'Desbloquea Notas',req:50,type:'xp',description:''},{id:'r2',name:'Avatar Personalizado',req:100,type:'xp',description:''},{id:'r3',name:'Tema Especial',req:200,type:'xp',description:''},{id:'r4',name:'Nivel 5',req:5,type:'level',description:''},{id:'r5',name:'Nivel 10',req:10,type:'level',description:''},{id:'r6',name:'Badge Estrella',req:15,type:'level',description:''}];
   let posts=[];
@@ -899,7 +1190,9 @@
   let habits={};
   let habitList=[];
   let reflections={};
-  let focusMode=false;
+  let pomodoroState=createPomodoroState();
+  let pomodoroTimer=null;
+  let pomodoroReady=false;
   let quickMode='note';
   let bootLoaded=false;
   let dashQuoteTimer=null;
@@ -946,6 +1239,7 @@
     target.prefs={...PREFS_DEFAULT,...(target.prefs||{})};
     if(!target.prefs.suggestionSnooze||typeof target.prefs.suggestionSnooze!=='object')target.prefs.suggestionSnooze={};
     prefs=target.prefs;
+    ensurePomodoroPrefs();
     if(!Number.isFinite(prefs.lastSuggestionAt))prefs.lastSuggestionAt=0;
     const incomingGoals=target.goals&&typeof target.goals==='object'?target.goals:{};
     target.goals={week:Array.isArray(incomingGoals.week)?incomingGoals.week:[],month:Array.isArray(incomingGoals.month)?incomingGoals.month:[]};
@@ -967,6 +1261,11 @@
     target.avatar=typeof target.avatar==='string'?target.avatar:null;
     avatarData=target.avatar||avatarData||null;
     target.avatar=avatarData;
+    pomodoroState=createPomodoroState();
+    if(pomodoroReady){
+      updatePomodoroInputs();
+      updatePomodoroUI();
+    }
     applyAvatar();
     ensureSuggestedTags();
     window.__APP_STATE__=target;
@@ -1064,6 +1363,7 @@
   function parseTags(text){return Array.from(new Set((text.match(/(^|\s)#([\p{L}\p{N}_]{2,30})/gu)||[]).map(t=>t.trim().replace(/^#/,'').toLowerCase())))}
 
   function applyPrefs(){
+    ensurePomodoroPrefs();
     const panelDark='linear-gradient(180deg,rgba(32,40,56,.95),rgba(20,26,38,.92))';
     const panelLight='linear-gradient(180deg,rgba(247,249,255,.96),rgba(226,235,250,.92))';
     document.documentElement.style.setProperty('--primary',prefs.primary);
@@ -1222,7 +1522,7 @@
   function updateAge(){const now=new Date(),dob=new Date(2007,11,29,10,0,0);let y=now.getFullYear()-dob.getFullYear(),m=now.getMonth()-dob.getMonth(),d=now.getDate()-dob.getDate();if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate()}if(m<0){y--;m+=12}$('#age').textContent=`${y} años, ${m} meses, ${d} días`;const next=new Date(now.getFullYear(),11,29);if(next<now)next.setFullYear(now.getFullYear()+1);const diff=Math.ceil((next-now)/86400000);$('#nextBirthday').textContent=`Próximo cumpleaños en: ${diff} días`}
 
   $('#lightbox').addEventListener('click',()=>{const lb=$('#lightbox');lb.classList.remove('open');const info=$('#galleryInfo');if(info)info.style.display='none'})
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){const lb=$('#lightbox');lb.classList.remove('open');const info=$('#galleryInfo');if(info)info.style.display='none'}})
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){const overlay=$('#pomodoroOverlay');if(overlay&&!overlay.classList.contains('hidden')){closePomodoro();return}const lb=$('#lightbox');lb?.classList.remove('open');const info=$('#galleryInfo');if(info)info.style.display='none'}})
 
   function fileToDataURL(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.readAsDataURL(file)})}
   function downscale(dataURL,max){return new Promise(resolve=>{const img=new Image();img.onload=()=>{const s=Math.min(max/img.width,max/img.height,1);const w=Math.round(img.width*s),h=Math.round(img.height*s);const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',0.88))};img.src=dataURL})}
@@ -1264,7 +1564,67 @@
   
   function calculateProductiveHours(){let hours=0;Object.keys(habits).forEach(key=>{const dayData=habits[key];if(dayData&&typeof dayData==='object'){habitList.forEach(h=>{if(dayData[h.id]){hours+=(h.minutes||0)/60}})}});return Math.round(hours*10)/10}
   
-  function renderDailyChecklist(){const box=$('#dailyHabitsChecklist');if(!box)return;const today=getTodayKey();const todayData=habits[today]||{};if(!habitList.length){box.innerHTML='<p style="color:var(--muted);font-size:13px">Agrega hábitos para empezar tu checklist diaria.</p>';return}box.innerHTML=habitList.map((h,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:${todayData[h.id]?'rgba(40,209,124,.08)':'transparent'}"><input type="checkbox" ${todayData[h.id]?'checked':''} data-habit-id="${h.id}" style="width:20px;height:20px;cursor:pointer"/><span style="flex:1;font-size:14px">${esc(h.name)}</span><span style="font-size:12px;color:var(--muted)">${h.minutes||0} min</span><button class="btn" data-del-habit="${h.id}" style="height:28px;padding:0 10px;font-size:12px">×</button></div>`).join('');box.querySelectorAll('input[type="checkbox"]').forEach(cb=>{const hid=cb.getAttribute('data-habit-id');const wasChecked=!!habits[today]?.[hid];cb.onchange=()=>{checkDailyXP();const isNowChecked=cb.checked;const todayData=getDayData(new Date());todayData[hid]=isNowChecked;setDayData(new Date(),todayData);if(isNowChecked&&!wasChecked&&!xpDaily.habitsDone.includes(hid)){addXP(5,'Hábito cumplido',hid);xpDaily.habitsDone.push(hid);save();playSound();playAnimation(cb.closest('div'))}else if(!isNowChecked&&wasChecked){xpDaily.habitsDone=xpDaily.habitsDone.filter(h=>h!==hid);save()}updateAllStats();renderWeeklyChart();renderMonthlyComparison();updateStreak();updateProgressBars()}});box.querySelectorAll('[data-del-habit]').forEach(btn=>btn.onclick=()=>{const hid=btn.getAttribute('data-del-habit');if(confirm('¿Eliminar este hábito?')){habitList=habitList.filter(h=>h.id!==hid);save();renderDailyChecklist();updateAllStats()}})}
+  function renderDailyChecklist(){
+    const box=$('#dailyHabitsChecklist');
+    if(!box)return;
+    const today=getTodayKey();
+    const todayData=habits[today]||{};
+    if(!habitList.length){
+      box.innerHTML='<p style="color:var(--muted);font-size:13px">Agrega hábitos para empezar tu checklist diaria.</p>';
+      return;
+    }
+    box.innerHTML=habitList.map(h=>{
+      const minutes=Math.max(0,Number(h.minutes)||0);
+      const isDone=!!todayData[h.id];
+      return `<div class="habit-row${isDone?' done':''}" data-habit="${h.id}">
+        <label class="habit-row__check">
+          <input type="checkbox" ${isDone?'checked':''} data-habit-id="${h.id}" aria-label="Marcar hábito completado"/>
+        </label>
+        <div class="habit-row__content">
+          <span class="habit-row__name">${esc(h.name)}</span>
+          <span class="habit-row__minutes">${minutes} min</span>
+        </div>
+        <div class="habit-row__actions">
+          <button class="btn habit-row__delete" data-del-habit="${h.id}" type="button" aria-label="Eliminar hábito">×</button>
+        </div>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+      const hid=cb.getAttribute('data-habit-id');
+      const wasChecked=!!habits[today]?.[hid];
+      cb.onchange=()=>{
+        checkDailyXP();
+        const isNowChecked=cb.checked;
+        const todaySnapshot=getDayData(new Date());
+        todaySnapshot[hid]=isNowChecked;
+        setDayData(new Date(),todaySnapshot);
+        if(isNowChecked&&!wasChecked&&!xpDaily.habitsDone.includes(hid)){
+          addXP(5,'Hábito cumplido',hid);
+          xpDaily.habitsDone.push(hid);
+          save();
+          playSound();
+          playAnimation(cb.closest('.habit-row'));
+        }else if(!isNowChecked&&wasChecked){
+          xpDaily.habitsDone=xpDaily.habitsDone.filter(h=>h!==hid);
+          save();
+        }
+        updateAllStats();
+        renderWeeklyChart();
+        renderMonthlyComparison();
+        updateStreak();
+        updateProgressBars();
+      };
+    });
+    box.querySelectorAll('[data-del-habit]').forEach(btn=>btn.onclick=()=>{
+      const hid=btn.getAttribute('data-del-habit');
+      if(confirm('¿Eliminar este hábito?')){
+        habitList=habitList.filter(h=>h.id!==hid);
+        save();
+        renderDailyChecklist();
+        updateAllStats();
+      }
+    });
+  }
   
   function updateAllStats(){const daily=calculateDailyStats();const weekly=calculateWeeklyStats();const monthly=calculateMonthlyStats();const points=calculatePoints();const hours=calculateProductiveHours();$('#dailyPercent').textContent=daily.percent+'%';$('#weeklyPercent').textContent=weekly.percent+'%';$('#monthlyPercent').textContent=monthly.percent+'%';$('#totalPoints').textContent=points;$('#productiveHours').textContent=hours+'h';const avg=(daily.percent+weekly.percent+monthly.percent)/3;let color='#ff4a4a';if(avg>=70)color='#28d17c';else if(avg>=40)color='#ffaa00';document.body.style.setProperty('--habit-performance',color);document.documentElement.style.setProperty('--habit-performance',color)}
   
@@ -1280,10 +1640,223 @@
 
   function renderGallery(){const box=$('#gallery');const infoBox=$('#galleryInfo');const infoText=$('#galleryInfoText');if(!box)return;const imgs=[];posts.forEach(p=>{if(Array.isArray(p.media)){p.media.forEach(m=>imgs.push({post:p,media:m,created:p.created||Date.now()}))}});const groups=new Map();imgs.forEach((entry,index)=>{const key=new Date(entry.created).toISOString().slice(0,10);if(!groups.has(key))groups.set(key,[]);groups.get(key).push({entry,index})});const sorted=Array.from(groups.entries()).sort((a,b)=>b[0].localeCompare(a[0]));if(!sorted.length){box.innerHTML='<p class="gallery-empty">Todavía no has subido imágenes.</p>';return}box.innerHTML=sorted.map(([date,list])=>{const human=formatGalleryDate(date);const items=list.map(({entry,index})=>`<button class="gallery-thumb" data-i="${index}" aria-label="Abrir imagen de ${human}"><img src="${entry.media.thumb||entry.media}" alt="Imagen de ${human}" loading="lazy"/></button>`).join('');return `<section class="gallery-section"><div class="gallery-date">${human}</div><div class="gallery-grid">${items}</div></section>`}).join('');box.querySelectorAll('.gallery-thumb').forEach(btn=>{btn.onclick=()=>{const idx=Number(btn.dataset.i);const img=imgs[idx];if(!img)return;const lb=$('#lightbox');if(lb){const lbImg=lb.querySelector('img');if(lbImg)lbImg.src=img.media.full||img.media;lb.classList.add('open');if(infoBox&&infoText){infoBox.style.display='block';const when=new Date(img.created).toLocaleString('es-CL',{dateStyle:'long',timeStyle:'short'});infoText.innerHTML=`<div style="font-weight:600;margin-bottom:6px">Subida: ${when}</div><div style="color:var(--muted)">${esc((img.post.text||'').slice(0,220))}${(img.post.text||'').length>220?'…':''}</div>`}}}})}
 
+  function ensurePomodoroPrefs(){
+    if(!prefs.pomodoro||typeof prefs.pomodoro!=='object')prefs.pomodoro={...POMODORO_DEFAULT};
+    prefs.pomodoro={...POMODORO_DEFAULT,...prefs.pomodoro};
+    ['work','short','long'].forEach(key=>{
+      const min=key==='short'?3:5;
+      const max=key==='work'?180:90;
+      const val=Math.round(Number(prefs.pomodoro[key])||POMODORO_DEFAULT[key]);
+      prefs.pomodoro[key]=Math.min(max,Math.max(min,val));
+    });
+    prefs.pomodoro.longEvery=Math.min(8,Math.max(1,Number(prefs.pomodoro.longEvery)||POMODORO_DEFAULT.longEvery));
+    prefs.pomodoro.cycles=Math.max(0,Number(prefs.pomodoro.cycles)||0);
+    prefs.pomodoro.autoStartBreaks=prefs.pomodoro.autoStartBreaks!==false;
+    prefs.pomodoro.autoStartFocus=!!prefs.pomodoro.autoStartFocus;
+  }
+
+  function createPomodoroState(){
+    ensurePomodoroPrefs();
+    return{
+      mode:'work',
+      running:false,
+      remaining:getPomodoroDurationSeconds('work'),
+      cycles:prefs.pomodoro.cycles||0
+    };
+  }
+
+  function getPomodoroDurationSeconds(mode){
+    ensurePomodoroPrefs();
+    const minutes=mode==='short'?prefs.pomodoro.short:mode==='long'?prefs.pomodoro.long:prefs.pomodoro.work;
+    return Math.max(60,Math.round(minutes*60));
+  }
+
+  function openPomodoro(){
+    const overlay=$('#pomodoroOverlay');
+    if(!overlay)return;
+    updatePomodoroInputs();
+    updatePomodoroUI();
+    overlay.classList.remove('hidden');
+    document.body.classList.add('pomodoro-open');
+  }
+
+  function closePomodoro(){
+    const overlay=$('#pomodoroOverlay');
+    if(!overlay)return;
+    overlay.classList.add('hidden');
+    document.body.classList.remove('pomodoro-open');
+  }
+
+  function formatPomodoroTime(sec){
+    const minutes=String(Math.floor(sec/60)).padStart(2,'0');
+    const seconds=String(sec%60).padStart(2,'0');
+    return `${minutes}:${seconds}`;
+  }
+
+  function updatePomodoroUI(){
+    const timeEl=$('#pomodoroTime');
+    if(!timeEl)return;
+    const total=getPomodoroDurationSeconds(pomodoroState.mode);
+    if(pomodoroState.remaining>total)pomodoroState.remaining=total;
+    timeEl.textContent=formatPomodoroTime(pomodoroState.remaining);
+    const statusEl=$('#pomodoroStatus');
+    if(statusEl){
+      const labels={work:'Enfoque',short:'Descanso corto',long:'Descanso largo'};
+      const modeLabel=labels[pomodoroState.mode]||'Pomodoro';
+      statusEl.textContent=pomodoroState.running?`${modeLabel} en curso`:`${modeLabel} listo`;
+    }
+    const primary=$('#pomodoroPrimary');
+    if(primary){
+      let label='Iniciar';
+      if(pomodoroState.running)label='Pausar';
+      else if(pomodoroState.remaining<total)label='Reanudar';
+      primary.textContent=label;
+    }
+    const progress=$('#pomodoroProgress');
+    if(progress){
+      const percent=((total-pomodoroState.remaining)/total)*100;
+      progress.style.width=`${Math.max(0,Math.min(100,percent))}%`;
+    }
+    const cycles=$('#pomodoroCycles');
+    if(cycles)cycles.textContent=String(pomodoroState.cycles||0);
+    const next=$('#pomodoroNext');
+    if(next)next.textContent=nextPomodoroLabel();
+    updatePomodoroTabs();
+  }
+
+  function updatePomodoroTabs(){
+    $$('.pomodoro-tab').forEach(tab=>tab.classList.toggle('active',tab.dataset.mode===pomodoroState.mode));
+  }
+
+  function startPomodoro(){
+    if(pomodoroState.running)return;
+    pomodoroState.running=true;
+    if(pomodoroTimer)clearInterval(pomodoroTimer);
+    pomodoroTimer=setInterval(()=>tickPomodoro(),1000);
+    updatePomodoroUI();
+  }
+
+  function pausePomodoro(){
+    if(pomodoroTimer){clearInterval(pomodoroTimer);pomodoroTimer=null;}
+    pomodoroState.running=false;
+    updatePomodoroUI();
+  }
+
+  function resetPomodoro(){
+    pausePomodoro();
+    pomodoroState.remaining=getPomodoroDurationSeconds(pomodoroState.mode);
+    updatePomodoroUI();
+  }
+
+  function skipPomodoro(){
+    handlePomodoroComplete(true);
+  }
+
+  function tickPomodoro(){
+    if(!pomodoroState.running)return;
+    pomodoroState.remaining=Math.max(0,pomodoroState.remaining-1);
+    updatePomodoroUI();
+    if(pomodoroState.remaining<=0){
+      handlePomodoroComplete(false);
+    }
+  }
+
+  function handlePomodoroComplete(manual){
+    pausePomodoro();
+    if(pomodoroState.mode==='work'){
+      pomodoroState.cycles=(pomodoroState.cycles||0)+1;
+      prefs.pomodoro.cycles=pomodoroState.cycles;
+      save();
+      const longBreakDue=pomodoroState.cycles % (prefs.pomodoro.longEvery||4)===0;
+      applyPomodoroMode(longBreakDue?'long':'short');
+      updatePomodoroUI();
+      if(!manual&&prefs.pomodoro.autoStartBreaks)startPomodoro();
+    }else{
+      applyPomodoroMode('work');
+      updatePomodoroUI();
+      if(!manual&&prefs.pomodoro.autoStartFocus)startPomodoro();
+    }
+    playSound();
+  }
+
+  function applyPomodoroMode(mode){
+    pomodoroState.mode=mode;
+    pomodoroState.remaining=getPomodoroDurationSeconds(mode);
+  }
+
+  function nextPomodoroLabel(){
+    if(pomodoroState.mode==='work'){
+      const nextCycle=(pomodoroState.cycles||0)+1;
+      const longBreakDue=nextCycle % (prefs.pomodoro.longEvery||4)===0;
+      return longBreakDue?'Descanso largo':'Descanso corto';
+    }
+    return 'Enfoque';
+  }
+
+  function updatePomodoroInputs(){
+    ensurePomodoroPrefs();
+    const work=$('#pomodoroWork');if(work)work.value=String(prefs.pomodoro.work);
+    const short=$('#pomodoroShort');if(short)short.value=String(prefs.pomodoro.short);
+    const longBreak=$('#pomodoroLong');if(longBreak)longBreak.value=String(prefs.pomodoro.long);
+    const longEvery=$('#pomodoroLongEvery');if(longEvery)longEvery.value=String(prefs.pomodoro.longEvery);
+    const autoBreak=$('#pomodoroAutoBreaks');if(autoBreak)autoBreak.checked=!!prefs.pomodoro.autoStartBreaks;
+    const autoWork=$('#pomodoroAutoWork');if(autoWork)autoWork.checked=!!prefs.pomodoro.autoStartFocus;
+  }
+
+  function bindPomodoroEvents(){
+    if(pomodoroReady)return;
+    pomodoroReady=true;
+    $('#focusMode')?.addEventListener('click',openPomodoro);
+    $('#closePomodoro')?.addEventListener('click',closePomodoro);
+    $('#pomodoroOverlay')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closePomodoro()});
+    $('#pomodoroPrimary')?.addEventListener('click',()=>{pomodoroState.running?pausePomodoro():startPomodoro()});
+    $('#pomodoroSkip')?.addEventListener('click',skipPomodoro);
+    $('#pomodoroReset')?.addEventListener('click',resetPomodoro);
+    $$('.pomodoro-tab').forEach(tab=>tab.addEventListener('click',()=>{pausePomodoro();applyPomodoroMode(tab.dataset.mode);updatePomodoroUI();}));
+    $('#pomodoroWork')?.addEventListener('change',e=>updatePomodoroDuration('work',e.target.value));
+    $('#pomodoroShort')?.addEventListener('change',e=>updatePomodoroDuration('short',e.target.value));
+    $('#pomodoroLong')?.addEventListener('change',e=>updatePomodoroDuration('long',e.target.value));
+    $('#pomodoroLongEvery')?.addEventListener('change',e=>{
+      const val=Math.min(8,Math.max(1,Math.round(Number(e.target.value)||POMODORO_DEFAULT.longEvery)));
+      prefs.pomodoro.longEvery=val;
+      e.target.value=String(val);
+      save();
+      updatePomodoroUI();
+    });
+    $('#pomodoroAutoBreaks')?.addEventListener('change',e=>{prefs.pomodoro.autoStartBreaks=e.target.checked;save()});
+    $('#pomodoroAutoWork')?.addEventListener('change',e=>{prefs.pomodoro.autoStartFocus=e.target.checked;save()});
+  }
+
+  function updatePomodoroDuration(field,value){
+    const boundaries={work:[5,180],short:[3,60],long:[5,90]};
+    const [min,max]=boundaries[field]||[5,90];
+    const minutes=Math.min(max,Math.max(min,Math.round(Number(value)||POMODORO_DEFAULT[field])));
+    prefs.pomodoro[field]=minutes;
+    const modeMap={work:'work',short:'short',long:'long'};
+    if(pomodoroState.mode===modeMap[field]){
+      const total=getPomodoroDurationSeconds(pomodoroState.mode);
+      if(pomodoroState.running){
+        pomodoroState.remaining=Math.min(pomodoroState.remaining,total);
+      }else{
+        pomodoroState.remaining=total;
+      }
+    }
+    save();
+    updatePomodoroInputs();
+    updatePomodoroUI();
+  }
+
+  function initPomodoro(){
+    ensurePomodoroPrefs();
+    pomodoroState=createPomodoroState();
+    bindPomodoroEvents();
+    updatePomodoroInputs();
+    updatePomodoroUI();
+  }
+
   $('#addHabit')?.addEventListener('click',()=>{const name=$('#newHabitName')?.value.trim();const minutes=Number($('#newHabitMinutes')?.value||0);if(!name)return;habitList.push({id:uid(),name,minutes});$('#newHabitName').value='';$('#newHabitMinutes').value='';save();renderDailyChecklist();updateAllStats()})
   $('#saveReflection')?.addEventListener('click',()=>{const text=$('#dailyReflection')?.value.trim();const today=getTodayKey();reflections[today]=text;save();alert('Reflexión guardada')})
   $('#playQuote')?.addEventListener('click',()=>{const quoteEl=$('#quoteText');if(!quoteEl)return;const text=quoteEl.textContent;if('speechSynthesis' in window){const utterance=new SpeechSynthesisUtterance(text);utterance.lang='es-ES';utterance.rate=0.9;speechSynthesis.speak(utterance)}else{alert('Tu navegador no soporta síntesis de voz')}})
-  $('#focusMode')?.addEventListener('click',()=>{focusMode=!focusMode;const main=$('#main-habits');const stats=$('#habitStats');if(!main)return;if(focusMode){main.style.position='fixed';main.style.top='0';main.style.left='0';main.style.right='0';main.style.bottom='0';main.style.background='var(--bg)';main.style.zIndex='100';main.style.overflow='auto';main.querySelectorAll('.card').forEach((c,i)=>{if(i>2)c.style.display='none'});if(stats)stats.style.display='grid';$('#focusMode').textContent='Salir Focus'}else{main.style.position='';main.style.top='';main.style.left='';main.style.right='';main.style.bottom='';main.style.background='';main.style.zIndex='';main.style.overflow='';main.querySelectorAll('.card').forEach(c=>c.style.display='');if(stats)stats.style.display='grid';$('#focusMode').textContent='Modo Focus';updateAllStats();renderHabitsPanel()}})
   
   function updateDashboard(){const weekly=calculateWeeklyStats();$('#dashDiscipline').textContent=weekly.percent+'%';const activeHours=Math.round((Date.now()-appStartTime)/(1000*60*60)*10)/10;$('#dashActive').textContent=activeHours+'h';updateStreak();const lastPost=posts[0];if(lastPost){$('#dashLastPost').textContent=(lastPost.text||'').slice(0,100)+(lastPost.text?.length>100?'…':'')}else{$('#dashLastPost').textContent='No hay posts aún'}const lastImg=posts.find(p=>p.media?.length);if(lastImg&&lastImg.media[0]){$('#dashLastImage').innerHTML=`<img src="${lastImg.media[0].thumb||lastImg.media[0]}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px"/>`}else{$('#dashLastImage').textContent='No hay imágenes aún'}const imgs=[];posts.forEach(p=>p.media?.forEach(m=>imgs.push(m)));const last3=imgs.slice(0,3);$('#dashGallery').innerHTML=last3.map(m=>`<img src="${m.thumb||m}" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in" onclick="document.querySelector('#lightbox img').src='${m.full||m}';document.querySelector('#lightbox').classList.add('open')"/>`).join('')+(last3.length===0?'<div style="text-align:center;color:var(--muted);padding:20px">No hay imágenes</div>':'');refreshDashQuote();if(dashQuoteTimer===null){dashQuoteTimer=setInterval(refreshDashQuote,45000)}}
   function calculateYearlyStats(){const now=new Date();const y=now.getFullYear();let completed=0,total=0;for(let m=0;m<12;m++){const days=new Date(y,m+1,0).getDate();for(let d=1;d<=days;d++){const key=new Date(y,m,d).toISOString().slice(0,10);const dayData=habits[key]||{};habitList.forEach(h=>{total++;if(dayData[h.id])completed++})}}return{completed,total,percent:total?Math.round((completed/total)*100):0}}
@@ -1476,7 +2049,7 @@
     }
   })
   $('#copyCloudLink')?.addEventListener('click',async()=>{const source=($('#cloudLinkInput')?.value||'').trim()||getActiveCloudId();if(!source){alert('Aún no hay un código disponible. Guarda en la nube para generar uno.');return;}try{await navigator.clipboard.writeText(source);alert('Código copiado. Pégalo en tu otro dispositivo.')}catch(err){console.warn('Clipboard error',err);window.prompt('Copia tu código manualmente:',source)}})
-  load();applyPrefs();updateCloudLinkUI();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);setQuickMode('note');bootLoaded=true;
+  load();applyPrefs();updateCloudLinkUI();checkDailyXP();updateXPDisplay();updateAge();updateWeekMonthLabels();initPhoneMode();updateLocalTime();renderInit();renderGoals();renderCalendar();renderHabitsPanel();updateStreak();updateProgressBars();autoWeeklySummary();smartSuggestions();updateDashboard();renderRewards();initAutoSave();if($('#autoSaveLocal'))$('#autoSaveLocal').checked=prefs.autoSaveLocal!==false;setInterval(updateProgressBars,60000);setInterval(updateLocalTime,1000);setQuickMode('note');bootLoaded=true;initPomodoro();
   let ticking=false;const scrollSources=[window,document.querySelector('main')].filter(Boolean);scrollSources.forEach(src=>{src.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onScroll(src)})},{passive:true})})
   document.addEventListener('click',()=>$$('.popover').forEach(p=>p.classList.remove('open')))
   $('#reset').addEventListener('click',async ()=>{if(!confirm('¿Estás seguro de que quieres restablecer todo? Esta acción eliminará todos tus datos permanentemente.'))return;if(!confirm('ADVERTENCIA: Esta acción no se puede deshacer. ¿Realmente quieres continuar?'))return;try{if(window.supabase && window.supabaseUser){await window.supabase.from('users_data').delete().eq('id',window.supabaseUser.id);}}catch(err){console.warn('No se pudo limpiar Supabase',err)}localStorage.clear();window.__APP_STATE__=window.createDefaultState?.();hydrateFromState(window.__APP_STATE__);snapshotState();saveLocal(window.__APP_STATE__);location.reload()})
