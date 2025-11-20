@@ -49,7 +49,7 @@
     body.phone #gear{display:none!important}
     #localTimeMobile{display:none}
     #gearMobile{display:none}
-    body.phone #localTimeMobile{display:none!important}
+    body.phone #localTimeMobile{display:flex!important;align-items:baseline;gap:4px;font-variant-numeric:tabular-nums}
     body.phone #gearMobile{display:grid!important;flex-shrink:0;position:fixed;top:calc(12px + var(--safe-top));right:16px;z-index:100}
     body.phone .bar-right{display:none}
     body.phone .bar{height:58px;padding:0 56px;justify-content:center}
@@ -73,6 +73,13 @@
     .mobile-tabs-container{display:none}
     body.phone .mobile-tabs-container{display:block;position:sticky;top:calc(58px + var(--safe-top));z-index:65;background:var(--bg);padding:0;border-bottom:1px solid var(--line);box-shadow:0 12px 24px rgba(0,0,0,.45);margin-top:-1px}
     body.phone .mobile-tabs-container .tabs-mobile{display:flex!important;gap:8px;overflow-x:auto;padding:8px 16px;margin:0 auto}
+    @media (max-width:1024px){
+      .bar{flex-wrap:wrap;gap:8px}
+      .bar-left{min-width:0;flex:1}
+      .tabs{flex-wrap:wrap}
+      .layout{grid-template-columns:clamp(240px,28vw,300px) minmax(0,1fr);gap:18px}
+      aside.left{padding:20px 18px 200px}
+    }
     @media (max-width:768px){
       header .tabs:not(.tabs-mobile){display:none!important}
       header #gear,header #localTime{display:none!important}
@@ -151,7 +158,7 @@
     .goals-goal-inputs.hidden{max-height:0;opacity:0;margin:0;padding:0}
     .goals-goal-inputs.hidden input,.goals-goal-inputs.hidden button{display:none}
 
-    main{min-height:calc(100dvh - 84px);height:calc(100dvh - 84px);border-left:1px solid var(--line);padding:16px 18px 260px;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable both-edges;background:linear-gradient(180deg,#050608,#070b11);border-radius:26px}
+    main{min-height:calc(100dvh - 84px);border-left:1px solid var(--line);padding:16px 18px 260px;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable both-edges;background:linear-gradient(180deg,#050608,#070b11);border-radius:26px}
     main::-webkit-scrollbar{width:10px}
     main::-webkit-scrollbar-thumb{background:rgba(111,220,255,.25);border-radius:8px}
     main::-webkit-scrollbar-track{background:transparent}
